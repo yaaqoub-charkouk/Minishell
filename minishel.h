@@ -7,15 +7,24 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-typedef enum s_type
+
+typedef enum s_type_node
 {
 	CMD,
 	PIPE,
-	OR,
-	AND,
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
-}	t_type;
+	APPEND,
+	HEREDOC,
+	AND,
+	OR,
+} t_type_node;
 
+// linked list , basic , before the binary tree
+typedef struct s_list
+{
+	char **line;
+	struct s_list	*next;
+}	t_list;
 
 #endif
