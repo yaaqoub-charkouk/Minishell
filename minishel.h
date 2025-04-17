@@ -18,7 +18,7 @@ typedef enum s_type_node
 	HEREDOC,
 	AND,
 	OR,
-} t_type_node;
+}	t_type_node;
 
 // linked list , basic , before the binary tree
 typedef struct s_list
