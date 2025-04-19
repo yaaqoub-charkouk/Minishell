@@ -44,7 +44,6 @@ t_type_node	get_type(char *content);
 t_tree	*create_tree(t_list *list);
 t_list	*new_node(char *content);
 void	free_matrix(char **tokens);
-// baghi nzid xi haja
-
+// parsing a
 
 #endif
