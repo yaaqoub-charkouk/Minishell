@@ -36,4 +36,15 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
+
+/**** tokenization ***/
+t_type_node	get_type(char *content);
+
+// test *****/
+t_tree	*create_tree(t_list *list);
+t_list	*new_node(char *content);
+void	free_matrix(char **tokens);
+// baghi nzid xi haja
+
+
 #endif

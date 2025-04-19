@@ -1,40 +1,70 @@
-#include "minishel.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/18 10:33:58 by akharkho          #+#    #+#             */
+/*   Updated: 2025/04/19 16:01:35 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	function(t_list **list, char *line)
+#include "minishell.h"
+
+t_list	*organize_input(char *line)
 {
-	int	i;
-	int j;
+	t_list	*list;
+	t_list	*head;
+	t_list	*new;
+	char	**tokens;
+	int		i;
 	
-	j = 0;
+	tokens = ft_split(line, ' ');
+	if (!tokens)
+		return (NULL);
 	i = 0;
-	while (line[i])
+	while (tokens[i])
 	{
-		(*list)->cmd[j][i] = line[i];
-		if (line[i] == '|')
-			j++;
+		new = new_node(tokens[i]);
+		if (!new)
+		{
+			free(tokens);
+			return (NULL);
+		}
+		if (i == 0)
+			head = new;
+		else
+			list->next = new;
+		list = new;
 		i++;
 	}
+	free_matrix(tokens);
+	return (head);
 }
 
-int main(int    ac, char **av, char **env)
+int	main(int ac, char **av, char **env)
 {
-	char    *line;
 	t_list	*list;
-
+	t_tree	*tree;
+	char	*line;
+	
 	(void)ac;
 	(void)av;
 	(void)env;
-
-	while(1337)
+	list = NULL;
+	tree = NULL;
+	while (1)
 	{
-		line = readline("minishell-1.0 $ ");
-		function(&list, line);
-		printf("the command is : %s\n", line);
+		line = readline("minishell-1.0 $");
+		add_history(line);
+		if (is_syntax_error(line))
+			continue ;
+		
+		list = organize_input(line);
+		tree = create_tree(list);
+		(void)tree;
 	}
+	
 	return (0);
 }
-
-// we have to parse the line, 
-// syntax error
-// ghanheto dik commandat f wahd tree , 
-// after that , we have to execute all the commands

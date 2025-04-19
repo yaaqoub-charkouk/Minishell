@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror 
 TARGET = minishell
-SOURCES = main_ad.c
+SOURCES = main.c parsing_1_a.c parsing_2_y.c utils_1_y.c
+
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)
 LIBFT_DIR = utils/libft
