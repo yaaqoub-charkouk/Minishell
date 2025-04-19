@@ -6,11 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 10:41:58 by akharkho          #+#    #+#             */
-/*   Updated: 2024/10/29 12:43:58 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 void	*ft_memchr(const void *s, int c, size_t n)
 {

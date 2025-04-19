@@ -6,11 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 19:55:37 by akharkho          #+#    #+#             */
-/*   Updated: 2024/11/12 11:40:04 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 int	ft_toupper(int c)
 {

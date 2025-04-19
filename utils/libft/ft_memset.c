@@ -6,11 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 15:08:23 by akharkho          #+#    #+#             */
-/*   Updated: 2024/11/07 17:00:55 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 void	*ft_memset(void *b, int c, size_t len)
 {

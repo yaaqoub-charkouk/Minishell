@@ -6,11 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 17:45:38 by akharkho          #+#    #+#             */
-/*   Updated: 2024/11/12 11:41:04 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/libft.h"
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {

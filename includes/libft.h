@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:11:04 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/16 12:42:47 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:56:46 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,10 @@
 # include <stdlib.h>
 # include <limits.h>
 
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}	t_list;
+//for linux
+#include <stdint.h>
+//remove later
+
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t count, size_t size);

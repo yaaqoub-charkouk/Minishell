@@ -23,7 +23,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	ar rcs $(NAME) $?
 
-%.o: %.c libft.h
+%.o: %.c ../../includes/libft.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 bonus: .additional
