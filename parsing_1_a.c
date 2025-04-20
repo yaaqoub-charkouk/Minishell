@@ -12,10 +12,12 @@
 
 #include "minishell.h"
 
+
 int	is_space(char c)
 {
 	return ((c == ' ' || c == '\t'));
 }
+
 
 int	has_unclosed_quotes(char *line, char quote)
 {
@@ -32,6 +34,7 @@ int	has_unclosed_quotes(char *line, char quote)
 	}
 	return (in_quote);
 }
+
 
 int	invalid_token(char *line)
 {
@@ -123,6 +126,7 @@ int	invalid_token(char *line)
 	}
 	return (0);
 }
+
 
 int	is_syntax_error(char *line)
 {
