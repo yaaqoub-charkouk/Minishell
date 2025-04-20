@@ -28,11 +28,10 @@ t_list    *tokenize(char	*line)
     i = 0;
     while (*line)
     {
-        new_node = ft_lstnew
         start = i;
         if (is_operator(line))
         {
-            ft_substr(line, start, i - start);
+            new_node = ft_lstnew(ft_substr(line, start, i - start));
         }
         
         
