@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-# include "./includes/libft.h"
+# include "includes/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
