@@ -2,7 +2,7 @@
 
 #include "minishell.h"
 
-t_list	*tokenizer(char	*line);
+t_list	*tokenize(char	*line);
 
 
 
