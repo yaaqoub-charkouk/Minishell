@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:11:04 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/18 11:56:46 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/20 10:17:19 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,15 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <limits.h>
+
+typedef enum s_type_node t_type_node;
+
+typedef struct s_list
+{
+	t_type_node		type;
+	char			*content;
+	struct s_list	*next;
+}	t_list;
 
 //for linux
 #include <stdint.h>
@@ -55,5 +64,6 @@ char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
+t_list	*ft_lstnew(void *content);
 
 #endif
