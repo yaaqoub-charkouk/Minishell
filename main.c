@@ -1,47 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 10:33:58 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/19 18:32:28 by akharkho         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
-t_list	*organize_input(char *line)
-{
-	t_list	*list;
-	t_list	*head;
-	t_list	*new;
-	char	**tokens;
-	int		i;
-	
-	tokens = ft_split(line, ' ');
-	if (!tokens)
-		return (NULL);
-	i = 0;
-	while (tokens[i])
-	{
-		new = new_node(tokens[i]);
-		if (!new)
-		{
-			free(tokens);
-			return (NULL);
-		}
-		if (i == 0)
-			head = new;
-		else
-			list->next = new;
-		list = new;
-		i++;
-	}
-	free_matrix(tokens);
-	return (head);
-}
 
 int	main(int ac, char **av, char **env)
 {
@@ -61,7 +19,7 @@ int	main(int ac, char **av, char **env)
 		if (is_syntax_error(line))
 			continue ;
 		
-		list = organize_input(line);
+		list = tokenize(line);
 		tree = create_tree(list);
 		(void)tree;
 	}
