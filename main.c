@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:33:58 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/19 18:32:28 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/20 12:59:19 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ int	main(int ac, char **av, char **env)
 		if (is_syntax_error(line))
 			continue ;
 		
-		list = organize_input(line);
-		tree = create_tree(list);
+		// list = organize_input(line);
+		// tree = create_tree(list);
 		(void)tree;
 	}
 	

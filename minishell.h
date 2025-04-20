@@ -45,5 +45,6 @@ t_tree	*create_tree(t_list *list);
 t_list	*new_node(char *content);
 void	free_matrix(char **tokens);
 // parsing a
+int	is_syntax_error(char *line);
 
 #endif
