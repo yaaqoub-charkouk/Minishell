@@ -17,10 +17,13 @@ int	main(int ac, char **av, char **env)
 		line = readline("minishell-1.0 $");
 		add_history(line);
 		if (is_syntax_error(line))
+		{
+			printf("skipping\n");
 			continue ;
+		}
 		
-		list = tokenize(line);
-		tree = create_tree(list);
+		// list = tokenize(line);
+		// tree = create_tree(list);
 		(void)tree;
 	}
 	
