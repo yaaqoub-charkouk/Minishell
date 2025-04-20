@@ -48,7 +48,5 @@ t_list		*tokenize(char	*line);
 t_tree	*create_tree(t_list *list);
 t_list	*new_node(char *content);
 void	free_matrix(char **tokens);
-// baghi nzid xi haja wlkin lralb llah
-
 
 #endif
