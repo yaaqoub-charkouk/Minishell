@@ -22,8 +22,6 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		
-		list = tokenize(line);
-		tree = create_tree(list);
 		// list = tokenize(line);
 		// tree = create_tree(list);
 		(void)tree;
