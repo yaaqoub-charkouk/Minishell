@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-
 t_type_node get_type(char *content)
 {
     if (ft_strncmp(content, ">>", 2) == 0)
