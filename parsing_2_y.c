@@ -2,7 +2,7 @@
 
 #include "minishell.h"
 
-t_list	*tokenize(char	*line);
+
 
 
 
@@ -58,6 +58,8 @@ t_list	*tokenize(char	*line)
 	}
 	return (free_matrix(tokens), head);
 }
+
+
 
 
 

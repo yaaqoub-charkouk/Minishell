@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-=======
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/28 17:11:04 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/20 13:18:19 by akharkho         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef LIBFT_H
 # define LIBFT_H
 
@@ -19,8 +5,24 @@
 # include <stdlib.h>
 # include <limits.h>
 
-typedef struct s_list		t_list;
-typedef enum s_type_node	t_type_node;
+typedef enum s_type_node
+{
+	CMD,
+	PIPE,
+	REDIRECTION_IN,
+	REDIRECTION_OUT,
+	APPEND,
+	HEREDOC,
+	AND,
+	OR,
+} t_type_node;
+
+typedef struct s_list
+{
+	t_type_node		type;
+	char			*content;
+	struct s_list	*next;
+}	t_list;
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
@@ -67,4 +69,3 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 int		ft_lstsize(t_list *lst);
 
 #endif
->>>>>>> e8dd825c04510f4c226bde29433e0442fc3de756

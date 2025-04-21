@@ -3,29 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-# include "./includes/libft.h"
+# include "includes/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
 
-typedef enum s_type_node
-{
-	CMD,
-	PIPE,
-	REDIRECTION_IN,
-	REDIRECTION_OUT,
-	APPEND,
-	HEREDOC,
-	AND,
-	OR,
-} t_type_node;
 
-typedef struct s_list
-{
-	t_type_node		type;
-	char			*content;
-	struct s_list	*next;
-}	t_list;
 
 // linked list , basic , before the binary tree
 typedef struct s_tree
@@ -48,5 +31,6 @@ t_list		*tokenize(char	*line);
 t_tree	*create_tree(t_list *list);
 t_list	*new_node(char *content);
 void	free_matrix(char **tokens);
-
+// parsing adnan
+int	is_syntax_error(char *line);
 #endif
