@@ -6,12 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 13:39:08 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/21 18:45:18 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:55:36 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int	is_space(char c)
 {
@@ -41,7 +40,6 @@ int	has_unclosed_quotes(char *line, char quote)
 	}
 	return (in_quote);
 }
-
 
 int	invalid_token(char *line)
 {
@@ -121,9 +119,23 @@ int	invalid_token(char *line)
 	}
 	return (0);
 }
+int	handle_redirections(t_list *list)
+{
+	while (list)
+	{
+		if ((list->type == REDIRECTION_IN || list->type == REDIRECTION_OUT
+				|| list->type == APPEND || list->type == HEREDOC) 
+			&& list->next->type != CMD)
+		{
+			print_error("newline");
+			return (1);
+		}
+		list = list->next;
+	}
+	return (0);
+}
 
-
-int	is_syntax_error(char *line)
+int	is_syntax_error(char *line, t_list *list)
 {
 	int		i;
 	char	*temp;
@@ -131,6 +143,8 @@ int	is_syntax_error(char *line)
 	char	token[3];
 
 	if (!line)
+		return (1);
+	if (handle_redirections(list))
 		return (1);
 	temp = ft_strdup(line);
 	// checking differnt combinations of operators ||&& or &&|| etc ..
@@ -141,14 +155,10 @@ int	is_syntax_error(char *line)
 	while (is_space(temp[i]))
 		i++;
 	//check if the operator is first
-	if (temp[i] == '|' || temp[i] == '<' || temp[i] == '>' || (temp[i] == '&' && temp[i + 1] == '&')
-		|| (temp [i] == '|' && temp[i + 1] == '|') || (temp[i] == '>' && temp[i + 1] == '>') || (temp[i] == '<' && temp[i + 1] == '<'))
+	if (temp[i] == '|' || (temp[i] == '&' && temp[i + 1] == '&')
+		|| (temp [i] == '|' && temp[i + 1] == '|'))
 	{
-		if (temp[i] == '>' || (temp[i] == '>' && temp[i + 1] == '>'))
-		{
-			return (print_error("newline"), 1);
-		}
-		else if ((temp[i] == '&' && temp[i + 1] == '&')
+		if ((temp[i] == '&' && temp[i + 1] == '&')
 			|| (temp [i] == '|' && temp[i + 1] == '|'))
 		{
 			token[0] = temp[i];
