@@ -15,6 +15,8 @@ typedef enum s_type_node
 	HEREDOC,
 	AND,
 	OR,
+	PAREN_OPEN,
+	PAREN_CLOSE
 } t_type_node;
 
 typedef struct s_list
