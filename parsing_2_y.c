@@ -279,20 +279,20 @@ void print_tokens(t_list *tokens)
 // 	}
 // }
 
-int main()
-{
-	char	*line;
-	t_list	*list;
-	// add_history(line);
-	while (1)
-	{
-		// printf("the len of : %zu\n", ft_strlen(""));
-		line = readline("minishell $ ");\
-		add_history(line);
-		list = tokenize(line);
-		print_tokens(list);
-		// print_tree(list, 20);
-	}
+// int main()
+// {
+// 	char	*line;
+// 	t_list	*list;
+// 	// add_history(line);
+// 	while (1)
+// 	{
+// 		// printf("the len of : %zu\n", ft_strlen(""));
+// 		line = readline("minishell $ ");\
+// 		add_history(line);
+// 		list = tokenize(line);
+// 		print_tokens(list);
+// 		// print_tree(list, 20);
+// 	}
 	
-}
+// }
 // cc -lreadline parsing_3_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c

@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 13:39:08 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/22 18:55:36 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:55:23 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,19 +119,43 @@ int	invalid_token(char *line)
 	}
 	return (0);
 }
+int	check_type_of_error(t_list *list)
+{
+	if (list->type == REDIRECTION_IN)
+	{
+		print_error("<");
+		return (1);
+	}
+	if (list->type == HEREDOC)
+	{
+		print_error("<<");
+		return (1);
+	}
+	if (list->type == REDIRECTION_OUT)
+	{
+		print_error(">");
+		return (1);
+	}
+	if (list->type == APPEND)
+	{
+		print_error(">>");
+		return (1);
+	}
+	return (0);
+}
 int	handle_redirections(t_list *list)
 {
-	while (list)
+	while (list && list->next)
 	{
 		if ((list->type == REDIRECTION_IN || list->type == REDIRECTION_OUT
 				|| list->type == APPEND || list->type == HEREDOC) 
 			&& list->next->type != CMD)
-		{
-			print_error("newline");
-			return (1);
-		}
+			return (check_type_of_error(list), 1);
 		list = list->next;
 	}
+	//checking if it s at the EOL
+	if (check_type_of_error(list))
+		return (1);
 	return (0);
 }
 
@@ -158,11 +182,7 @@ int	is_syntax_error(char *line, t_list *list)
 	if (temp[i] == '|' || (temp[i] == '&' && temp[i + 1] == '&')
 		|| (temp [i] == '|' && temp[i + 1] == '|'))
 	{
-		if (temp[i] == '>' || (temp[i] == '>' && temp[i + 1] == '>'))
-		{
-			return (print_error("newline"), 1);
-		}
-		else if ((temp[i] == '&' && temp[i + 1] == '&')
+		if ((temp[i] == '&' && temp[i + 1] == '&')
 			|| (temp [i] == '|' && temp[i + 1] == '|'))
 		{
 			token[0] = temp[i];
