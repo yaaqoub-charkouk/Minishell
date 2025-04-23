@@ -59,17 +59,21 @@ t_list	*tokenize(char	*line)
 			{
 				// add the hole command as string as a token to the linked list ;
 				word = ft_substr(line, start, i - start);
-				new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
-				new_node->type = CMD;
-				if (!head)
+				temp = ft_strtrim(word, " ", "	");
+				if (ft_strlen(temp))
 				{
-					head = new_node;
-					list = new_node;
-				}
-				else
-				{
-					list->next = new_node;
-					list = list->next;
+					new_node = ft_lstnew(temp);
+					new_node->type = CMD;
+					if (!head)
+					{
+						head = new_node;
+						list = new_node;
+					}
+					else
+					{
+						list->next = new_node;
+						list = list->next;
+					}
 				}
 				// old place of adding the operator
 			}
@@ -98,14 +102,18 @@ t_list	*tokenize(char	*line)
 	if (i > start)
 	{
 		word = ft_substr(line, start, i - start);
-		new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
-		new_node->type = CMD;
-		if (!head)
-			head = new_node;
-		else
+		temp = ft_strtrim(word, " ", "	");
+		if (ft_strlen(temp))
 		{
-			list->next = new_node;
-			// list->next->next = NULL; // terminate the linked list ;
+			new_node = ft_lstnew(temp);
+			new_node->type = CMD;
+			if (!head)
+				head = new_node;
+			else
+			{
+				list->next = new_node;
+				// list->next->next = NULL; // terminate the linked list ;
+			}
 		}
 	}
 	return (head);
@@ -278,6 +286,7 @@ int main()
 	// add_history(line);
 	while (1)
 	{
+		// printf("the len of : %zu\n", ft_strlen(""));
 		line = readline("minishell $ ");\
 		add_history(line);
 		list = tokenize(line);
