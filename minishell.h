@@ -8,24 +8,7 @@
 #include <readline/history.h>
 
 
-typedef enum s_type_node
-{
-	CMD,
-	PIPE,
-	REDIRECTION_IN,
-	REDIRECTION_OUT,
-	APPEND,
-	HEREDOC,
-	AND,
-	OR,
-} t_type_node;
 
-typedef struct s_list
-{
-	t_type_node		type;
-	char			*content;
-	struct s_list	*next;
-}	t_list;
 
 // linked list , basic , before the binary tree
 typedef struct s_tree

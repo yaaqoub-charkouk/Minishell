@@ -5,8 +5,26 @@
 # include <stdlib.h>
 # include <limits.h>
 
-typedef struct s_list		t_list;
-typedef enum s_type_node	t_type_node;
+typedef enum s_type_node
+{
+	CMD,
+	PIPE,
+	REDIRECTION_IN,
+	REDIRECTION_OUT,
+	APPEND,
+	HEREDOC,
+	AND,
+	OR,
+	PAREN_OPEN,
+	PAREN_CLOSE
+} t_type_node;
+
+typedef struct s_list
+{
+	t_type_node		type;
+	char			*content;
+	struct s_list	*next;
+}	t_list;
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
@@ -38,7 +56,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 char	*ft_strrchr(const char *s, int c);
-char	*ft_strtrim(char const *s1, char const *set);
+char	*ft_strtrim(char const *s1, char const *set1, char const *set2);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
