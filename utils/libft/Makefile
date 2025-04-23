@@ -18,7 +18,7 @@ OBJ = $(SRC:.c=.o)
 
 OBJBONUS = $(BONUS:.c=.o)
 
-all: $(NAME)
+all: $(NAME) bonus
 
 $(NAME): $(OBJ)
 	ar rcs $(NAME) $?
