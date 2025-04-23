@@ -158,7 +158,11 @@ int	is_syntax_error(char *line, t_list *list)
 	if (temp[i] == '|' || (temp[i] == '&' && temp[i + 1] == '&')
 		|| (temp [i] == '|' && temp[i + 1] == '|'))
 	{
-		if ((temp[i] == '&' && temp[i + 1] == '&')
+		if (temp[i] == '>' || (temp[i] == '>' && temp[i + 1] == '>'))
+		{
+			return (print_error("newline"), 1);
+		}
+		else if ((temp[i] == '&' && temp[i + 1] == '&')
 			|| (temp [i] == '|' && temp[i + 1] == '|'))
 		{
 			token[0] = temp[i];

@@ -1,92 +1,123 @@
-//building tree
-
 #include "minishell.h"
 
-t_list	*tokenize(char	*line);
-
-
-
-t_type_node	get_type(char *content)
+t_type_node get_type(char *content)
 {
-	if (ft_strncmp(content, "|", 2) == 0)
-		return (PIPE);
-	else if (ft_strncmp(content, ">", 2) == 0)
-		return (REDIRECTION_OUT);
-	else if (ft_strncmp(content, "<", 2) == 0)
-		return (REDIRECTION_IN);
-	else if (ft_strncmp(content, ">>", 3) == 0)
-		return (APPEND);
-	else if (ft_strncmp(content, "<<", 3) == 0)
-		return (HEREDOC);
-	else if (ft_strncmp(content, "&&", 3) == 0)
-		return (AND);
-	else if (ft_strncmp(content, "||", 3) == 0)
-		return (OR);
-	else
-		return (CMD);
+    if (ft_strncmp(content, ">>", 2) == 0)
+        return (APPEND);
+    else if (ft_strncmp(content, "<<", 2) == 0)
+        return (HEREDOC);
+    else if (ft_strncmp(content, "&&", 2) == 0)
+        return (AND);
+    else if (ft_strncmp(content, "||", 2) == 0)
+        return (OR);
+    else if (ft_strncmp(content, ">", 1) == 0)
+        return (REDIRECTION_OUT);
+    else if (ft_strncmp(content, "<", 1) == 0)
+        return (REDIRECTION_IN);
+    else if (ft_strncmp(content, "|", 1) == 0)
+        return (PIPE);
+	else if (ft_strncmp(content, "(", 1) == 0)
+		return (PAREN_OPEN);
+	else if (ft_strncmp(content, ")", 1) == 0)
+		return (PAREN_CLOSE);
+    else
+        return (CMD);
+}		
+
+int	get_operator_len(t_type_node type)
+{
+	if (type == APPEND || type == HEREDOC || type == AND || type == OR)
+		return (2);
+	return (1);
 }
 
 t_list	*tokenize(char	*line)
 {
-	t_list	*head;
-	t_list	*new_node;
-	t_list	*list;
-	char	**tokens;
-	int		i;
+	int			i;
+	int			start;
+	int			op_len;
+	char		*word;
+	char		*operator;
+	char		*temp;
+	t_list		*head;
+	t_list		*new_node;
+	t_list		*list;
+	t_type_node	type;
 
-	tokens = ft_split(line, ' ');
-	if (!tokens)
-		return (NULL);
+	head = NULL;
+	list = NULL;
+	new_node = NULL;
+	start = 0;
 	i = 0;
-	while (tokens[i])
+
+	while (line[i])
 	{
-		new_node = ft_lstnew(tokens[i]);
-		if (!new_node)
-			return (free_matrix(tokens), NULL); // node creation failed ;
-		new_node->type = get_type(tokens[i]); // get the type the current node ;
-		if (i == 0)
+		type = get_type(&line[i]);
+		if (type != CMD)
 		{
-			head = new_node;
-			list = head;
+			if (i > start)
+			{
+				// add the hole command as string as a token to the linked list ;
+				word = ft_substr(line, start, i - start);
+				new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
+				new_node->type = CMD;
+				if (!head)
+				{
+					head = new_node;
+					list = new_node;
+				}
+				else
+				{
+					list->next = new_node;
+					list = list->next;
+				}
+				// old place of adding the operator
+			}
+			// ad the operator it self as token to the linked list ;
+			op_len = get_operator_len(type);
+			operator = ft_substr(line, i, op_len);
+			new_node = ft_lstnew(operator);
+			new_node->type = type;
+			if (!head)
+			{
+				head = new_node;
+				list = new_node;
+			}
+			else
+			{
+				list->next = new_node;
+				list = list->next;
+			}
+			i += op_len;
+			start = i;	
 		}
+		else
+			i++;
+	}
+	// add the final command as a token or if there is only the command without operators;
+	if (i > start)
+	{
+		word = ft_substr(line, start, i - start);
+		new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
+		new_node->type = CMD;
+		if (!head)
+			head = new_node;
 		else
 		{
 			list->next = new_node;
-			list = new_node;
+			// list->next->next = NULL; // terminate the linked list ;
 		}
-		i++;
 	}
-	return (free_matrix(tokens), head);
+	return (head);
 }
 
+/* i think i will work recursive descent algo , 
+ first i will look for the lowest precedence operator in this order
+ || , && , | , < > , >> << .
+ then i will split by it , to get two nodes , the left node will be a leaf then the 
+ i will call back , a recursion , to do the same work again .
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 // t_tree	*create_tree(t_list *list)
 // {
@@ -123,3 +154,136 @@ t_list	*tokenize(char	*line)
 // 	}
 // 	return (tree_root);
 // }
+
+
+
+
+
+
+
+
+
+
+
+void print_tokens(t_list *tokens)
+{
+	while (tokens)
+	{
+		printf("TOKEN: %-10s \n", tokens->content);
+		switch (tokens->type)
+		{
+			case CMD:
+				printf("  TYPE: CMD\n");
+				break;
+			case PIPE:
+				printf("  TYPE: PIPE\n");
+				break;
+			case REDIRECTION_IN:
+				printf("  TYPE: REDIRECTION_IN\n");
+				break;
+			case REDIRECTION_OUT:
+				printf("  TYPE: REDIRECTION_OUT\n");
+				break;
+			case APPEND:
+				printf("  TYPE: APPEND\n");
+				break;
+			case HEREDOC:
+				printf("  TYPE: HEREDOC\n");
+				break;
+			case AND:
+				printf("  TYPE: AND\n");
+				break;
+			case OR:
+				printf("  TYPE: OR\n");
+				break;
+			case PAREN_OPEN:
+				printf("  TYPE: (\n");
+				break;
+			case PAREN_CLOSE:
+				printf("  TYPE: )\n");
+				break;
+			default:
+				printf("  TYPE: Unknown\n");
+				break;
+		}
+		tokens = tokens->next;
+	}
+}
+
+// void	print_tree(t_tree *node, int depth)
+// {
+// 	if (!node)
+// 		return;
+
+// 	for (int i = 0; i < depth; i++)
+// 		printf("  "); // indentation
+
+// 	switch (node->type)
+// 	{
+// 		case CMD:
+// 			printf("CMD:");
+// 			for (int i = 0; node->cmd && node->cmd[i]; i++)
+// 				printf(" %c", node->cmd[i]);
+// 			printf("\n");
+// 			break;
+// 		case PIPE:
+// 			printf("PIPE\n");
+// 			break;
+// 		case REDIRECTION_IN:
+// 			printf("REDIRECTION_IN\n");
+// 			break;
+// 		case REDIRECTION_OUT:
+// 			printf("REDIRECTION_OUT\n");
+// 			break;
+// 		case APPEND:
+// 			printf("APPEND\n");
+// 			break;
+// 		case HEREDOC:
+// 			printf("HEREDOC\n");
+// 			break;
+// 		case AND:
+// 			printf("AND\n");
+// 			break;
+// 		case OR:
+// 			printf("OR\n");
+// 			break;
+// 		case GROUP:
+// 			printf("GROUP ( )\n");
+// 			break;
+// 		default:
+// 			printf("UNKNOWN NODE\n");
+// 	}
+
+// 	if (node->left_node)
+// 	{
+// 		for (int i = 0; i < depth; i++)
+// 			printf("  ");
+// 		printf("L:\n");
+// 		print_tree(node->left_node, depth + 1);
+// 	}
+
+// 	if (node->right_node)
+// 	{
+// 		for (int i = 0; i < depth; i++)
+// 			printf("  ");
+// 		printf("R:\n");
+// 		print_tree(node->right_node, depth + 1);
+// 	}
+// }
+
+int main()
+{
+	char	*line;
+	t_list	*list;
+	// add_history(line);
+	while (1)
+	{
+		line = readline("minishell $ ");\
+		add_history(line);
+		list = tokenize(line);
+		print_tokens(list);
+		// print_tree(list, 20);
+	}
+	
+}
+// cc -lreadline parsing_3_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c
