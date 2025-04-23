@@ -6,18 +6,24 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 13:39:08 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/20 18:17:00 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:55:36 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int	is_space(char c)
 {
 	return ((c == ' ' || c == '\t'));
 }
 
+void	print_error(char *token)
+{
+	write(2, "minishell: syntax error near unexpected token `", 47);
+	if (token)
+		write(2, token, ft_strlen(token));
+	write(2, "'\n", 2);
+}
 
 int	has_unclosed_quotes(char *line, char quote)
 {
@@ -34,7 +40,6 @@ int	has_unclosed_quotes(char *line, char quote)
 	}
 	return (in_quote);
 }
-
 
 int	invalid_token(char *line)
 {
@@ -57,19 +62,13 @@ int	invalid_token(char *line)
 				i++;
 			}
 			if (count_and == 1 || count_and == 3)//this may be removed in the future single &
-			{
-				printf("minishell: syntax error near unexpected token `&'\n");
-				return (1);
-			}
+				return (print_error("&"), 1);
 			else if (count_and != 2)
-			{
-				printf("minishell: syntax error near unexpected token `&&'\n");
-				return (1);
-			}
+				return (print_error("&&"), 1);
 			//check if the operators are mixed &&| &&|| etc..
 			while (is_space(line[i]))
 				i++;
-			while(line[i] == '|')
+			while (line[i] == '|')
 			{
 				count_or++;
 				i++;
@@ -77,9 +76,9 @@ int	invalid_token(char *line)
 			if (count_or != 0)
 			{
 				if (count_or == 1)
-					printf("minishell: syntax error near unexpected token `|'\n");
+					print_error("|");
 				else
-					printf("minishell: syntax error near unexpected token `||'\n");
+					print_error("||");
 				return (1);
 			}
 			count_or = 0;
@@ -95,15 +94,9 @@ int	invalid_token(char *line)
 				i++;
 			}
 			if (count_or == 3)
-			{
-				printf("minishell: syntax error near unexpected token `|'\n");
-				return (1);
-			}
+				return (print_error("|"), 1);
 			if (count_or > 3)
-			{
-				printf("minishell: syntax error near unexpected token `||'\n");
-				return (1);
-			}
+				return (print_error("||"), 1);
 			//check if the operators are mixed ||& &&|| |& etc..
 			while (is_space(line[i]))
 				i++;
@@ -115,9 +108,9 @@ int	invalid_token(char *line)
 			if (count_and != 0)
 			{
 				if (count_and == 1)
-					printf("minishell: syntax error near unexpected token `&'\n");
+					print_error("&");
 				else
-					printf("minishell: syntax error near unexpected token `&&'\n");
+					print_error("&&");
 				return (1);
 			}
 		}
@@ -126,15 +119,32 @@ int	invalid_token(char *line)
 	}
 	return (0);
 }
+int	handle_redirections(t_list *list)
+{
+	while (list)
+	{
+		if ((list->type == REDIRECTION_IN || list->type == REDIRECTION_OUT
+				|| list->type == APPEND || list->type == HEREDOC) 
+			&& list->next->type != CMD)
+		{
+			print_error("newline");
+			return (1);
+		}
+		list = list->next;
+	}
+	return (0);
+}
 
-
-int	is_syntax_error(char *line)
+int	is_syntax_error(char *line, t_list *list)
 {
 	int		i;
 	char	*temp;
 	int		len;
+	char	token[3];
 
 	if (!line)
+		return (1);
+	if (handle_redirections(list))
 		return (1);
 	temp = ft_strdup(line);
 	// checking differnt combinations of operators ||&& or &&|| etc ..
@@ -145,21 +155,25 @@ int	is_syntax_error(char *line)
 	while (is_space(temp[i]))
 		i++;
 	//check if the operator is first
-	if (temp[i] == '|' ||(temp[i] == '&' && temp[i + 1] == '&')
+	if (temp[i] == '|' || (temp[i] == '&' && temp[i + 1] == '&')
 		|| (temp [i] == '|' && temp[i + 1] == '|'))
 	{
-		if ((temp[i] == '&' && temp[i + 1] == '&')
+		if (temp[i] == '>' || (temp[i] == '>' && temp[i + 1] == '>'))
+		{
+			return (print_error("newline"), 1);
+		}
+		else if ((temp[i] == '&' && temp[i + 1] == '&')
 			|| (temp [i] == '|' && temp[i + 1] == '|'))
 		{
-			printf("minishell: syntax error near unexpected");
-			printf("token `%c%c'\n", temp[i], temp[i + 1]);
+			token[0] = temp[i];
+			token[1] = temp[i + 1];
 		}
 		else
 		{
-			printf("minishell: syntax error near unexpected ");
-			printf("token `%c'\n", temp[i]);
+			token[0] = temp[i];
+			token[1] = '\0';
 		}
-		return (free(temp), 1);
+		return (token[2] = '\0', print_error(token), free(temp), 1);
 	}
 
 	//check if the last thing is an operator
@@ -172,25 +186,25 @@ int	is_syntax_error(char *line)
 		if ((temp[len] == '&' && temp[len - 1] == '&')
 			|| (temp [len] == '|' && temp[len - 1] == '|'))
 		{
-			printf("minishell: syntax error near unexpected ");
-			printf("token `%c%c'\n", temp[len], temp[len - 1]);
+			token[0] = temp[len];
+			token[1] = temp[len - 1];
 		}
 		else
 		{
-			printf("minishell: syntax error near unexpected ");
-			printf("token `%c'\n", temp[len]);
+			token[0] = temp[len];
+			token[1] = '\0';
 		}
-		return (free(temp), 1);
+		return (token[2] = '\0', print_error(token), free(temp), 1);
 	}
 	//checking quotes
 	if (has_unclosed_quotes(line, '\''))
 	{
-		printf("minishell: syntax error unclosed single quote\n");
+		write(2, "minishell: syntax error unclosed single quote\n", 46);
 		return (free(temp), 1);
 	}
 	if (has_unclosed_quotes(line, '\"'))
 	{
-		printf("minishell: syntax error unclosed double quotes\n");
+		write(2, "minishell: syntax error unclosed double quotes\n", 47);
 		return (free(temp), 1);
 	}
 	return (free(temp), 0);
