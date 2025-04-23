@@ -9,5 +9,6 @@ t_list	*ft_lstnew(void *content)
 		return (NULL);
 	node->content = content;
 	node->next = NULL;
+	// i need to free content here since it a return of a function so may be freeing the pointer here will be a good choice , and a good practice so yeah
 	return (node);
 }

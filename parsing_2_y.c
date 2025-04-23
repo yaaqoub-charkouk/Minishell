@@ -31,13 +31,14 @@ int	get_operator_len(t_type_node type)
 	return (1);
 }
 
-t_list    *tokenize(char	*line)
+t_list	*tokenize(char	*line)
 {
 	int			i;
 	int			start;
 	int			op_len;
 	char		*word;
 	char		*operator;
+	char		*temp;
 	t_list		*head;
 	t_list		*new_node;
 	t_list		*list;
@@ -58,7 +59,7 @@ t_list    *tokenize(char	*line)
 			{
 				// add the hole command as string as a token to the linked list ;
 				word = ft_substr(line, start, i - start);
-				new_node = ft_lstnew(word);
+				new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
 				new_node->type = CMD;
 				if (!head)
 				{
@@ -71,7 +72,6 @@ t_list    *tokenize(char	*line)
 					list = list->next;
 				}
 				// old place of adding the operator
-				
 			}
 			// ad the operator it self as token to the linked list ;
 			op_len = get_operator_len(type);
@@ -98,7 +98,7 @@ t_list    *tokenize(char	*line)
 	if (i > start)
 	{
 		word = ft_substr(line, start, i - start);
-		new_node = ft_lstnew(word);
+		new_node = ft_lstnew(ft_strtrim(word, " ", "	"));
 		new_node->type = CMD;
 		if (!head)
 			head = new_node;
@@ -173,37 +173,37 @@ void print_tokens(t_list *tokens)
 		switch (tokens->type)
 		{
 			case CMD:
-				printf("TYPE: CMD\n");
+				printf("  TYPE: CMD\n");
 				break;
 			case PIPE:
-				printf("TYPE: PIPE\n");
+				printf("  TYPE: PIPE\n");
 				break;
 			case REDIRECTION_IN:
-				printf("TYPE: REDIRECTION_IN\n");
+				printf("  TYPE: REDIRECTION_IN\n");
 				break;
 			case REDIRECTION_OUT:
-				printf("TYPE: REDIRECTION_OUT\n");
+				printf("  TYPE: REDIRECTION_OUT\n");
 				break;
 			case APPEND:
-				printf("TYPE: APPEND\n");
+				printf("  TYPE: APPEND\n");
 				break;
 			case HEREDOC:
-				printf("TYPE: HEREDOC\n");
+				printf("  TYPE: HEREDOC\n");
 				break;
 			case AND:
-				printf("TYPE: AND\n");
+				printf("  TYPE: AND\n");
 				break;
 			case OR:
-				printf("TYPE: OR\n");
+				printf("  TYPE: OR\n");
 				break;
 			case PAREN_OPEN:
-				printf("TYPE: (\n");
+				printf("  TYPE: (\n");
 				break;
 			case PAREN_CLOSE:
-				printf("TYPE: )\n");
+				printf("  TYPE: )\n");
 				break;
 			default:
-				printf("TYPE: Unknown\n");
+				printf("  TYPE: Unknown\n");
 				break;
 		}
 		tokens = tokens->next;

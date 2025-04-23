@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 18:16:30 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/23 11:21:48 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/libft.h"
 
-static int	trim(char c, char const	*set)
+static int	trim(char c, char const *set)
 {
 	while (*set != '\0')
 	{
@@ -23,20 +23,20 @@ static int	trim(char c, char const	*set)
 	return (0);
 }
 
-char	*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char const *s1, char const *set1, char const *set2)
 {
 	char	*str;
 	char	*start;
 	char	*final;
 	size_t	len;
 
-	if (!s1 || !set)
+	if (!s1 || !set1 || !set2)
 		return (NULL);
 	start = (char *)s1;
 	final = (char *)s1 + ft_strlen(s1) - 1;
-	while (trim(*final, set) && final >= start)
+	while ((trim(*final, set1) || trim(*final, set2)) && final >= start)
 		final--;
-	while (trim (*start, set) && start <= final)
+	while ((trim(*start, set1) || trim(*start, set2)) && start <= final)
 		start++;
 	len = final - start + 1;
 	str = malloc((len + 1) * sizeof(char));
