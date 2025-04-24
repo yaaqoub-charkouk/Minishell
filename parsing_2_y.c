@@ -36,6 +36,7 @@ t_list	*tokenize(char	*line)
 	int			i;
 	int			start;
 	int			op_len;
+	int			in_quotes;
 	char		*word;
 	char		*operator;
 	char		*temp;
@@ -44,16 +45,20 @@ t_list	*tokenize(char	*line)
 	t_list		*list;
 	t_type_node	type;
 
+
 	head = NULL;
 	list = NULL;
 	new_node = NULL;
 	start = 0;
 	i = 0;
+	in_quotes = 0;
 
 	while (line[i])
 	{
 		type = get_type(&line[i]);
-		if (type != CMD)
+		if (line[i] == 34 || line[i] == 39)
+			in_quotes = !in_quotes;
+		if (type != CMD && !in_quotes) // if we are in quotes , don't split;
 		{
 			if (i > start)
 			{
@@ -256,4 +261,4 @@ int main()
 	}
 }
 
-// cc -lreadline parsing_3_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c
+// cc -lreadline parsing_2_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c
