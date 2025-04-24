@@ -12,7 +12,7 @@
 
 // linked list , basic , before the binary tree
 
-typedef struct s_tree
+typedef struct	s_tree
 {
 	char			*cmd;
 	char			**tokens;
@@ -21,6 +21,22 @@ typedef struct s_tree
 	t_type_node		type;
 }	t_tree;
 
+/*==== stack to use for shunting yard algorithm ==== */
+
+typedef struct	s_op // LIFO stack
+{
+	char			*content;
+	t_type_node		type;
+	struct	s_op	*next;
+}	t_op;
+
+typedef struct	s_queue // FIFO stack 
+{
+	char			*content;
+	t_type_node		type;
+	struct	s_queue *next;
+}	t_queue;
+ /*======= shunting yard ========*/
 
 
 
@@ -31,8 +47,8 @@ t_list		*tokenize(char	*line);
 // test *****/
 // t_tree	*create_tree(t_list *list);
 
-t_list	*new_node(char *content);
-void	free_matrix(char **tokens);
+
+
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
 #endif
