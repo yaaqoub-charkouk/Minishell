@@ -22,7 +22,6 @@ int	main(int ac, char **av, char **env)
 			printf("skipping\n");
 			continue ;
 		}
-		
 		// tree = create_tree(list);
 		(void)tree;
 	}

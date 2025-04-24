@@ -240,11 +240,6 @@ void print_tokens(t_list *tokens)
 // }
 
 
-
-
-
-
-
 int main()
 {
 	char	*line;
