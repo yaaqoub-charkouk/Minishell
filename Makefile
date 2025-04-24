@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 TARGET = minishell
-SOURCES = main.c parsing_1_a.c parsing_2_y.c utils_1_y.c
+SOURCES = main.c parsing_1_a.c parsing_2_y.c utils_1_y.c test_y.c
 
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)

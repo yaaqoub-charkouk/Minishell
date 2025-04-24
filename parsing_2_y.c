@@ -58,11 +58,11 @@ t_list	*tokenize(char	*line)
 			if (i > start)
 			{
 				// add the hole command as string as a token to the linked list ;
-				word = ft_substr(line, start, i - start);
-				temp = ft_strtrim(word, " ", "	");
+				word = ft_substr(line, start, i - start); // i allocate memory here !!!!!!!!!
+				temp = ft_strtrim(word, " ", "	"); // i allocate memory here !!!!!!!!!!
 				if (ft_strlen(temp))
 				{
-					new_node = ft_lstnew(temp);
+					new_node = ft_lstnew(temp); // i allocate memory here !!!!!!!!!!!!!
 					new_node->type = CMD;
 					if (!head)
 					{
@@ -126,51 +126,6 @@ t_list	*tokenize(char	*line)
  i will call back , a recursion , to do the same work again .
 
 */
-
-// t_tree	*create_tree(t_list *list)
-// {
-// 	 t_tree	*tree_root;
-	 
-// 	 if (!list)
-// 		 return (NULL);
-// 	 tree_root = malloc(sizeof(t_tree));
-// 	 if (!tree_root)
-// 		 return (NULL);
-// 	tree_root->cmd = NULL;
-// 	tree_root->left_node = NULL;
-// 	tree_root->right_node = NULL;
-// 	if (list->type == CMD)
-// 	{
-// 		tree_root->type = CMD;
-// 		tree_root->cmd = malloc(sizeof(char *) * 2);
-// 		if (!tree_root->cmd)
-// 			return (NULL);
-// 		tree_root->cmd[0] = ft_strdup(list->content);
-// 		tree_root->cmd[1] = NULL;
-// 	}
-// 	list = list->next;
-// 	if (list)
-// 	{
-// 		if (list->type == PIPE || list->type == AND || list->type == OR)
-// 		{
-// 			tree_root->type = list->type;
-// 			if (list->next)
-// 				tree_root->left_node = create_tree(list->next);
-// 			if (list->next->next)
-// 				tree_root->right_node = create_tree(list->next->next);
-// 		}
-// 	}
-// 	return (tree_root);
-// }
-
-
-
-
-
-
-
-
-
 
 
 void print_tokens(t_list *tokens)
@@ -279,6 +234,12 @@ void print_tokens(t_list *tokens)
 // 	}
 // }
 
+
+
+
+
+
+
 int main()
 {
 	char	*line;
@@ -293,7 +254,6 @@ int main()
 		print_tokens(list);
 		// print_tree(list, 20);
 	}
-	
 }
 
 // cc -lreadline parsing_3_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c

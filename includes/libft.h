@@ -7,7 +7,6 @@
 
 typedef enum s_type_node
 {
-	CMD,
 	PIPE,
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
@@ -16,7 +15,8 @@ typedef enum s_type_node
 	AND,
 	OR,
 	PAREN_OPEN,
-	PAREN_CLOSE
+	PAREN_CLOSE,
+	CMD
 } t_type_node;
 
 typedef struct s_list
@@ -69,3 +69,5 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 int		ft_lstsize(t_list *lst);
+
+#endif
