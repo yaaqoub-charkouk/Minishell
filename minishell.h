@@ -47,7 +47,7 @@ t_list		*tokenize(char	*line);
 // test *****/
 // t_tree	*create_tree(t_list *list);
 
-
+t_queue  *build_sy_queue(t_list  *tokens);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
