@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 13:39:08 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/24 17:42:50 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:23:10 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,16 +85,27 @@ int	has_unclosed_quotes(char *line)
 int	invalid_token(char *line)
 {
 	int	i;
+	int	in_squote;
+	int	in_dquote;
 	int	count_and;
 	int	count_or;
 
 	i = 0;
+	in_squote = 0;
+	in_dquote = 0;
 	while (line[i])
 	{
 		count_and = 0;
 		count_or = 0;
+		if (line[i] == '\'' || line[i] == '\"')
+		{
+			if (line[i] == '\'')
+				in_squote = !in_squote;
+			else
+				in_dquote = !in_dquote;
+		}
 		//cheecking the && operator
-		if (line[i] == '&')
+		if (line[i] == '&' && !in_squote && !in_dquote)
 		{
 			while (line[i] == '&' || is_space(line[i]))
 			{
@@ -126,7 +137,7 @@ int	invalid_token(char *line)
 			count_and = 0;
 		}
 		//cheecking the | and || operators
-		else if (line[i] == '|')
+		else if (line[i] == '|' && !in_squote && !in_dquote)
 		{
 			while (line[i] == '|' || is_space(line[i]))
 			{
@@ -232,11 +243,28 @@ int	handle_brackets(char *line)
 	return (0);
 }
 
+int	check_op_start_end(t_list *list)
+{
+	if (list->type == AND || list->type == OR || list->type == PIPE)
+	{
+		print_error(list->content);
+		return (1);
+	}
+	while (list && list->next)
+		list = list->next;
+	if (list->type == AND || list->type == OR || list->type == PIPE)
+	{
+		print_error(list->content);
+		return (1);
+	}
+	return (0);
+}
+
 int	is_syntax_error(char *line, t_list *list)
 {
-	int		i;
-	int		len;
-	char	token[3];
+	// int		i;
+	// int		len;
+	// char	token[3];
 
 	if (!line)
 		return (1);
@@ -245,48 +273,49 @@ int	is_syntax_error(char *line, t_list *list)
 	// checking differnt combinations of operators ||&& or &&|| etc ..
 	if (invalid_token(line))
 		return(1);
-
-	i = 0;
-	while (is_space(line[i]))
-		i++;
-	//check if the operator is first
-	if (line[i] == '|' || (line[i] == '&' && line[i + 1] == '&')
-		|| (line [i] == '|' && line[i + 1] == '|'))
-	{
-		if ((line[i] == '&' && line[i + 1] == '&')
-			|| (line [i] == '|' && line[i + 1] == '|'))
-		{
-			token[0] = line[i];
-			token[1] = line[i + 1];
-		}
-		else
-		{
-			token[0] = line[i];
-			token[1] = '\0';
-		}
-		return (token[2] = '\0', print_error(token), 1);
-	}
+	if (check_op_start_end(list))
+		return (1);
+	// i = 0;
+	// while (is_space(line[i]))
+	// 	i++;
+	// //check if the operator is first
+	// if (line[i] == '|' || (line[i] == '&' && line[i + 1] == '&')
+	// 	|| (line [i] == '|' && line[i + 1] == '|'))
+	// {
+	// 	if ((line[i] == '&' && line[i + 1] == '&')
+	// 		|| (line [i] == '|' && line[i + 1] == '|'))
+	// 	{
+	// 		token[0] = line[i];
+	// 		token[1] = line[i + 1];
+	// 	}
+	// 	else
+	// 	{
+	// 		token[0] = line[i];
+	// 		token[1] = '\0';
+	// 	}
+	// 	return (token[2] = '\0', print_error(token), 1);
+	// }
 
 	//check if the last thing is an operator
-	len = ft_strlen(line) - 1;
-	while (len >= 0 && (line[len] == ' ' || line[len] == '\t'))
-		len--;
-	if (line[len] == '|' || (line[len] == '&' && line[len - 1] == '&')
-		|| (line [len] == '|' && line[len - 1] == '|'))
-	{
-		if ((line[len] == '&' && line[len - 1] == '&')
-			|| (line [len] == '|' && line[len - 1] == '|'))
-		{
-			token[0] = line[len];
-			token[1] = line[len - 1];
-		}
-		else
-		{
-			token[0] = line[len];
-			token[1] = '\0';
-		}
-		return (token[2] = '\0', print_error(token), 1);
-	}
+	// len = ft_strlen(line) - 1;
+	// while (len >= 0 && (line[len] == ' ' || line[len] == '\t'))
+	// 	len--;
+	// if (line[len] == '|' || (line[len] == '&' && line[len - 1] == '&')
+	// 	|| (line [len] == '|' && line[len - 1] == '|'))
+	// {
+	// 	if ((line[len] == '&' && line[len - 1] == '&')
+	// 		|| (line [len] == '|' && line[len - 1] == '|'))
+	// 	{
+	// 		token[0] = line[len];
+	// 		token[1] = line[len - 1];
+	// 	}
+	// 	else
+	// 	{
+	// 		token[0] = line[len];
+	// 		token[1] = '\0';
+	// 	}
+	// 	return (token[2] = '\0', print_error(token), 1);
+	// }
 	//checking quotes && brackets
 	if (handle_brackets(line)
 		|| has_unclosed_quotes(line) || has_special_char(line))
