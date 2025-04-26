@@ -17,9 +17,9 @@ t_type_node get_type(char *content)
     else if (ft_strncmp(content, "|", 1) == 0)
         return (PIPE);
 	else if (ft_strncmp(content, "(", 1) == 0)
-		return (PAREN_OPEN);
+		return (P_OPEN);
 	else if (ft_strncmp(content, ")", 1) == 0)
-		return (PAREN_CLOSE);
+		return (P_CLOSE);
     else
         return (CMD);
 }		
@@ -56,7 +56,7 @@ t_list	*tokenize(char	*line)
 	while (line[i])
 	{
 		type = get_type(&line[i]);
-		if (line[i] == 34 || line[i] == 39)
+		if (line[i] == 34 || line[i] == 39) // " '
 			in_quotes = !in_quotes;
 		if (type != CMD && !in_quotes) // if we are in quotes , don't split;
 		{
@@ -164,10 +164,10 @@ void print_tokens(t_list *tokens)
 			case OR:
 				printf("  TYPE: OR\n");
 				break;
-			case PAREN_OPEN:
+			case P_OPEN:
 				printf("  TYPE: (\n");
 				break;
-			case PAREN_CLOSE:
+			case P_CLOSE:
 				printf("  TYPE: )\n");
 				break;
 			default:
@@ -178,72 +178,21 @@ void print_tokens(t_list *tokens)
 	}
 }
 
-// void	print_tree(t_tree *node, int depth)
-// {
-// 	if (!node)
-// 		return;
-
-// 	for (int i = 0; i < depth; i++)
-// 		printf("  "); // indentation
-
-// 	switch (node->type)
-// 	{
-// 		case CMD:
-// 			printf("CMD:");
-// 			for (int i = 0; node->cmd && node->cmd[i]; i++)
-// 				printf(" %c", node->cmd[i]);
-// 			printf("\n");
-// 			break;
-// 		case PIPE:
-// 			printf("PIPE\n");
-// 			break;
-// 		case REDIRECTION_IN:
-// 			printf("REDIRECTION_IN\n");
-// 			break;
-// 		case REDIRECTION_OUT:
-// 			printf("REDIRECTION_OUT\n");
-// 			break;
-// 		case APPEND:
-// 			printf("APPEND\n");
-// 			break;
-// 		case HEREDOC:
-// 			printf("HEREDOC\n");
-// 			break;
-// 		case AND:
-// 			printf("AND\n");
-// 			break;
-// 		case OR:
-// 			printf("OR\n");
-// 			break;
-// 		case GROUP:
-// 			printf("GROUP ( )\n");
-// 			break;
-// 		default:
-// 			printf("UNKNOWN NODE\n");
-// 	}
-
-// 	if (node->left_node)
-// 	{
-// 		for (int i = 0; i < depth; i++)
-// 			printf("  ");
-// 		printf("L:\n");
-// 		print_tree(node->left_node, depth + 1);
-// 	}
-
-// 	if (node->right_node)
-// 	{
-// 		for (int i = 0; i < depth; i++)
-// 			printf("  ");
-// 		printf("R:\n");
-// 		print_tree(node->right_node, depth + 1);
-// 	}
-// }
-
+void	print_queue(t_queue *queue)
+{
+	while (queue)
+	{
+		printf("%s\n", queue->content);
+		queue = queue->next;
+	}
+}
 
 int main()
 {
 	char	*line;
 	t_list	*list;
+	t_queue	*queue;
+
 	// add_history(line);
 	while (1)
 	{
@@ -252,6 +201,8 @@ int main()
 		add_history(line);
 		list = tokenize(line);
 		print_tokens(list);
+		// queue = build_sy_queue(list);
+		// print_queue(queue);
 		// print_tree(list, 20);
 	}
 }
