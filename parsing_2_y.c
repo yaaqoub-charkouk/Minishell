@@ -180,7 +180,6 @@ void print_tokens(t_list *tokens)
 
 void	print_queue(t_queue *queue)
 {
-	printf("hi\n");
 	while (queue)
 	{
 		printf("%s\n", queue->content);
@@ -202,8 +201,8 @@ int main()
 		add_history(line);
 		list = tokenize(line);
 		print_tokens(list);
-		queue = build_sy_queue(list);
-		print_queue(queue);
+		// queue = build_sy_queue(list);
+		// print_queue(queue);
 		// print_tree(list, 20);
 	}
 }

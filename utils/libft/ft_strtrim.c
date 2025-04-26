@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 18:16:30 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/23 11:21:48 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:47:03 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ char	*ft_strtrim(char const *s1, char const *set1, char const *set2)
 		return (NULL);
 	start = (char *)s1;
 	final = (char *)s1 + ft_strlen(s1) - 1;
-	while ((trim(*final, set1) || trim(*final, set2)) && final >= start)
-		final--;
 	while ((trim(*start, set1) || trim(*start, set2)) && start <= final)
 		start++;
+	while ((trim(*final, set1) || trim(*final, set2)) && final >= start)
+		final--;
 	len = final - start + 1;
 	str = malloc((len + 1) * sizeof(char));
 	if (!str)
