@@ -1,17 +1,9 @@
 #include "minishell.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h> // for strdup
 
-// === Parse Forward Declarations ===
-t_tree *parse_logical_or(t_list **tokens);
-t_tree *parse_logical_and(t_list **tokens);
-t_tree *parse_pipe(t_list **tokens);
-t_tree *parse_redirection(t_list **tokens);
-t_tree *parse_command(t_list **tokens);
-t_tree *parse_group(t_list **tokens);
-
-// === Tree Node Allocator ===
+// === AST Node Creator ===
 t_tree *create_tree_node(t_type_node type, t_tree *left, t_tree *right, char **cmd)
 {
     t_tree *node = malloc(sizeof(t_tree));
@@ -23,6 +15,52 @@ t_tree *create_tree_node(t_type_node type, t_tree *left, t_tree *right, char **c
     node->cmd = cmd;
     return node;
 }
+
+// === Group Extractor ===
+t_list *extract_group(t_list **tokens)
+{
+    t_list *start = *tokens;
+    t_list *curr = *tokens;
+    int depth = 0;
+
+    if (!curr || curr->type != PAREN_OPEN)
+        return NULL;
+
+    depth++;
+    curr = curr->next;
+
+    while (curr)
+    {
+        if (curr->type == PAREN_OPEN)
+            depth++;
+        else if (curr->type == PAREN_CLOSE)
+            depth--;
+
+        if (depth == 0)
+            break;
+
+        curr = curr->next;
+    }
+
+    if (!curr || depth != 0)
+    {
+        printf("syntax error: unbalanced parentheses\n");
+        return NULL;
+    }
+
+    t_list *after = curr->next;
+    curr->next = NULL;
+    *tokens = after;
+    return start->next;
+}
+
+// === Recursive Parser Forward Declarations ===
+t_tree *parse_logical_or(t_list **tokens);
+t_tree *parse_logical_and(t_list **tokens);
+t_tree *parse_pipe(t_list **tokens);
+t_tree *parse_redirection(t_list **tokens);
+t_tree *parse_command(t_list **tokens);
+t_tree *parse_group(t_list **tokens);
 
 // === Entry Point ===
 t_tree *parse_input(t_list *tokens)
@@ -90,7 +128,7 @@ t_tree *parse_pipe(t_list **tokens)
     return parse_redirection(tokens);
 }
 
-// === Redirections ===
+// === Redirection ===
 t_tree *parse_redirection(t_list **tokens)
 {
     t_list *curr = *tokens, *prev = NULL;
@@ -114,23 +152,17 @@ t_tree *parse_redirection(t_list **tokens)
     return parse_command(tokens);
 }
 
-// === Group Parsing (Bonus) ===
+// === Group (Parentheses) ===
 t_tree *parse_group(t_list **tokens)
 {
-    if (!*tokens || (*tokens)->type != PAREN_OPEN)
+    t_list *inside = extract_group(tokens);
+    if (!inside)
         return NULL;
-    *tokens = (*tokens)->next; // Skip '('
-    t_tree *subtree = parse_logical_or(tokens);
-    if (!*tokens || (*tokens)->type != PAREN_CLOSE)
-    {
-        printf("syntax error: expected ')'\n");
-        return NULL;
-    }
-    *tokens = (*tokens)->next; // Skip ')'
+    t_tree *subtree = parse_logical_or(&inside);
     return create_tree_node(GROUP, subtree, NULL, NULL);
 }
 
-// === Command Parsing ===
+// === Command ===
 t_tree *parse_command(t_list **tokens)
 {
     if (*tokens && (*tokens)->type == PAREN_OPEN)
