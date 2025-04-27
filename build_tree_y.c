@@ -1,129 +1,95 @@
 #include "minishell.h"
 
-
-// what i  need to do now is to fill the two stack operator and queue ;
-
-t_queue	*new_node_queue(t_list	*lst) // FIFO stack // i assign type here 
+void	add_token_to_queue(t_queue **queue, t_list	*token)
 {
-	t_queue	*node;
+	t_queue	*new_node;
 
-	node = (t_queue *)malloc(sizeof(t_queue));
-	if (!node)
-		return (NULL);
-	node->content = lst->content;
-	node->type = lst->type; // i add the type to the node ;
-	node->next = NULL;
-	return (node);
-}
-
-t_queue	*new_op_node_queue(t_op	*operator) // FIFO stack // i assign type here 
-{
-	t_queue	*node;
-
-	node = (t_queue *)malloc(sizeof(t_queue));
-	if (!node)
-		return (NULL);
-	node->content = operator->content;
-	node->type = operator->type; // i add the type to the node ;
-	node->next = NULL;
-	return (node);
-}
-
-void	add_back_queue(t_queue **queue, t_queue *new)// FIFO stack
-{
-	t_queue	*last;
-
-	if (!queue || !new)
+	new_node = new_node_queue(token); // create a node a copy of the token with the same content and type ;
+	if (!new_node)
 		return ;
-	if (*queue == NULL)
-	{
-		*queue = new;
-		return ;
-	}
-	last = *queue;
-	while (last->next)
-		last = last->next;
-	last->next = new;
+	add_to_queue(queue, new_node);
 }
 
-int	push_to_operator(t_op **op_stack, t_list	*token) // push the operator to op stack
+void	add_op_to_queue(t_queue **queue, t_op **stack_op)
 {
-	t_op *new_node;
-
-	if (!*op_stack)
-			return (0);
-	new_node = malloc(sizeof(t_op));
-	new_node->content = token->content;
-	new_node->next = *op_stack;
-	new_node->type = token->type;
-	*op_stack = new_node;
-	return (1);
-}
-
-t_queue  *build_sy_queue(t_list  *tokens)
-{
-	t_list	*list;
-	t_op	*op_stack; // the operator stack
-	t_queue	*queue; 
+	t_queue	*new_node;
 	t_op	*operator;
 
-	list = tokens;
-	op_stack = NULL;
+	new_node = new_node_op_queue(*stack_op); // queue , copy of operator;
+	if (!new_node)
+		return ;
+	add_to_queue(queue, new_node); // the head operator was added to queue;
+	operator = *stack_op;
+	*stack_op = (*stack_op)->next; // hte head has been changed to the next op ;
+	free(operator);
+}
+
+void	parenthesis_case(t_queue **queue, t_op **stack_op, t_list	**token)
+{
+	t_op	*operator;
+
+	while ((*token)->type != P_CLOSE)
+	{
+		if ((*token)->type == CMD)
+			add_token_to_queue(queue, *token);
+		else if ((*token)->type != CMD)
+			push_to_op_stack(stack_op, *token);
+		*token = (*token)->next;
+	}
+	while((*stack_op)->type != P_OPEN) // there is at least one operator in the operator stack
+	{	// push all operators to queue;
+		add_op_to_queue(queue, stack_op);
+	}
+	operator = *stack_op;
+	*stack_op = (*stack_op)->next;
+	free(operator);
+}
+
+void	print_operator(t_op *operator)
+{
+	while (operator)
+	{
+		printf("%s\n", operator->content);
+		operator = operator->next;
+	}
+}
+
+t_queue	*build_sy_queue(t_list	*token)
+{
+	t_queue	*queue;
+	t_op	*stack_op;
+
 	queue = NULL;
-	while (list)
+	stack_op = NULL;
+	while (token)
 	{
-		if (list->type == CMD)
+		if (token->type == CMD)
+			add_token_to_queue(&queue, token);
+		else if (token->type != CMD)
 		{
-			add_back_queue(&queue, new_node_queue(list));
+			if (token->type == P_OPEN)
+				parenthesis_case(&queue, &stack_op, &token);
+			else if (!stack_op || token->type >= stack_op->type)
+				push_to_op_stack(&stack_op, token); // push the operator to stack_op if the op stack is empty or the token precedence is higher than the stack  operator at the top of the stack 
+			else if (token->type < stack_op->type)
+			{
+				// li f stack to queue
+				while (!stack_op || token->type < stack_op->type)
+				{
+					add_op_to_queue(&queue, &stack_op);
+				}
+				push_to_op_stack(&stack_op, token);		
+			}
+			// nh
 		}
-		else if (list->type != CMD)
-		{
-			// handle op case;
-			if (list->type == P_OPEN)
-			{
-				while (list->type != P_CLOSE)
-				{
-					if (list->type == CMD)
-						add_back_queue(&queue, new_node_queue(list));
-					else
-						push_to_operator(&op_stack, list);
-					list = list->next;
-				}
-			}
-			else if (list->type == P_CLOSE)
-			{
-				while (op_stack->type != P_OPEN)
-				{
-					add_back_queue(&queue, new_op_node_queue(op_stack));
-					operator = op_stack;
-					op_stack = op_stack->next;
-					free(operator); // to avoid leaks;
-				}
-				operator = op_stack;
-				op_stack = op_stack->next;
-				free(operator);
-			}
-			else if (!op_stack || list->type > op_stack->type)
-				push_to_operator(&op_stack, list);
-			else if (list->type <= op_stack->type)
-			{
-				while (list->type <= op_stack->type)
-				{
-					add_back_queue(&queue, new_node_queue(list));
-					list = list->next;
-				}
-				push_to_operator(&op_stack, list);
-			}
-		}
-		list = list->next;
+		token = token->next;
 	}
-	while (op_stack)
+	// end of tokens
+	while (stack_op)
 	{
-		add_back_queue(&queue, new_op_node_queue(op_stack));
-		operator = op_stack;
-		op_stack = op_stack->next;
-		free(operator);
+		add_op_to_queue(&queue, &stack_op);
 	}
+	// free resourrces , token
+	
 	return (queue);
 }
-// i will create two stack , an operator stack LIFO , and a cmd or queue stack FIFO	 , then the result wich is the tree ,
