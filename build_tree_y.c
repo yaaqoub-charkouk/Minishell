@@ -49,7 +49,7 @@ void	print_operator(t_op *operator)
 {
 	while (operator)
 	{
-		printf("%s\n", operator->content);
+		printf("operator is :%s\n", operator->content);
 		operator = operator->next;
 	}
 }
@@ -74,7 +74,7 @@ t_queue	*build_sy_queue(t_list	*token)
 			else if (token->type < stack_op->type)
 			{
 				// li f stack to queue
-				while (!stack_op || token->type < stack_op->type)
+				while (stack_op && token->type < stack_op->type)
 				{
 					add_op_to_queue(&queue, &stack_op);
 				}
@@ -90,6 +90,5 @@ t_queue	*build_sy_queue(t_list	*token)
 		add_op_to_queue(&queue, &stack_op);
 	}
 	// free resourrces , token
-	
 	return (queue);
 }

@@ -63,8 +63,8 @@ int	push_to_op_stack(t_op **op_stack, t_list	*token) // push the operator to op 
 {
 	t_op *new_node;
 
-	if (!*op_stack)
-			return (0);
+	// if (!*op_stack)
+	// 		return (0);
 	new_node = new_operator_node(token);
 	new_node->next = *op_stack;
 	*op_stack = new_node;
