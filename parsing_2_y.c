@@ -182,7 +182,7 @@ void	print_queue(t_queue *queue)
 {
 	while (queue)
 	{
-		printf("%s\n", queue->content);
+		printf("%s  ", queue->content);
 		queue = queue->next;
 	}
 }
@@ -197,14 +197,14 @@ int main()
 	while (1)
 	{
 		// printf("the len of : %zu\n", ft_strlen(""));
-		line = readline("minishell $ ");\
+		line = readline("\nminishell $ ");\
 		add_history(line);
 		list = tokenize(line);
-		print_tokens(list);
+		// print_tokens(list);
 		queue = build_sy_queue(list);
 		print_queue(queue);
 		// print_tree(list, 20);
 	}
 }
 
-// cc -lreadline parsing_2_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c
+// cc -lreadline parsing_2_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c utils/libft/ft_strtrim.c build_tree_y.c utils_1_y.c 
