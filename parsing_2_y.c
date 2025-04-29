@@ -207,4 +207,4 @@ int main()
 	}
 }
 
-// cc -lreadline parsing_2_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c utils/libft/ft_strtrim.c build_tree_y.c utils_1_y.c 
+// cc -lreadline parsing_2_y.c utils/libft/ft_lstnew_bonus.c utils/libft/ft_strncmp.c utils/libft/ft_substr.c utils/libft/ft_calloc.c utils/libft/ft_strlcpy.c utils/libft/ft_strlen.c utils/libft/ft_memset.c utils/libft/ft_strtrim.c build_queue_y.c utils_1_y.c utils/libft/ft_strdup.c            

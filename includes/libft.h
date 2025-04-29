@@ -10,12 +10,12 @@ typedef enum s_type_node
 	P_OPEN,
 	P_CLOSE,
 	CMD,
+	OR,
+	AND,
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
 	APPEND,
 	HEREDOC,
-	AND,
-	OR,
 	PIPE
 } t_type_node;
 

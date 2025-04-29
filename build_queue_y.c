@@ -45,6 +45,19 @@ void	add_op_to_queue(t_queue **queue, t_op **stack_op)
 // 	free(operator);
 // }
 
+int	precedence(t_type_node type)
+{
+	if (type == PIPE)
+		return (3);
+	else if (type == HEREDOC || type == APPEND || type == REDIRECTION_OUT || type == REDIRECTION_IN)
+		return (4);
+	else if (type == OR)
+		return (1);
+	else if (type == AND)
+		return (2);
+	return (0);
+}
+
 t_queue	*build_sy_queue(t_list	*token)
 {
 	t_queue	*queue;
@@ -79,7 +92,8 @@ t_queue	*build_sy_queue(t_list	*token)
 		else
 		{
 			// li f stack to queue
-			while (stack_op && token->type < stack_op->type)
+			// while (stack_op && token->type < stack_op->type)
+			while (stack_op && precedence(token->type) < precedence(stack_op->type))
 				add_op_to_queue(&queue, &stack_op);
 			push_to_op_stack(&stack_op, token);		
 		}
