@@ -24,26 +24,26 @@ void	add_op_to_queue(t_queue **queue, t_op **stack_op)
 	free(operator);
 }
 
-void	parenthesis_case(t_queue **queue, t_op **stack_op, t_list	**token)
-{
-	t_op	*operator;
+// void	parenthesis_case(t_queue **queue, t_op **stack_op, t_list	**token)
+// {
+// 	t_op	*operator;
 
-	// while ((*token)->type != P_CLOSE)
-	// {
-	// 	if ((*token)->type == CMD)
-	// 		add_token_to_queue(queue, *token);
-	// 	else if ((*token)->type != CMD)
-	// 		push_to_op_stack(stack_op, *token);
-	// 	*token = (*token)->next;
-	// }
-	while(*stack_op && (*stack_op)->type != P_OPEN) // there is at least one operator in the operator stack
-	{	// push all operators to queue;
-		add_op_to_queue(queue, stack_op);
-	}
-	operator = *stack_op;
-	*stack_op = (*stack_op)->next;
-	free(operator);
-}
+// 	// while ((*token)->type != P_CLOSE)
+// 	// {
+// 	// 	if ((*token)->type == CMD)
+// 	// 		add_token_to_queue(queue, *token);
+// 	// 	else if ((*token)->type != CMD)
+// 	// 		push_to_op_stack(stack_op, *token);
+// 	// 	*token = (*token)->next;
+// 	// }
+// 	while(*stack_op && (*stack_op)->type != P_OPEN) // there is at least one operator in the operator stack
+// 	{	// push all operators to queue;
+// 		add_op_to_queue(queue, stack_op);
+// 	}
+// 	operator = *stack_op;
+// 	*stack_op = (*stack_op)->next;
+// 	free(operator);
+// }
 
 t_queue	*build_sy_queue(t_list	*token)
 {
@@ -57,32 +57,33 @@ t_queue	*build_sy_queue(t_list	*token)
 	{
 		if (token->type == CMD)
 			add_token_to_queue(&queue, token);
-		else if (token->type != CMD)
+		else if (token->type == P_OPEN)
+			push_to_op_stack(&stack_op, token);
+		else if (token->type == P_CLOSE)
 		{
-			if (token->type == P_OPEN)
-				push_to_op_stack(&stack_op, token);
-			else if (token->type == P_CLOSE)
+			while (stack_op && stack_op->type != P_OPEN)
 			{
-				while (stack_op && stack_op->type != P_OPEN)
-					add_op_to_queue(&queue, &stack_op);
-				temp = stack_op; // the P_OPEN 
-				stack_op = stack_op->next;
-				free(stack_op);
+				add_op_to_queue(&queue, &stack_op);
 			}
-
-				// parenthesis_case(&queue, &stack_op, &token);
-				// parenthesis_case(&queue, &stack_op, &token);
-			else if (!stack_op || token->type >= stack_op->type)
-				push_to_op_stack(&stack_op, token); // push the operator to stack_op if the op stack is empty or the token precedence is higher than the stack  operator at the top of the stack 
-			else if (token->type < stack_op->type)
+			if (stack_op == NULL) // just to test prevent segfault ;
 			{
-				// li f stack to queue
-				while (stack_op && token->type < stack_op->type)
-					add_op_to_queue(&queue, &stack_op);
-				push_to_op_stack(&stack_op, token);		
+				printf("segfault\n");
+				break;
 			}
-			// nh
+			temp = stack_op; // the P_OPEN 
+			stack_op = stack_op->next;
+			free(temp);
 		}
+		// else if (!stack_op || token->type >= stack_op->type)
+		// 	push_to_op_stack(&stack_op, token); // push the operator to stack_op if the op stack is empty or the token precedence is higher than the stack  operator at the top of the stack 
+		else
+		{
+			// li f stack to queue
+			while (stack_op && token->type < stack_op->type)
+				add_op_to_queue(&queue, &stack_op);
+			push_to_op_stack(&stack_op, token);		
+		}
+		// nh
 		token = token->next;
 	}
 	// end of tokens

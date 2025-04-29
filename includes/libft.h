@@ -7,6 +7,8 @@
 
 typedef enum s_type_node
 {
+	P_OPEN,
+	P_CLOSE,
 	CMD,
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
@@ -14,9 +16,7 @@ typedef enum s_type_node
 	HEREDOC,
 	AND,
 	OR,
-	PIPE,
-	P_OPEN,
-	P_CLOSE
+	PIPE
 } t_type_node;
 
 typedef struct s_list
