@@ -44,10 +44,10 @@ int	precedence(t_type_node type)
 		return (4);
 	else if (type == PIPE)
 		return (3);
-	else if (type == OR)
+	else if (type == OR || type == AND)
 		return (1);
-	else if (type == AND)
-		return (2);
+	// else if (type == AND)
+	// 	return (2);
 	return (0);
 }
 
@@ -70,7 +70,7 @@ t_queue	*build_sy_queue(t_list	*token)
 		{
 			while (stack_op && precedence(token->type) < precedence(stack_op->type))
 				add_op_to_queue(&queue, &stack_op);
-			push_to_op_stack(&stack_op, token);		
+			push_to_op_stack(&stack_op, token);
 		}
 		token = token->next;
 	}

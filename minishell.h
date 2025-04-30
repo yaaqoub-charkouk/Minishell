@@ -38,6 +38,12 @@ typedef struct	s_queue // FIFO stack
 }	t_queue;
  /*======= shunting yard ========*/
 
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+} t_env;
 
 
 /**** tokenization ***/
@@ -54,6 +60,7 @@ int			push_to_op_stack(t_op **stack_op, t_list	*token);
 t_queue		*new_node_op_queue(t_op	*operator); // create a new queue for operator;
 void		add_to_queue(t_queue **queue, t_queue *new); // add a t queue node to queue
 t_queue		*new_node_queue(t_list	*lst);
+t_tree  *build_tree(t_queue *queue);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
