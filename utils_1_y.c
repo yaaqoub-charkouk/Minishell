@@ -53,7 +53,8 @@ t_op	*new_operator_node(t_list	*token)
 	new_node = (t_op *)malloc(sizeof(t_op));
 	if (!new_node)
 		return (NULL);
-	new_node->content = token->content;
+	// new_node->content = token->content;
+	new_node->content = ft_strdup(token->content);
 	new_node->type = token->type;
 	new_node->next = NULL;
 	return (new_node);
