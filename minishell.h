@@ -1,6 +1,7 @@
 # ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include "built_ins/built_ins.h"
 #include <stdio.h>
 #include <stdlib.h>
 # include "includes/libft.h"
@@ -64,4 +65,11 @@ t_tree  *build_tree(t_queue *queue);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
+//built_in_cmds
+int	built_in_env(char **envp);
+int	built_in_pwd(void);
+int	built_in_exit(void);
+int	built_in_unset(char *var, char **envp);
+int	built_in_echo(char **args, char **envp);
+int	built_in_cd(char **args, char **envp);
 #endif

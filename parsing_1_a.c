@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 13:39:08 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/26 17:23:10 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:30:31 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ int	is_syntax_error(char *line, t_list *list)
 	// int		len;
 	// char	token[3];
 
-	if (!line)
+	if (!line || !*line)
 		return (1);
 	if (handle_redirections(list))
 		return (1);
