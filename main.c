@@ -6,7 +6,7 @@ int	main(int ac, char **av, char **env)
 	t_list	*list;
 	t_tree	*tree;
 	char	*line;
-	
+
 	(void)ac;
 	(void)av;
 	(void)env;

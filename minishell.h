@@ -57,4 +57,10 @@ t_queue		*new_node_queue(t_list	*lst);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
+//built_in_cmds
+void	built_in_env(char **envp);
+void	built_in_pwd(void);
+void	built_in_exit(void);
+void	built_in_unset(char *var, char **envp);
+void	built_in_echo(char **args, char **envp);
 #endif
