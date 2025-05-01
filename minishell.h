@@ -39,12 +39,12 @@ typedef struct	s_queue // FIFO stack
 }	t_queue;
  /*======= shunting yard ========*/
 
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-} t_env;
+// typedef struct s_env
+// {
+// 	char			*key;
+// 	char			*value;
+// 	struct s_env	*next;
+// } t_env;
 
 
 /**** tokenization ***/
@@ -65,11 +65,4 @@ t_tree  *build_tree(t_queue *queue);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
-//built_in_cmds
-int	built_in_env(char **envp);
-int	built_in_pwd(void);
-int	built_in_exit(void);
-int	built_in_unset(char *var, char **envp);
-int	built_in_echo(char **args, char **envp);
-int	built_in_cd(char **args, char **envp);
 #endif
