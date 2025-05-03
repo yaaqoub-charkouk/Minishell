@@ -1,6 +1,4 @@
-// define how the tree will be , and build it .
-
-#include "minishell.h"
+#include "../minishell.h"
 
 t_queue	*new_node_queue(t_list	*lst) // FIFO stack // i assign type here 
 {

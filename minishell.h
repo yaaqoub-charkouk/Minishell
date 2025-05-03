@@ -16,9 +16,9 @@
 typedef struct	s_tree
 {
 	char			*cmd;
-	char			**tokens;
-	struct s_tree	*left_node;
-	struct s_tree	*right_node;
+	char			**args;
+	struct s_tree	*left;
+	struct s_tree	*right;
 	t_type_node		type;
 }	t_tree;
 
@@ -61,7 +61,8 @@ int			push_to_op_stack(t_op **stack_op, t_list	*token);
 t_queue		*new_node_op_queue(t_op	*operator); // create a new queue for operator;
 void		add_to_queue(t_queue **queue, t_queue *new); // add a t queue node to queue
 t_queue		*new_node_queue(t_list	*lst);
-t_tree  *build_tree(t_queue *queue);
+t_tree		*build_tree(t_list *tokens);
+void		print_tokens(t_list *tokens);
 
 // parsing adnan
 int	is_syntax_error(char *line, t_list	*list);
