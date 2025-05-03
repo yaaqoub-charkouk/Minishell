@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 void	add_token_to_queue(t_queue **queue, t_list	*token)
 {

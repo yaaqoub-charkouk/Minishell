@@ -1,6 +1,6 @@
-#include "minishell.h"
+#include "../minishell.h"
 
-t_list  *new_node_queue_list(t_queue *queue, t_list *list)
+t_list  *new_node_queue_list(t_queue *queue) // ,t_list *list)
 {
 	t_list	*node;
 
@@ -18,7 +18,7 @@ int     push(t_queue *queue, t_list **list)
 {
 	t_list	*node;
 
-	node = new_node_queue_list(queue, *list);
+	node = new_node_queue_list(queue);
 	node->next = *list;
 	*list = node;
 	return (1);
@@ -34,17 +34,37 @@ void	print_list(t_list	*list)
 	printf("\n");
 }
 
-t_tree  *build_tree(t_queue *queue)
+t_tree *new_tree_node(t_list	*token)
+{
+	t_tree	*tree_node;
+
+	tree_node = malloc(sizeof(t_tree));
+	tree_node->args = ft_split(token->content, ' ');
+	tree_node->cmd = token->content; // a copy from the first allocated token ;
+	tree_node->type = token->type;
+	tree_node->left = NULL;
+	tree_node->right = NULL;
+	return (tree_node);
+}
+
+t_tree  *build_tree(t_list	*tokens)
 {
 	t_list	*reversed_queue;
+	t_queue *queue;
+	t_tree *root;
 
+	queue = build_sy_queue(tokens);
 	reversed_queue = NULL;
+	root = NULL;
 	while (queue)
 	{
 		push(queue, &reversed_queue);
 		queue = queue->next;
 	}
-	
+	// while (reversed_queue)
+	// {
+		
+	// }
 	print_list(reversed_queue);
-	return (NULL);	
+	return (NULL);
 }

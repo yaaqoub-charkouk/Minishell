@@ -3,26 +3,27 @@
 
 int	main(int ac, char **av, char **env)
 {
-	t_list	*list;
+	t_list	*tokens;
 	t_tree	*tree;
 	char	*line;
 
 	(void)ac;
 	(void)av;
 	(void)env;
-	list = NULL;
+	tokens = NULL;
 	tree = NULL;
 	while (1)
 	{
-		line = readline("minishell-1.0 $");
+		line = readline("minishell-1.2$ ");
 		add_history(line);
-		list = tokenize(line);
-		if (is_syntax_error(line, list))
+		tokens = tokenize(line);
+		if (is_syntax_error(line, tokens))
 		{
 			printf("skipping\n");
 			continue ;
 		}
-		// tree = create_tree(list);
+		print_tokens(tokens);
+		tree = build_tree(tokens);
 		(void)tree;
 	}
 	
