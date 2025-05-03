@@ -1,27 +1,28 @@
 #include "built_ins.h"
 
-int	built_in_unset(char *var, char **envp)
+int	built_in_unset(char *var, t_env **env)
 {
-	int	i;
-	int	j;
-	int	len;
+	int		len;
+	t_env	*prev;
+	t_env	*curr;
 
-	i = 0;
-	j = 0;
+	prev = NULL;
 	len = ft_strlen(var);
-	while (envp[i])
+	while (curr)
 	{
-		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
+		if (ft_strncmp(curr->content, var, len) == 0 
+			&& curr->content[len] == '=')
 		{
-			j = i;
-			while (envp[j])
-			{
-				envp[j] = envp[j + 1];
-				j++;
-			}
-			break ;
+			if (prev == NULL)
+				*env = curr->next;
+			else
+				prev->next = curr->next;
+			free(curr->content);
+			free(curr);
+			return (0);
 		}
-		i++;
+		prev = curr;
+		curr = curr->next;
 	}
 	return (0);
 }

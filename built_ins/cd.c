@@ -1,34 +1,48 @@
 #include "built_ins.h"
 
-void	update_pwd(char **env, char *path, char *oldpwd)
+void	update_pwd(t_env *env, char *path, char *oldpwd)
 {
-	int		i;
-	char	*join;
+	char	*new_pwd;
+	char	*old_pwd;
 
-	i = 0;
-	while (env[i])
+	while (env)
 	{
-		if (ft_strncmp(env[i], "PWD=", 4) == 0)
+		if (ft_strncmp(env->content, "PWD=", 4) == 0)
 		{
-			// free(env[i]);
-			join = ft_strjoin("PWD=", path);
-			if (!join)
+			new_pwd = ft_strjoin("PWD=", path);
+			if (!new_pwd)
 				return ;
-			env[i] = join;
+			free(env->content);
+			env->content = new_pwd;
 		}
-		if (ft_strncmp(env[i], "OLDPWD=", 7) == 0)
+		if (ft_strncmp(env->content, "OLDPWD=", 7) == 0)
 		{
-			// free(env[i]);
-			join = ft_strjoin("OLDPWD=", oldpwd);
-			if (!join)
+			old_pwd = ft_strjoin("OLDPWD=", oldpwd);
+			if (!old_pwd)
 				return ;
-			env[i] = join;
+			free(env->content);
+			env->content = old_pwd;
 		}
-		i++;
+		env = env->next;
 	}
 }
 
-int	built_in_cd(char **args, char **envp)
+char	*get_env_content(t_env *env, char *value)
+{
+	int	len;
+
+	len = ft_strlen(value);
+	while (env)
+	{
+		if (ft_strncmp(env->content, value, len) == 0 
+			&& env->content[len] == '=')
+			return (env->content + len + 1);
+		env = env->next;
+	}
+	return (NULL);
+}
+
+int	built_in_cd(char **args, t_env *env)
 {
 	char	*path;
 	char	*oldpwd;
@@ -40,7 +54,7 @@ int	built_in_cd(char **args, char **envp)
 		return (perror("minishell: getcwd"), 1);
 	if (!args[1] || !*args[1] || args[1][0] == '~')
 	{
-		path = getenv("HOME");
+		path = get_env_content(env, "HOME");
 		if (!path)
 		{
 			write(2, "cd: HOME not set\n", 17);
@@ -49,7 +63,7 @@ int	built_in_cd(char **args, char **envp)
 	}
 	else if (args[1] && args[1][0] == '-')
 	{
-		prev_oldpwd = getenv("OLDPWD");
+		prev_oldpwd = get_env_content(env, "OLDPWD");
 		if (!prev_oldpwd)
 		{
 			write(2, "cd: OLDPWD not set\n", 19);
@@ -64,19 +78,17 @@ int	built_in_cd(char **args, char **envp)
 		while (*args[1] == '\"')
 			args[1]++;
 		special = args[1];
-		while (*args[1] != '\"')
+		while (*args[1] && *args[1] != '\"')
 			args[1]++;
 		*args[1] = '\0';
 		if (!special)
 			return (free(oldpwd), 1);
 		if (*special == '$')
 			special++;
-		path = getenv(special);
+		path = get_env_content(env, special);
 		if (!path)
-		{
-			perror("cd :");
-			return (free(oldpwd), 1);
-		}
+			return (write(2, "cd: ", 4), write(2, special, ft_strlen(special)),
+				write(2, " not set\n", 9), free(oldpwd), 1);
 	}
 	else
 		path = args[1];
@@ -86,6 +98,6 @@ int	built_in_cd(char **args, char **envp)
 		return (free(oldpwd), 1);
 	}
 	newpwd = getcwd(NULL, 0);
-	update_pwd(envp, newpwd, oldpwd);
+	update_pwd(env, newpwd, oldpwd);
 	return (free(oldpwd), free(newpwd), 0);
 }
