@@ -7,6 +7,7 @@ int	built_in_unset(char *var, t_env **env)
 	t_env	*curr;
 
 	prev = NULL;
+	curr = *env;
 	len = ft_strlen(var);
 	while (curr)
 	{
