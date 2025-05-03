@@ -1,7 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 TARGET = minishell
-SOURCES = main.c parsing_1_a.c parsing_2_y.c utils_1_y.c built_in_cmds_a.c build_tree_y.c
+
+PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c utils_1_y.c build_tree_y.c tokenize_y.c)
+BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c)
+SOURCES = main.c $(PARSING)  #$(BUILT_INS)
 
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)
