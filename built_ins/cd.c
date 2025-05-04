@@ -12,7 +12,7 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 			new_pwd = ft_strjoin("PWD=", path);
 			if (!new_pwd)
 				return ;
-			free(env->content);
+			// free(env->content);
 			env->content = new_pwd;
 		}
 		if (ft_strncmp(env->content, "OLDPWD=", 7) == 0)
@@ -20,7 +20,7 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 			old_pwd = ft_strjoin("OLDPWD=", oldpwd);
 			if (!old_pwd)
 				return ;
-			free(env->content);
+			// free(env->content);
 			env->content = old_pwd;
 		}
 		env = env->next;
