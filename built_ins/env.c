@@ -29,7 +29,7 @@ void	ft_add_back(t_env **lst, t_env *new)
 	last->next = new;
 }
 
-void	copy_env(char **envp, t_env **env)
+void	copy_env(char **envp, t_env **env)// char ** -> t_env **.
 {
 	int	i;
 
