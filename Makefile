@@ -4,7 +4,8 @@ TARGET = minishell
 
 PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c utils_1_y.c build_tree_y.c tokenize_y.c)
 BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c)
-SOURCES = main.c $(PARSING)  #$(BUILT_INS)
+# EXECUTION = &(addprefix execution/, )
+SOURCES = main.c $(PARSING)  $(BUILT_INS)
 
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)
