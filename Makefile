@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address
 TARGET = minishell
 
 PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c utils_1_y.c build_tree_y.c tokenize_y.c)
