@@ -7,7 +7,7 @@ t_env	*ft_new(void *content)
 	node = (t_env *)malloc(sizeof(t_env));
 	if (!node)
 		return (NULL);
-	node->content = content;
+	node->content = ft_strdup(content);
 	node->next = NULL;
 	return (node);
 }
