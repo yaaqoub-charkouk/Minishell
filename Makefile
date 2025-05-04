@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=address
 TARGET = minishell
 
-PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c utils_1_y.c build_tree_y.c tokenize_y.c)
+PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c tokenize_y.c build_tree_y.c tree_utils_y.c)
 BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c)
 # EXECUTION = &(addprefix execution/, )
 SOURCES = main.c $(PARSING)  $(BUILT_INS)
@@ -13,6 +13,7 @@ LIBFT_DIR = utils/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 all: $(LIBFT) $(TARGET)
+	./minishell
 
 $(LIBFT):
 	make -C $(LIBFT_DIR)

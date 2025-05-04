@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "parsing.h"
 
 t_queue	*new_node_queue(t_list	*lst) // FIFO stack // i assign type here 
 {

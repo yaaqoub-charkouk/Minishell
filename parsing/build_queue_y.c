@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "parsing.h"
 
 void	add_token_to_queue(t_queue **queue, t_list	*token)
 {
@@ -38,7 +38,7 @@ void	parenthesis_priority(t_op **stack_op, t_queue  **queue)
 	free(temp);
 }
 
-int	precedence(t_type_node type)
+int	precedence(t_type_node type) // the precedent make the position of the operator in the tree 
 {
 	if (type == HEREDOC || type == APPEND || type == REDIRECTION_OUT || type == REDIRECTION_IN)
 		return (4);
@@ -46,8 +46,6 @@ int	precedence(t_type_node type)
 		return (3);
 	else if (type == OR || type == AND)
 		return (1);
-	// else if (type == AND)
-	// 	return (2);
 	return (0);
 }
 

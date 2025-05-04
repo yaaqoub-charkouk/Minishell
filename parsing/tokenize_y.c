@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "parsing.h"
 
 t_type_node get_type(char *content)
 {
