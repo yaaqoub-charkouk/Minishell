@@ -24,11 +24,9 @@ int	main(int ac, char **av, char **envp)
 			printf("skipping\n");
 			continue ;
 		}
-		// print_tokens(tokens);
 		tree = build_tree(tokens);
 		execution(tree, envp, &env);
 		(void)tree;
 	}
-	
 	return (0);
 }
