@@ -19,6 +19,26 @@
 // }
 
 
+t_tree *build_tree_from_rqueue(t_list **current)
+{
+	t_tree *node;
+
+	if (!current || !*current)
+		return (NULL);
+
+	node = new_tree_node(*current);
+	*current = (*current)->next;
+
+	if (node->type != CMD)
+	{
+		node->right = build_tree_from_rqueue(current); // build the right first , so that the left will be the right->next ,wich will be updated when calling the function 
+		node->left = build_tree_from_rqueue(current);
+	}
+	return (node);
+}
+
+
+
 
 t_tree *build_tree_from_rqueue(t_list **current)
 {
@@ -37,6 +57,10 @@ t_tree *build_tree_from_rqueue(t_list **current)
 	}
 	return (node);
 }
+
+
+
+
 
 t_tree  *build_tree(t_list	*tokens)
 {

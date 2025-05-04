@@ -9,7 +9,6 @@ t_env	*ft_new(void *content)
 		return (NULL);
 	node->content = content;
 	node->next = NULL;
-	// i need to free content here since it a return of a function so may be freeing the pointer here will be a good choice , and a good practice so yeah
 	return (node);
 }
 
@@ -46,7 +45,8 @@ int	built_in_env(t_env *env)
 {
 	while (env)
 	{
-		printf("%s\n", env->content);
+		if (ft_strchr(env->content, '='))
+			printf("%s\n", env->content);
 		env = env->next;
 	}
 	return (0);
