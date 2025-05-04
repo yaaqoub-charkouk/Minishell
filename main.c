@@ -1,15 +1,17 @@
 #include "minishell.h"
 
 
-int	main(int ac, char **av, char **env)
+int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
 	t_tree	*tree;
+	t_env	*env;
 	char	*line;
 
 	(void)ac;
 	(void)av;
-	(void)env;
+	env = NULL;
+	copy_env(envp, &env);
 	tokens = NULL;
 	tree = NULL;
 	while (1)
@@ -24,6 +26,7 @@ int	main(int ac, char **av, char **env)
 		}
 		// print_tokens(tokens);
 		tree = build_tree(tokens);
+		execution(tree, envp, &env);
 		(void)tree;
 	}
 	
