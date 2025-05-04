@@ -1,10 +1,11 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 TARGET = minishell
 
 PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c tokenize_y.c build_tree_y.c tree_utils_y.c)
 BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c)
-SOURCES = main.c $(PARSING)  #$(BUILT_INS)
+EXECUTION = $(addprefix execution/, execution_a.c utils_a.c)
+SOURCES = main.c $(PARSING)  $(BUILT_INS) $(EXECUTION)
 
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)
@@ -12,6 +13,7 @@ LIBFT_DIR = utils/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 all: $(LIBFT) $(TARGET)
+	make clean
 	./minishell
 
 $(LIBFT):
