@@ -3,8 +3,8 @@
 
 # include "../includes/libft.h"
 # include <stdio.h>
-# include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/readline.h>
 // linked list , basic , before the binary tree
 
 typedef struct	s_tree
@@ -49,5 +49,6 @@ t_tree		*new_tree_node(t_list	*token);
 void		print_tree(t_tree *node, int level);
 int			push(t_queue *queue, t_list **list);
 char		**ft_split_pipex(char const *s, char c);
+char	**free_string(char **string, int i);
 
 #endif

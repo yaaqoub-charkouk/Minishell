@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/05/04 18:04:13 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/05/05 20:20:08 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,6 @@ int		built_in_exit(void);
 int		built_in_pwd(void);
 int		built_in_export(char **args, t_env **env);
 int		built_in_unset(char **args, t_env **env);
+char	**env_struct_to_char(t_env  *env);
 
 #endif
