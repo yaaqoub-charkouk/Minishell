@@ -48,5 +48,6 @@ int			is_syntax_error(char *line, t_list	*list);
 t_tree		*new_tree_node(t_list	*token);
 void		print_tree(t_tree *node, int level);
 int			push(t_queue *queue, t_list **list);
+char		**ft_split_pipex(char const *s, char c);
 
 #endif
