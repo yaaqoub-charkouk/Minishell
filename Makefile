@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 TARGET = minishell
 
-PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c tokenize_y.c build_tree_y.c tree_utils_y.c)
-BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c)
+PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c tokenize_y.c build_tree_y.c tree_utils_y.c split_pipex.c)
+BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c env_utils.c)
 EXECUTION = $(addprefix execution/, execution_a.c utils_a.c)
 SIGNALS = $(addprefix signals/, signal_1_y.c)
 

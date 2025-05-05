@@ -1,15 +1,15 @@
 #include "parsing.h"
 
 
-char    **free_string(char **string, int i)
+char	**free_string(char **string, int i)
 {
-    while (i >= 0)
-    {
-        free(string[i]);
-        i--;
-    }
-    free(string);
-    return (NULL);
+	while (i >= 0)
+	{
+		free(string[i]);
+		i--;
+	}
+	free(string);
+	return (NULL);
 }
 
 void	ft_quotes(const char *str, int *in_quote)

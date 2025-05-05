@@ -1,5 +1,9 @@
 #include "minishell.h"
 
+void	ll()
+{
+	system("leaks minishell");
+}
 
 int	main(int ac, char **av, char **envp)
 {
@@ -13,7 +17,7 @@ int	main(int ac, char **av, char **envp)
 	copy_env(envp, &env);
 	tokens = NULL;
 	tree = NULL;
-	rl_catch_signals = 0;
+	// rl_catch_signals = 0;
 	setup_signals();
 	while (1)
 	{
@@ -37,9 +41,9 @@ int	main(int ac, char **av, char **envp)
 		}
 		tree = build_tree(tokens);
 		// free queue , op stack , tokens
-		execution(tree, envp, &env);
+		execution(tree, env_struct_to_char(env), &env);
 		(void)tree;
 	}
-	rl_clear_history();
+	// rl_clear_history();
 	return (0);
 }

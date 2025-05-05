@@ -7,7 +7,7 @@ int	built_in_export(char **args, t_env **env)
 
 	i = 1;
 	curr = *env;
-	if (!args)
+	if (!args[1])
 	{
 		while (curr)
 		{

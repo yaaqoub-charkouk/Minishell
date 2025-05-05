@@ -62,3 +62,4 @@ t_tree *new_tree_node(t_list	*token)
 	tree_node->right = NULL;
 	return (tree_node);
 }
+
