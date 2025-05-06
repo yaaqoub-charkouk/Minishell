@@ -1,5 +1,6 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address  -I$(HOME)/readline
+LDFLAGS = -L$(LIBFT_DIR) -L$(HOME)/readline -lreadline -lhistory 
 TARGET = minishell
 
 PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c tokenize_y.c build_tree_y.c tree_utils_y.c)
@@ -8,7 +9,7 @@ EXECUTION = $(addprefix execution/, execution_a.c utils_a.c)
 SIGNALS = $(addprefix signals/, signal_1_y.c)
 
 SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS)
-
+READLINE = 
 HEADERS = minishell.h
 OBJECTS = $(SOURCES:.c=.o)
 LIBFT_DIR = utils/libft
@@ -22,7 +23,8 @@ $(LIBFT):
 	make -C $(LIBFT_DIR)
 
 $(TARGET): $(OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $^ -L$(LIBFT_DIR) -lreadline
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ 
+
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 

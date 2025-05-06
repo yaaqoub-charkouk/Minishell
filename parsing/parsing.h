@@ -3,8 +3,10 @@
 
 # include "../includes/libft.h"
 # include <stdio.h>
-# include <readline/history.h>
-# include <readline/readline.h>
+
+# include "history.h"
+# include "readline.h"
+
 // linked list , basic , before the binary tree
 
 typedef struct	s_tree

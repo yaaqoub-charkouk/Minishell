@@ -15,6 +15,7 @@ int	main(int ac, char **av, char **envp)
 	tree = NULL;
 	rl_catch_signals = 0;
 	setup_signals();
+	// signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		line = readline("minishell-1.3$ ");
@@ -26,7 +27,7 @@ int	main(int ac, char **av, char **envp)
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
-			continue;
+			break;
 		}
 		add_history(line);
 		tokens = tokenize(line);
