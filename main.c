@@ -17,8 +17,10 @@ int	main(int ac, char **av, char **envp)
 	copy_env(envp, &env);
 	tokens = NULL;
 	tree = NULL;
-	// rl_catch_signals = 0;
+  
+	rl_catch_signals = 0;
 	setup_signals();
+  
 	while (1)
 	{
 		line = readline("minishell-1.3$ ");
@@ -30,7 +32,7 @@ int	main(int ac, char **av, char **envp)
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
-			continue;
+			break;
 		}
 		add_history(line);
 		tokens = tokenize(line);
@@ -44,6 +46,6 @@ int	main(int ac, char **av, char **envp)
 		execution(tree, env_struct_to_char(env), &env);
 		(void)tree;
 	}
-	// rl_clear_history();
+	rl_clear_history();
 	return (0);
 }
