@@ -53,7 +53,7 @@ int	check_built_in(char **args, t_env **env)
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
 		return (built_in_echo(args, *env), 1);
 	else if (ft_strncmp(args[0], "env", 4) == 0)
-		return (built_in_cd(args, *env), 1);
+		return (built_in_env(*env), 1);
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
 		return (built_in_exit(), 1);//exit need argument
 	else if (ft_strncmp(args[0], "export", 7) == 0)
@@ -64,11 +64,29 @@ int	check_built_in(char **args, t_env **env)
 		return (built_in_unset(args, env), 1);
 	return (0);
 }
+
+void	exec_cmd(t_tree *node, char **env)
+{
+	char	**path;
+
+	if (access(node->args[0], X_OK) == 0)
+	{
+		execve(node->args[0], node->args, env);
+		perror("execve");
+	}
+	path = get_path(env);
+	exec_cmd_from_path(path, node->args[0], node->args, env);
+	free_split(path);
+	write(2, "minishell: ", 11);
+	write(2, node->args[0], ft_strlen(node->args[0]));
+	write(2, ": command not found\n", 20);
+	exit(127);
+}
+
 int	execute_cmd(t_tree *node, char **env, t_env **envl)
 {
 	int		pid;
 	int		status;
-	char	**path;
 
 	if (!node || !node->args || !node->args[0])
 		return (1);
@@ -79,20 +97,7 @@ int	execute_cmd(t_tree *node, char **env, t_env **envl)
 	if (pid < 0)
 		return (perror("fork"), 1);
 	if (pid == 0)
-	{
-		if (access(node->args[0], X_OK) == 0)
-		{
-			execve(node->args[0], node->args, env);
-			perror("execve");
-		}
-		path = get_path(env);
-		exec_cmd_from_path(path, node->args[0], node->args, env);
-		free_split(path);
-		write(2, "minishell: ", 11);
-		write(2, node->args[0], ft_strlen(node->args[0]));
-		write(2, ": command not found\n", 20);
-		exit(127);
-	}
+		exec_cmd(node, env);
 	waitpid(pid, &status, 0);
 	return (WEXITSTATUS(status));
 }
@@ -111,14 +116,50 @@ int	execute_or(t_tree *node, char **env, t_env **envl)
 	return (0);
 }
 
+int	execute_pipe(t_tree *node, char **env, t_env **envl)
+{
+	int	fd[2];
+	int	pidl;
+	int	pidr;
+	int	status;
+
+	if (pipe(fd) < 0)
+		return (perror("pipe"), 1);
+	pidl = fork();
+	if (pidl < 0)
+		return (close(fd[0]), close(fd[1]), perror("fork"), 1);
+	if (pidl == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		exit(execution(node->left, env, envl));
+	}
+	pidr = fork();
+	if (pidr < 0)
+		return (close(fd[0]), close(fd[1]), perror("fork"), 1); //we may need to kill the left process
+	if (pidr == 0)
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		exit(execution(node->right, env, envl));
+	}
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pidr, &status, 0);
+	waitpid(pidl, NULL, 0);
+	return (WEXITSTATUS(status));
+}
+
 int	execution(t_tree	*node, char **env, t_env **envl)
 {
 	if (!node)
 		return (1);
 	if (node->type == CMD)
 		return (execute_cmd(node, env, envl));
-	// if (node->type == PIPE)
-	// 	return (execute_pipe(node, env));
+	if (node->type == PIPE)
+		return (execute_pipe(node, env, envl));
 	if (node->type == OR)
 		return (execute_or(node, env, envl));
 	if (node->type == AND)

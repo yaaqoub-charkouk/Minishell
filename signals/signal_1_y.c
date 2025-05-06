@@ -17,7 +17,6 @@ void	do_nothing(int signal, siginfo_t *info, void *context)
 	(void)info;
 	(void)context;
 	(void)signal;
-	// write(1, "ctrl^\\ does nothing\n", 21);
 }
 
 void	setup_signals(void )

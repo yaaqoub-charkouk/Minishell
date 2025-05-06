@@ -20,13 +20,16 @@ char    **env_struct_to_char(t_env  *env) // the function to convert t_env struc
 	char	**env_char;
 
 	i = 0;
-	size =  ft_envsize(env);
-	env_char = malloc(size * sizeof(t_env *));
+	size = ft_envsize(env);
+	env_char = malloc((size + 1) * sizeof(char *));
+  if(!env_char)
+     return (NULL);
 	while (i < size)
 	{
 		env_char[i] = ft_strdup(env->content);
 		env = env->next;
 		i++;
 	}
+	env_char[i] = NULL;
 	return (env_char); // need to be freed ;
 }
