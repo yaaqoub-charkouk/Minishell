@@ -2,6 +2,6 @@
 
 int	built_in_exit(void)
 {
-	printf("exit\n");
+	// printf("exit\n");
 	exit(0);
 }
