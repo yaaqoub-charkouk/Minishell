@@ -22,6 +22,8 @@ char    **env_struct_to_char(t_env  *env) // the function to convert t_env struc
 	i = 0;
 	size = ft_envsize(env);
 	env_char = malloc((size + 1) * sizeof(char *));
+  if(!env_char)
+     return (NULL);
 	while (i < size)
 	{
 		env_char[i] = ft_strdup(env->content);
