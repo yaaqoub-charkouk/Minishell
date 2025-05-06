@@ -49,3 +49,9 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (0);
 }
+
+
+/* how we should execute redirection
+ ---> using tree
+ ---> linked list 
+ */
