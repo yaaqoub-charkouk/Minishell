@@ -43,7 +43,7 @@ int	main(int ac, char **av, char **envp)
 		}
 		tree = build_tree(tokens);
 		// free queue , op stack , tokens
-		execution(tree, env_struct_to_char(env), &env, 0);
+		execution(tree, env_struct_to_char(env), &env, 0);//>> free the env
 		(void)tree;
 	}
 	rl_clear_history();
