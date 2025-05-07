@@ -83,7 +83,7 @@ int	execute_red_out(t_tree *node, char **env, t_env **envl)
 	{
 		dup2(fd, 1);
 		close(fd);
-		exit(execute_cmd(node, env, envl));
+		exit(execute_cmd(node, env, envl, 0));
 	}
 	waitpid(pid, NULL, 0); // need to exit with the exit status returned by the child process 
 	close(fd);
