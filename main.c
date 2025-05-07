@@ -38,7 +38,7 @@ int	main(int ac, char **av, char **envp)
 		tokens = tokenize(line);
 		if (is_syntax_error(line, tokens))
 		{
-			printf("skipping\n"); // need to free tokens
+			printf("skipping\n");    // need to free tokens
 			continue ;
 		}
 		tree = build_tree(tokens);
@@ -49,3 +49,9 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (0);
 }
+
+
+/* how we should execute redirection
+ ---> using tree
+ ---> linked list 
+ */

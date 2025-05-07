@@ -177,5 +177,7 @@ int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 		return (execute_or(node, env, envl));
 	if (node->type == AND)
 		return (execute_and(node, env, envl));
+	if (node->type == REDIRECTION_OUT)
+		return (execute_red_out(node, env, envl));
 	return (1);
 }

@@ -13,7 +13,7 @@ int	ft_envsize(t_env *lst)
 	return (c);
 }
 
-char    **env_struct_to_char(t_env  *env) // the function to convert t_env struct to char ** ;
+char	**env_struct_to_char(t_env  *env) // the function to convert t_env struct to char ** ;
 {
 	int		size;
 	int		i;
