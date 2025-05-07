@@ -19,9 +19,9 @@
 // }
 
 
-t_tree *build_tree_from_rqueue(t_list **current)
+t_tree	*build_tree_from_rqueue(t_list **current)
 {
-	t_tree *node;
+	t_tree	*node;
 
 	if (!current || !*current)
 		return (NULL);
@@ -37,7 +37,7 @@ t_tree *build_tree_from_rqueue(t_list **current)
 	return (node);
 }
 
-t_tree  *build_tree(t_list	*tokens)
+t_tree	*build_tree(t_list	*tokens)
 {
 	t_list	*reversed_queue;
 	t_list	*temp;
@@ -55,6 +55,6 @@ t_tree  *build_tree(t_list	*tokens)
 	temp = reversed_queue; // to free it later;
 	root = build_tree_from_rqueue(&reversed_queue);
 	// print_list(temp);
-	// print_tree(root, 0);
+	print_tree(root, 0);
 	return (root);
 }
