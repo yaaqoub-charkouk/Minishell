@@ -87,49 +87,49 @@ void	exec_cmd(t_tree *node, char **env)
 	exit(127);
 }
 
-int	execute_cmd(t_tree *node, char **env, t_env **envl, int is_pipe)
+int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 {
 	int		pid;
 	int		status;
 
-	if (!node || !node->args || !node->args[0])
-		return (1);
-	if (check_built_in(&node->args[0], envl, is_pipe))
+	// if (!node || !node->args || !node->args[0])
+	// 	return (1);
+	if (check_built_in(&node->args[0], data->envl, is_pipe))
 	{
 		if (is_pipe)
 			exit(0);
 		return (0);
 	}
 	if (is_pipe == 1)
-		exec_cmd(node, env);
+		exec_cmd(node, data->env);
 	else
 	{
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"), 1);
 		if (pid == 0)
-			exec_cmd(node, env);
+			exec_cmd(node, data->env);
 		waitpid(pid, &status, 0);
 		return (WEXITSTATUS(status));
 	}
 	return (1);
 }
 
-int	execute_and(t_tree *node, char **env, t_env **envl)
+int	execute_and(t_tree *node, t_data *data)
 {
-	if (execution(node->left, env, envl, 0) == 0)
-		return (execution(node->right, env, envl, 0));
+	if (execution(node->left, data->env, data->envl, 0) == 0)
+		return (execution(node->right, data->env, data->envl, 0));
 	return (1);
 }
 
-int	execute_or(t_tree *node, char **env, t_env **envl)
+int	execute_or(t_tree *node, t_data *data)
 {
-	if (execution(node->left, env, envl, 0) != 0)
-		return (execution(node->right, env, envl, 0));
+	if (execution(node->left, data->env, data->envl, 0) != 0)
+		return (execution(node->right, data->env, data->envl, 0));
 	return (0);
 }
 
-int	execute_pipe(t_tree *node, char **env, t_env **envl)
+int	execute_pipe(t_tree *node, t_data *data)
 {
 	int	fd[2];
 	int	pidl;
@@ -146,7 +146,7 @@ int	execute_pipe(t_tree *node, char **env, t_env **envl)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(execution(node->left, env, envl, 1));
+		exit(execution(node->left, data->env, data->envl, 1));
 	}
 	pidr = fork();
 	if (pidr < 0)
@@ -156,7 +156,7 @@ int	execute_pipe(t_tree *node, char **env, t_env **envl)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(execution(node->right, env, envl, 1));
+		exit(execution(node->right, data->env, data->envl, 1));
 	}
 	close(fd[0]);
 	close(fd[1]);
@@ -167,17 +167,22 @@ int	execute_pipe(t_tree *node, char **env, t_env **envl)
 
 int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 {
+	t_data	*data;
+
+	data = NULL;
+	data->envl = envl;
+	data->env = env;
 	if (!node)
 		return (1);
 	if (node->type == CMD)
-		return (execute_cmd(node, env, envl, is_pipe));
+		return (execute_cmd(node, data, is_pipe));
 	if (node->type == PIPE)
-		return (execute_pipe(node, env, envl));
+		return (execute_pipe(node, data));
 	if (node->type == OR)
-		return (execute_or(node, env, envl));
+		return (execute_or(node, data));
 	if (node->type == AND)
-		return (execute_and(node, env, envl));
-	if (node->type == REDIRECTION_OUT || node->type == APPEND)
-		return (execute_red_out(node, env, envl));
+		return (execute_and(node, data));
+	if (node->type == REDIRECTION_OUT)
+		return (execute_red_out(node, data));
 	return (1);
 }
