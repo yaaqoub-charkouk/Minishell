@@ -46,7 +46,7 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 	}
 }
 
-int	check_built_in(char **args, t_env **env)
+int	check_built_in(char **args, t_env **env, int is_pipe)
 {
 	if (ft_strncmp(args[0], "cd", 3) == 0)
 		return (built_in_cd(args, *env), 1);
@@ -55,7 +55,11 @@ int	check_built_in(char **args, t_env **env)
 	else if (ft_strncmp(args[0], "env", 4) == 0)
 		return (built_in_env(*env), 1);
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
+	{
+		if (!is_pipe)
+			printf("exit\n");
 		return (built_in_exit(), 1);//exit need argument
+	}
 	else if (ft_strncmp(args[0], "export", 7) == 0)
 		return (built_in_export(args, env), 1);
 	else if (ft_strncmp(args[0], "pwd", 4) == 0)
@@ -83,36 +87,45 @@ void	exec_cmd(t_tree *node, char **env)
 	exit(127);
 }
 
-int	execute_cmd(t_tree *node, char **env, t_env **envl)
+int	execute_cmd(t_tree *node, char **env, t_env **envl, int is_pipe)
 {
 	int		pid;
 	int		status;
 
 	if (!node || !node->args || !node->args[0])
 		return (1);
-	if (check_built_in(&node->args[0], envl))
-		return (1);
-	(void)envl;
-	pid = fork();
-	if (pid < 0)
-		return (perror("fork"), 1);
-	if (pid == 0)
+	if (check_built_in(&node->args[0], envl, is_pipe))
+	{
+		if (is_pipe)
+			exit(0);
+		return (0);
+	}
+	if (is_pipe == 1)
 		exec_cmd(node, env);
-	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+	else
+	{
+		pid = fork();
+		if (pid < 0)
+			return (perror("fork"), 1);
+		if (pid == 0)
+			exec_cmd(node, env);
+		waitpid(pid, &status, 0);
+		return (WEXITSTATUS(status));
+	}
+	return (1);
 }
 
 int	execute_and(t_tree *node, char **env, t_env **envl)
 {
-	if (execution(node->left, env, envl) == 0)
-		return (execution(node->right, env, envl));
+	if (execution(node->left, env, envl, 0) == 0)
+		return (execution(node->right, env, envl, 0));
 	return (1);
 }
 
 int	execute_or(t_tree *node, char **env, t_env **envl)
 {
-	if (execution(node->left, env, envl) != 0)
-		return (execution(node->right, env, envl));
+	if (execution(node->left, env, envl, 0) != 0)
+		return (execution(node->right, env, envl, 0));
 	return (0);
 }
 
@@ -133,38 +146,38 @@ int	execute_pipe(t_tree *node, char **env, t_env **envl)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(execution(node->left, env, envl));
+		exit(execution(node->left, env, envl, 1));
 	}
 	pidr = fork();
 	if (pidr < 0)
-		return (close(fd[0]), close(fd[1]), perror("fork"), 1); //we may need to kill the left process
+		return (close(fd[0]), kill(pidl, SIGKILL), close(fd[1]), perror("fork"), 1); //we may need to kill the left process
 	if (pidr == 0)
 	{
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(execution(node->right, env, envl));
+		exit(execution(node->right, env, envl, 1));
 	}
 	close(fd[0]);
 	close(fd[1]);
+	waitpid(pidl, &status, 0);
 	waitpid(pidr, &status, 0);
-	waitpid(pidl, NULL, 0);
 	return (WEXITSTATUS(status));
 }
 
-int	execution(t_tree	*node, char **env, t_env **envl)
+int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 {
 	if (!node)
 		return (1);
 	if (node->type == CMD)
-		return (execute_cmd(node, env, envl));
+		return (execute_cmd(node, env, envl, is_pipe));
 	if (node->type == PIPE)
 		return (execute_pipe(node, env, envl));
 	if (node->type == OR)
 		return (execute_or(node, env, envl));
 	if (node->type == AND)
 		return (execute_and(node, env, envl));
-	if (node->type == REDIRECTION_OUT)
+	if (node->type == REDIRECTION_OUT || node->type == APPEND)
 		return (execute_red_out(node, env, envl));
 	return (1);
 }

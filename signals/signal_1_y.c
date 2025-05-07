@@ -35,7 +35,9 @@ void	setup_signals(void )
 
 	/*============================================*/
 	// setup exit signal set // neeed to be removed 
-	exit.sa_sigaction = do_nothing;
+
+	// exit.sa_sigaction = do_nothing;
+	exit.sa_handler = SIG_IGN;
 	exit.sa_flags = SA_SIGINFO | SA_RESTART;
 	sigemptyset(&exit.sa_mask);
 	sigaddset(&exit.sa_mask, SIGQUIT);

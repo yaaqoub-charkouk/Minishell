@@ -15,25 +15,6 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 	return (*args_list);
 }
 
-
-
-char	*open_return_outfile(t_tree *node, char **env, t_env **envl, t_list	**args_list)
-{
-	int	fd;
-
-	if (!node->right)
-		return (node->args[0]);
-	if (node->right )
-	{
-		fd = open(node->left->args[0], O_TRUNC  | O_CREAT | O_RDWR, 0777);
-		add_cmd_options(args_list, node->left->args, 1);
-		close(fd);
-		return (open_return_outfile(node->right, env, envl, args_list));
-	}
-	return (node->right->args[0]); // if right not a redirection ---> right is the outfile;
-}
-
-
 char	**list_to_char(t_list  *env) // the function to convert t_env struct to char ** ;
 {
 	int		size;
@@ -43,7 +24,7 @@ char	**list_to_char(t_list  *env) // the function to convert t_env struct to cha
 	i = 0;
 	size = ft_lstsize(env);
 	env_char = malloc((size + 1) * sizeof(char *));
-  if(!env_char)
+	if(!env_char)
      return (NULL);
 	while (i < size)
 	{
@@ -57,36 +38,87 @@ char	**list_to_char(t_list  *env) // the function to convert t_env struct to cha
 
 
 
-int	execute_red_out(t_tree *node, char **env, t_env **envl)
+char	*open_return_outfile(t_tree *node, t_data *data, t_list	**args_list, t_type_node *red_type)
 {
 	int	fd;
-	int	pid;
+	// static t_type_node red_type;
+	int	flag;
+
+	// if (init_type != 0)
+	// 	red_type = init_type;
+	
+	if (!node->right)
+	{
+		add_cmd_options(args_list, node->args, 1);
+		return (node->args[0]);
+	}
+	if (node->right)
+	{
+
+		flag = O_CREAT | O_RDWR;
+		if (*red_type == APPEND)
+			flag |= O_APPEND;
+		else
+			flag |= O_TRUNC;
+		
+		
+		fd = open(node->left->args[0], flag, 0777);
+		add_cmd_options(args_list, node->left->args, 1);
+		close(fd);
+		// red_type = node ->type;
+		*red_type = node->type;
+		return (open_return_outfile(node->right, data, args_list, red_type));
+	}
+	return (node->right->args[0]); // if right not a redirection ---> right is the outfile;
+}
+
+
+
+int	execute_red_out(t_tree *node, t_data *data)
+{
+	int		fd;
+	int		pid;
 	char	**arguments; // need to be built from all redirections args ;
 	char	*outfile;
 	t_list	*args_list;
+	int		flag;
+	t_type_node	red_type;
 
+	red_type = node->type;
 	arguments = node->left->args; // those line must be interpreted once ;
 
 	args_list = NULL;
 	args_list = add_cmd_options(&args_list, arguments, 0);
 
 
-	outfile = open_return_outfile(node->right, env, envl, &args_list); // essential
-	
+	outfile = open_return_outfile(node->right, data, &args_list, &red_type); // essential
+	printf("outfile : %s\n", outfile);
 
 	arguments = list_to_char(args_list);
 	node->args = arguments;
 
-	fd = open(outfile, O_TRUNC  | O_CREAT | O_RDWR, 0777);
+
+	flag = O_CREAT | O_RDWR;
+	if (red_type == APPEND)
+		flag |= O_APPEND;
+	else
+		flag |= O_TRUNC;
+
+
+	fd = open(outfile, flag, 0777);
+	if(fd < 0)
+		perror("open");
 	pid = fork();
 	if (pid == 0)
 	{
 		dup2(fd, 1);
 		close(fd);
-		exit(execute_cmd(node, env, envl));
+		exit(execute_cmd(node, data, 0));
 	}
 	waitpid(pid, NULL, 0); // need to exit with the exit status returned by the child process 
 	close(fd);
 	return (0);
 }
 
+// bash-3.2$ ls >> ""
+// bash: : No such file or directory
