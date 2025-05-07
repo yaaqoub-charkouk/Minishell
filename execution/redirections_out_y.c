@@ -1,67 +1,92 @@
 #include "execution.h"
 
-// int	execute_red_out(t_tree *node, char **env, t_env **envl)
-// {
-// 	int	fd;
-// 	int	pid;
-// 	static int flag = 1;
 
-// 	// if (node->right->type == REDIRECTION_OUT)
-// 	if (node->right && node->right->type == REDIRECTION_OUT)
-// 	{
-// 		fd = open(node->right->left->args[0], O_TRUNC  | O_CREAT | O_RDWR, 0777);
-// 		close(fd);
-// 		return (execute_red_out(node->right, env, envl));
-// 	}
-// 	fd = open(node->args[0], O_TRUNC  | O_CREAT | O_RDWR, 0777);
-// 	pid = fork();
-// 	if (pid == 0 && flag)
-// 	{
-// 		// printf("%d\n", fd);
-// 		printf("node : %s\n", node->left->args[0]);
-// 		dup2(fd, 1);
-// 		close(fd);
-// 		// printf("%d\n", fd);
-// 		flag--;
-// 		exit(execute_cmd(node->left, env, envl));
-// 	}
-// 	waitpid(pid, NULL, 0);// need to exit with the exit status returned by the child process 
-// 	close(fd);
-// 	return (0);
-// }
+// store the command to execute and build its args
+// open all outfiles and return the last one 
+
+
+t_list	*add_cmd_options(t_list **args_list, char **args, int i)
+{
+	while (args[i])
+	{
+		ft_lstadd_back(args_list, ft_lstnew(args[i]));
+		i++;
+	}
+	return (*args_list);
+}
+
+
+
+char	*open_return_outfile(t_tree *node, char **env, t_env **envl, t_list	**args_list)
+{
+	int	fd;
+
+	if (!node->right)
+		return (node->args[0]);
+	if (node->right )
+	{
+		fd = open(node->left->args[0], O_TRUNC  | O_CREAT | O_RDWR, 0777);
+		add_cmd_options(args_list, node->left->args, 1);
+		close(fd);
+		return (open_return_outfile(node->right, env, envl, args_list));
+	}
+	return (node->right->args[0]); // if right not a redirection ---> right is the outfile;
+}
+
+
+char	**list_to_char(t_list  *env) // the function to convert t_env struct to char ** ;
+{
+	int		size;
+	int		i;
+	char	**env_char;
+
+	i = 0;
+	size = ft_lstsize(env);
+	env_char = malloc((size + 1) * sizeof(char *));
+  if(!env_char)
+     return (NULL);
+	while (i < size)
+	{
+		env_char[i] = ft_strdup(env->content);
+		env = env->next;
+		i++;
+	}
+	env_char[i] = NULL;
+	return (env_char); // need to be freed ;
+}
+
 
 
 int	execute_red_out(t_tree *node, char **env, t_env **envl)
 {
 	int	fd;
 	int	pid;
+	char	**arguments; // need to be built from all redirections args ;
+	char	*outfile;
+	t_list	*args_list;
 
-	// Traverse to the last redirection to get final output file
-	while (node->right && node->right->type == REDIRECTION_OUT)
-	{
-		fd = open(node->right->left->args[0], O_CREAT | O_TRUNC | O_RDWR, 0777);
-		if (fd < 0)
-			return (perror("open"), 1);
-		close(fd);
-		node = node->right;
-	}
+	arguments = node->left->args; // those line must be interpreted once ;
 
-	// Now node->left is the command node, and node->args[0] is the final output file
-	fd = open(node->args[0], O_CREAT | O_TRUNC | O_RDWR, 0777);
-	if (fd < 0)
-		return (perror("open"), 1);
+	args_list = NULL;
+	args_list = add_cmd_options(&args_list, arguments, 0);
 
+
+	outfile = open_return_outfile(node->right, env, envl, &args_list); // essential
+	
+
+	arguments = list_to_char(args_list);
+	node->args = arguments;
+
+	fd = open(outfile, O_TRUNC  | O_CREAT | O_RDWR, 0777);
 	pid = fork();
-	if (pid < 0)
-		return (perror("fork"), close(fd), 1);
-
 	if (pid == 0)
 	{
-		dup2(fd, STDOUT_FILENO);
+		dup2(fd, 1);
 		close(fd);
-		exit(execute_cmd(node->left, env, envl));
+		exit(execute_cmd(node, env, envl));
 	}
+	waitpid(pid, NULL, 0); // need to exit with the exit status returned by the child process 
 	close(fd);
-	waitpid(pid, NULL, 0);
 	return (0);
 }
+
