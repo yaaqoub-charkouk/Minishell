@@ -172,6 +172,7 @@ int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 	data = NULL;
 	data->envl = envl;
 	data->env = env;
+	
 	if (!node)
 		return (1);
 	if (node->type == CMD)
