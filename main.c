@@ -39,8 +39,7 @@ int	main(int ac, char **av, char **envp)
 			printf("skipping\n");    // need to free tokens
 			continue ;
 		}
-		tree = build_tree(tokens);
-		// free queue , op stack , tokens
+		tree = build_tree(tokens); // free queue , op stack , tokens
 		execution(tree, env_struct_to_char(env), &env, 0);//>> free the env
 		(void)tree;
 	}

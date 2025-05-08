@@ -1,0 +1,17 @@
+Makefile
+a
+b
+built_ins
+c
+d
+e
+execution
+includes
+main.c
+minishell
+minishell.h
+o
+out
+parsing
+signals
+utils
