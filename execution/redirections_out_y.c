@@ -105,7 +105,7 @@ int	execute_red_out(t_tree *node, t_data *data)
 		flag |= O_TRUNC;
 
 
-	fd = open(outfile, flag, 0777);
+	fd = open(outfile ,flag, 0777);
 	if(fd < 0)
 		perror("open");
 	pid = fork();
