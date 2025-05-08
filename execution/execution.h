@@ -23,6 +23,6 @@ int		execute_and(t_tree *node, t_data *data);
 int		execute_pipe(t_tree *node, t_data *data);
 int		execution(t_tree *node, char **env, t_env **envl, int is_pipe);
 void	free_split(char **str);
-int		execute_red_out(t_tree *node, char **env, t_env **envl);
+int		execute_red_out(t_tree *node, t_data *data);
 
 #endif

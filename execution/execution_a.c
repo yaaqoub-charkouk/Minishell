@@ -167,22 +167,23 @@ int	execute_pipe(t_tree *node, t_data *data)
 
 int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 {
-	t_data	*data;
+	t_data	data;
 
-	data = NULL;
-	data->envl = envl;
-	data->env = env;
+	// data = NULL;
+	data.envl = envl;
+	data.env = env;
+	
 	if (!node)
 		return (1);
 	if (node->type == CMD)
-		return (execute_cmd(node, data, is_pipe));
+		return (execute_cmd(node, &data, is_pipe));
 	if (node->type == PIPE)
-		return (execute_pipe(node, data));
+		return (execute_pipe(node, &data));
 	if (node->type == OR)
-		return (execute_or(node, data));
+		return (execute_or(node, &data));
 	if (node->type == AND)
-		return (execute_and(node, data));
-	if (node->type == REDIRECTION_OUT)
-		return (execute_red_out(node, data));
+		return (execute_and(node, &data));
+	if (node->type == REDIRECTION_OUT || node->type == APPEND)
+		return (execute_red_out(node, &data));
 	return (1);
 }
