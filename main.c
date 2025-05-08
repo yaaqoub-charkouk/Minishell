@@ -48,7 +48,8 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
-
+//  >> h>> k>> l (SEGV)
+// CTR C for here_doc
 /* how we should execute redirection
  ---> using tree
  ---> linked list 
