@@ -92,8 +92,8 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	int		pid;
 	int		status;
 
-	// if (!node || !node->args || !node->args[0])
-	// 	return (1);
+	if (!node || !node->args || !node->args[0])
+		return (0);
 	if (check_built_in(&node->args[0], data->envl, is_pipe))
 	{
 		if (is_pipe)
@@ -186,6 +186,7 @@ int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 	data.envl = envl;
 	data.env = env;
 	data.read_fd = STDIN_FILENO;
+	
 	if (here_doc(node, &data))
 		return (1);
 	if (!node)
