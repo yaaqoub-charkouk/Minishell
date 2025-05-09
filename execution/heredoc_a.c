@@ -37,14 +37,16 @@ int	execute_here_doc(t_tree *node, t_data *data)
 
 static char	*open_heredocs(t_tree *node, t_data *data, t_list	**args_list, int	is_heredoc)
 {
-
+	if (!node)
+		return (NULL);
+	
 	if (!node->right)
 	{
 		// delemiter is node->args[0];
 		add_cmd_options(args_list, node->args, 1);
 		if (is_heredoc)
 			execute_here_doc(node, data);
-		return (node->args[0]);
+		return (NULL);
 	}
 
 	if (node->right)
@@ -55,6 +57,8 @@ static char	*open_heredocs(t_tree *node, t_data *data, t_list	**args_list, int	i
 		if (is_heredoc)
 			execute_here_doc(node->left, data);
 
+		if (node->type != HEREDOC)
+			return (NULL);
 		// *red_type = node->type;
 		return (open_heredocs(node->right, data, args_list, is_heredoc));
 	}
@@ -65,7 +69,7 @@ static char	*open_heredocs(t_tree *node, t_data *data, t_list	**args_list, int	i
 		return (open_heredocs(node->right, data, args_list, is_heredoc));
 	}
 
-	return (node->right->args[0]);
+	return (NULL);
 }
 
 
@@ -81,17 +85,19 @@ int	here_doc(t_tree *node, t_data *data)
 
 	if (node->type == HEREDOC)
 		is_heredoc = 1;
-
+	
 	if (node->left)
 	{
 		arguments = node->left->args; // those line must be interpreted once ;
 		args_list = add_cmd_options(&args_list, arguments, 0); // add left / first args ;
 	}
 
-	open_heredocs(node->right, data, &args_list, is_heredoc);
+	// if (node->right)
+	if (!open_heredocs(node->right, data, &args_list, is_heredoc))
+		return (1);
 
 	arguments = list_to_char(args_list);
-	node->args = arguments;
+	node->args = arguments; // need to free old args
 
 	execute_cmd(node, data, 0);
 

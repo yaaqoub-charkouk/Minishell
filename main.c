@@ -26,7 +26,7 @@ int	main(int ac, char **av, char **envp)
   
 	while (1)
 	{
-		line = readline(SKY_BLUE"minishell-1.5$ "RESET_COLOR);
+		line = readline(SKY_BLUE"minishell-1.7$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
@@ -47,9 +47,7 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
+// heredoc with pipes
+// cat << a > output 
 //  >> h>> k>> l (SEGV)
 // CTR C for here_doc
-/* how we should execute redirection
- ---> using tree
- ---> linked list 
- */
