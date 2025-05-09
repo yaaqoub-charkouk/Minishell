@@ -95,7 +95,7 @@ int	execute_red_out(t_tree *node, t_data *data)
 	printf("outfile : %s\n", outfile);
 
 	arguments = list_to_char(args_list);
-	node->args = arguments;
+	node->args = arguments; // need to free old args;
 
 	flag = O_CREAT | O_RDWR;
 	if (red_type == APPEND)

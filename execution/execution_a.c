@@ -187,12 +187,12 @@ int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 	data.env = env;
 	data.read_fd = STDIN_FILENO;
 	
-	if (here_doc(node, &data))
-		return (1);
 	if (!node)
 		return (1);
 	if (node->type == CMD)
 		return (execute_cmd(node, &data, is_pipe));
+	here_doc(node, &data);
+		// return (1);
 	if (node->type == PIPE)
 		return (execute_pipe(node, &data));
 	if (node->type == OR)
@@ -201,5 +201,7 @@ int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
 		return (execute_and(node, &data, is_pipe));
 	if (node->type == REDIRECTION_OUT || node->type == APPEND)
 		return (execute_red_out(node, &data));
+	if (node->type == REDIRECTION_IN)
+		return (execute_red_in(node, &data));
 	return (1);
 }
