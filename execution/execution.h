@@ -27,6 +27,9 @@ void	free_split(char **str);
 int		execute_red_out(t_tree *node, t_data *data);
 
 int		here_doc(t_tree *node, t_data *data);
+t_list	*add_cmd_options(t_list **args_list, char **args, int i);
+char	**list_to_char(t_list  *env);
+int		execute_red_in(t_tree *node, t_data *data);
 
 
 #endif

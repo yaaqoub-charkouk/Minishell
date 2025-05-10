@@ -26,7 +26,7 @@ int	main(int ac, char **av, char **envp)
   
 	while (1)
 	{
-		line = readline(SKY_BLUE"minishell-1.5$ "RESET_COLOR);
+		line = readline(SKY_BLUE"minishell-1.7$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
@@ -39,8 +39,7 @@ int	main(int ac, char **av, char **envp)
 			printf("skipping\n");    // need to free tokens
 			continue ;
 		}
-		tree = build_tree(tokens);
-		// free queue , op stack , tokens
+		tree = build_tree(tokens); // free queue , op stack , tokens
 		execution(tree, env_struct_to_char(env), &env, 0);//>> free the env
 		(void)tree;
 	}
@@ -48,9 +47,7 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
+// heredoc with pipes
+// cat << a > output 
 //  >> h>> k>> l (SEGV)
 // CTR C for here_doc
-/* how we should execute redirection
- ---> using tree
- ---> linked list 
- */

@@ -7,6 +7,8 @@
 
 t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 {
+	if (!args || !*args)
+		return (printf("add_cmd_options\n"), NULL); // delete printf;
 	while (args[i])
 	{
 		ft_lstadd_back(args_list, ft_lstnew(args[i]));
@@ -41,11 +43,7 @@ char	**list_to_char(t_list  *env) // the function to convert t_env struct to cha
 char	*open_return_outfile(t_tree *node, t_data *data, t_list	**args_list, t_type_node *red_type)
 {
 	int	fd;
-	// static t_type_node red_type;
 	int	flag;
-
-	// if (init_type != 0)
-	// 	red_type = init_type;
 	
 	if (!node->right)
 	{
@@ -65,7 +63,6 @@ char	*open_return_outfile(t_tree *node, t_data *data, t_list	**args_list, t_type
 		fd = open(node->left->args[0], flag, 0777);
 		add_cmd_options(args_list, node->left->args, 1);
 		close(fd);
-		// red_type = node ->type;
 		*red_type = node->type;
 		return (open_return_outfile(node->right, data, args_list, red_type));
 	}
@@ -85,18 +82,20 @@ int	execute_red_out(t_tree *node, t_data *data)
 	t_type_node	red_type;
 
 	red_type = node->type;
-	arguments = node->left->args; // those line must be interpreted once ;
-
 	args_list = NULL;
-	args_list = add_cmd_options(&args_list, arguments, 0);
+	arguments = NULL;
 
+	if (node->left)
+	{
+		arguments = node->left->args; // those line must be interpreted once ;
+		args_list = add_cmd_options(&args_list, arguments, 0); // add left / first args ;
+	}
 
 	outfile = open_return_outfile(node->right, data, &args_list, &red_type); // essential
 	printf("outfile : %s\n", outfile);
 
 	arguments = list_to_char(args_list);
-	node->args = arguments;
-
+	node->args = arguments; // need to free old args;
 
 	flag = O_CREAT | O_RDWR;
 	if (red_type == APPEND)
@@ -113,7 +112,7 @@ int	execute_red_out(t_tree *node, t_data *data)
 	{
 		dup2(fd, 1);
 		close(fd);
-		exit(execute_cmd(node, data, 0));
+		exit(execute_cmd(node, data, 1)); // kanet b 0; xof wax hadxi hiya hadik
 	}
 	waitpid(pid, NULL, 0); // need to exit with the exit status returned by the child process 
 	close(fd);
