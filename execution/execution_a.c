@@ -131,15 +131,15 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 
 int	execute_and(t_tree *node, t_data *data, int is_pipe)
 {
-	if (execution(node->left, data->env, data->envl, is_pipe) == 0)
-		return (execution(node->right, data->env, data->envl, is_pipe));
+	if (execution(node->left, data, is_pipe) == 0)
+		return (execution(node->right, data, is_pipe));
 	return (1);
 }
 
 int	execute_or(t_tree *node, t_data *data, int is_pipe)
 {
-	if (execution(node->left, data->env, data->envl, is_pipe) != 0)
-		return (execution(node->right, data->env, data->envl, is_pipe));
+	if (execution(node->left, data, is_pipe) != 0)
+		return (execution(node->right, data, is_pipe));
 	return (0);
 }
 
@@ -160,7 +160,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		exit(execution(node->left, data->env, data->envl, 1));
+		exit(execution(node->left, data, 1));
 	}
 	pidr = fork();
 	if (pidr < 0)
@@ -170,7 +170,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		exit(execution(node->right, data->env, data->envl, 1));
+		exit(execution(node->right, data, 1));
 	}
 	close(fd[0]);
 	close(fd[1]);
@@ -179,29 +179,25 @@ int	execute_pipe(t_tree *node, t_data *data)
 	return (WEXITSTATUS(status));
 }
 
-int	execution(t_tree *node, char **env, t_env **envl, int is_pipe)
+int	execution(t_tree *node, t_data *data, int is_pipe)
 {
-	t_data	data;
-
-	data.envl = envl;
-	data.env = env;
-	data.read_fd = STDIN_FILENO;
-	
 	if (!node)
 		return (1);
+	here_doc(node, data);
+	if (node->type == HEREDOC)
+		return (execution(node->left, data, is_pipe));
 	if (node->type == CMD)
-		return (execute_cmd(node, &data, is_pipe));
-	here_doc(node, &data);
+		return (execute_cmd(node, data, is_pipe));
 		// return (1);
 	if (node->type == PIPE)
-		return (execute_pipe(node, &data));
+		return (execute_pipe(node, data));
 	if (node->type == OR)
-		return (execute_or(node, &data, is_pipe));
+		return (execute_or(node, data, is_pipe));
 	if (node->type == AND)
-		return (execute_and(node, &data, is_pipe));
+		return (execute_and(node, data, is_pipe));
 	if (node->type == REDIRECTION_OUT || node->type == APPEND)
-		return (execute_red_out(node, &data));
+		return (execute_red_out(node, data));
 	if (node->type == REDIRECTION_IN)
-		return (execute_red_in(node, &data));
+		return (execute_red_in(node, data));
 	return (1);
 }

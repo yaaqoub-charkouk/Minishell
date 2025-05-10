@@ -13,6 +13,7 @@ int	main(int ac, char **av, char **envp)
 	t_list	*tokens;
 	t_tree	*tree;
 	t_env	*env;
+	t_data	data;
 	char	*line;
 	(void)ac;
 	(void)av;
@@ -40,7 +41,10 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 		}
 		tree = build_tree(tokens); // free queue , op stack , tokens
-		execution(tree, env_struct_to_char(env), &env, 0);//>> free the env
+		data.env = env_struct_to_char(env);
+		data.envl = &env;
+		data.read_fd = STDIN_FILENO;
+		execution(tree, &data, 0);//>> free the env
 		(void)tree;
 	}
 	rl_clear_history();
