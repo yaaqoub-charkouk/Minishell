@@ -41,9 +41,9 @@ void	parenthesis_priority(t_op **stack_op, t_queue  **queue)
 int	precedence(t_type_node type) // the precedent make the position of the operator in the tree 
 {
 	if (type == HEREDOC || type == APPEND || type == REDIRECTION_OUT || type == REDIRECTION_IN)
-		return (4);
-	else if (type == PIPE)
 		return (3);
+	else if (type == PIPE)
+		return (2);
 	else if (type == OR || type == AND)
 		return (1);
 	return (0);

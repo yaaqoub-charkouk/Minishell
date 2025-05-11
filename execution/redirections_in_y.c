@@ -15,7 +15,7 @@ char    *open_return_infile(t_tree  *node, t_data *data, t_list **args_list)
 		if (fd < 0)
 		{
 			perror(node->left->args[0]);
-			exit (1);
+			// exit (1);
 		}
 		add_cmd_options(args_list, node->left->args, 1);
 		close(fd);
@@ -46,7 +46,7 @@ int	execute_red_in(t_tree *node, t_data *data)
 
 	arguments = list_to_char(args_list);
 	node->args = arguments; // need to free old args;
-
+	printf("cmd is : %s\n", arguments[0]);
 
 	// just redirect the command input to infile , there are several edge cases 
 	// don't code heredoc we will handle some cases together , it was hard a sat;
