@@ -43,7 +43,7 @@ void print_tree(t_tree *node, int level)
 
     for (int i = 0; i < level; i++)
         printf("   ");  // Indentation
-    printf("%s\n", node->cmd);  // Print current node
+    printf("%s\n", node->args[0]);  // Print current node
 
     print_tree(node->left, level + 1);  // Print left subtree
 }

@@ -13,7 +13,7 @@ typedef struct	s_tree
 	char			*cmd;
 	char			**args;
 	t_type_node		type;
-	int				fd[2]; // each cmd must have its own read and right fd;
+	int				fd[2]; // each cmd must have its own read and write fd;
 	struct s_tree	*right;
 	struct s_tree	*left;
 }	t_tree;
@@ -53,5 +53,8 @@ void		print_tree(t_tree *node, int level);
 int			push(t_queue *queue, t_list **list);
 char		**ft_split_pipex(char const *s, char c);
 char	**free_string(char **string, int i);
+
+
+void	print_list(t_list	*list);
 
 #endif
