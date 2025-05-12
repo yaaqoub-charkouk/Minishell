@@ -49,7 +49,10 @@ int	main(int ac, char **av, char **envp)
 		data.done_with_heredoc = 0;
 		// here_doc(tree, &data); // prepare all heredoc first
 		
+		// print_tokens(tokens);
+
 		pre_execution(tree, &data);
+		print_tree(tree, 0);
 		execution(tree, &data, 0);
 		(void)tree;
 	}
@@ -57,10 +60,13 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
-// heredoc with pipes
-// cat << a > output 
+// ls > l && >> l && cat l 
+
+
+// cat << a > output done
 //  >> h>> k>> l (SEGV)
 // CTR C for here_doc
-// ls > l && >> l && cat l
 
 // ls | cat > a < main.c
+// execve format error ??????
+//  > out && ls

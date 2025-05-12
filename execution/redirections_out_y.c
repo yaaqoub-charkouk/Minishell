@@ -5,38 +5,7 @@
 // open all outfiles and return the last one 
 
 
-t_list	*add_cmd_options(t_list **args_list, char **args, int i)
-{
-	if (!args || !*args)
-		return (printf("add_cmd_options\n"), NULL); // delete printf;
-	while (args[i])
-	{
-		ft_lstadd_back(args_list, ft_lstnew(args[i]));
-		i++;
-	}
-	return (*args_list);
-}
 
-char	**list_to_char(t_list  *env) // the function to convert t_env struct to char ** ;
-{
-	int		size;
-	int		i;
-	char	**env_char;
-
-	i = 0;
-	size = ft_lstsize(env);
-	env_char = malloc((size + 1) * sizeof(char *));
-	if(!env_char)
-     return (NULL);
-	while (i < size)
-	{
-		env_char[i] = ft_strdup(env->content);
-		env = env->next;
-		i++;
-	}
-	env_char[i] = NULL;
-	return (env_char); // need to be freed ;
-}
 
 
 
