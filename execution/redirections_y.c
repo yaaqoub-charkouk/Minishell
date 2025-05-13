@@ -38,13 +38,6 @@ char	**list_to_char(t_list  *args_list)
 	return (args_char); // need to be freed ;
 }
 
-
-
-
-
-
-
-
 void	open_outfile(char	*filename, t_tree *entry_node, t_type_node type)
 {
 	int	flag;
@@ -139,7 +132,6 @@ void	open_fd(t_tree	*node, t_tree *entry_node, t_type_node *type, t_list **args_
 
 	// decide how we should open the fd ;
 }
-
 
 
 void    traverse_branch(t_tree *node, t_tree *entry_node, t_type_node *type, t_list	**args_list)
