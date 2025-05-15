@@ -11,8 +11,17 @@ typedef struct s_data
 	t_env	**envl;
 	char	**env;
 	int		read_fd;
+	int		done_with_heredoc;
 }	t_data;
 
+typedef struct s_redir
+{
+	t_tree		*node;
+	t_tree		*entry_node;
+	t_type_node	*type;
+	t_list		*args_list;
+	int			open_error;
+}	t_redir;
 
 char	**get_path(char **env);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
@@ -30,6 +39,5 @@ int		here_doc(t_tree *node, t_data *data);
 t_list	*add_cmd_options(t_list **args_list, char **args, int i);
 char	**list_to_char(t_list  *env);
 int		execute_red_in(t_tree *node, t_data *data);
-
-
+int		pre_execution(t_tree *node, t_data *data);
 #endif

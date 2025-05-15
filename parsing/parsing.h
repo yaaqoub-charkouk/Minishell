@@ -12,9 +12,10 @@ typedef struct	s_tree
 {
 	char			*cmd;
 	char			**args;
-	struct s_tree	*left;
-	struct s_tree	*right;
 	t_type_node		type;
+	int				fd[2]; // each cmd must have its own read and write fd;
+	struct s_tree	*right;
+	struct s_tree	*left;
 }	t_tree;
 
 /*==== stack to use for shunting yard algorithm ==== */
@@ -47,9 +48,13 @@ t_tree		*build_tree(t_list *tokens);
 void		print_tokens(t_list *tokens);
 int			is_syntax_error(char *line, t_list	*list);
 t_tree		*new_tree_node(t_list	*token);
+t_tree		*new_tree_node_args(char	**arguments);
 void		print_tree(t_tree *node, int level);
 int			push(t_queue *queue, t_list **list);
 char		**ft_split_pipex(char const *s, char c);
 char	**free_string(char **string, int i);
+
+
+void	print_list(t_list	*list);
 
 #endif

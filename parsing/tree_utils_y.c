@@ -43,7 +43,7 @@ void print_tree(t_tree *node, int level)
 
     for (int i = 0; i < level; i++)
         printf("   ");  // Indentation
-    printf("%s\n", node->cmd);  // Print current node
+    printf("%s\n", node->args[0]);  // Print current node
 
     print_tree(node->left, level + 1);  // Print left subtree
 }
@@ -55,11 +55,15 @@ t_tree *new_tree_node(t_list	*token)
 	if (!token)
 		return (NULL);
 	tree_node = malloc(sizeof(t_tree));
-	tree_node->args = ft_split(token->content, ' ');
+	tree_node->args = ft_split(token->content, ' '); // 
 	tree_node->cmd = token->content; // a copy from the first allocated token ;
 	tree_node->type = token->type;
 	tree_node->left = NULL;
 	tree_node->right = NULL;
+	tree_node->fd[0] = -1;
+	tree_node->fd[1] = -1;
 	return (tree_node);
 }
+
+
 

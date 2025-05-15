@@ -33,6 +33,7 @@ int	main(int ac, char **av, char **envp)
 			printf("line is NULL from readline\n");
 			break;
 		}
+
 		add_history(line);
 		tokens = tokenize(line);
 		if (is_syntax_error(line, tokens))
@@ -40,18 +41,33 @@ int	main(int ac, char **av, char **envp)
 			printf("skipping\n");    // need to free tokens
 			continue ;
 		}
+		
 		tree = build_tree(tokens); // free queue , op stack , tokens
 		data.env = env_struct_to_char(env);
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
-		execution(tree, &data, 0);//>> free the env
+		data.done_with_heredoc = 0;
+		// here_doc(tree, &data); // prepare all heredoc first
+		
+		// print_tokens(tokens);
+
+		if (pre_execution(tree, &data))
+			continue ;
+		// print_tree(tree, 0);
+		execution(tree, &data, 0);
 		(void)tree;
 	}
 	rl_clear_history();
 	return (0);
 }
 
-// heredoc with pipes
-// cat << a > output 
+// ls > l && >> l && cat l 
+
+
+// cat << a > output done
 //  >> h>> k>> l (SEGV)
 // CTR C for here_doc
+
+// ls | cat > a < main.c
+// execve format error ??????
+//  > out && ls
