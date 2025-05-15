@@ -51,8 +51,9 @@ int	main(int ac, char **av, char **envp)
 		
 		// print_tokens(tokens);
 
-		pre_execution(tree, &data);
-		print_tree(tree, 0);
+		if (pre_execution(tree, &data))
+			continue ;
+		// print_tree(tree, 0);
 		execution(tree, &data, 0);
 		(void)tree;
 	}
