@@ -38,14 +38,14 @@ char	**list_to_char(t_list  *args_list)
 	return (args_char); // need to be freed ;
 }
 
-void	open_outfile(char	*filename, t_tree *entry_node, t_type_node type)
+void	open_outfile(char	*filename, t_redir *redir)
 {
 	int	flag;
 	int	fd;
 
 	printf("outfile : %s\n", filename);
 	flag = O_CREAT | O_RDWR;
-	if (type == REDIRECTION_OUT)
+	if (*(redir->type) == REDIRECTION_OUT)
 		flag |= O_TRUNC;
 	else
 		flag |= O_APPEND;
@@ -53,15 +53,16 @@ void	open_outfile(char	*filename, t_tree *entry_node, t_type_node type)
 	if (fd < 0)
 	{
 		perror("open_file");
+		redir->open_error = 1;
 		return ;
 	}
-	if (entry_node->fd[1] != -1)
-		close(entry_node->fd[1]);
-	entry_node->fd[1] = fd;
+	if (redir->entry_node->fd[1] != -1)
+		close(redir->entry_node->fd[1]);
+	redir->entry_node->fd[1] = fd;
 	printf("outfile fd : %d\n\n", fd);
 }
 
-void	open_infile(char *filename,	t_tree *entry_node)
+void	open_infile(char *filename,	t_redir	*redir)
 {
 	int	fd;
 
@@ -70,15 +71,16 @@ void	open_infile(char *filename,	t_tree *entry_node)
 	if (fd < 0)	
 	{
 		perror("open_infile");
+		redir->open_error = 1;
 		return ;
 	}
-	if (entry_node->fd[0] != -1)
-		close(entry_node->fd[0]);
-	entry_node->fd[0] = fd;
+	if (redir->entry_node->fd[0] != -1)
+		close(redir->entry_node->fd[0]);
+	redir->entry_node->fd[0] = fd;
 	printf("infile fd : %d\n\n", fd);
 }
 
-void	open_heredoc(char	*limiter, t_tree *entry_node)
+void	open_heredoc(char	*limiter, t_redir *redir)
 {
 	int		fd[2];
 	char	*line;
@@ -89,6 +91,7 @@ void	open_heredoc(char	*limiter, t_tree *entry_node)
 	if (pipe(fd) == -1)
 	{
 		perror("pipe"); 
+		
 		return ;
 	}
 	while (1)
@@ -104,107 +107,99 @@ void	open_heredoc(char	*limiter, t_tree *entry_node)
 		free(line); // freeeeeee  !!!!!!!!!!!
 	}
 	free(line);
-	if (entry_node->fd[0] != -1)
-		close(entry_node->fd[0]);
-	entry_node->fd[0] = fd[0];
+	if (redir->entry_node->fd[0] != -1)
+		close(redir->entry_node->fd[0]);
+	redir->entry_node->fd[0] = fd[0];
 	close(fd[1]);
 	printf("heredoc fd : %d\n", fd[0]);
 }
 
-void	open_fd(t_tree	*node, t_tree *entry_node, t_type_node *type, t_list **args_list)
+void	open_fd(t_tree	*node, t_redir *redir)
 {
-
-	add_cmd_options(args_list, node->args, 1);
+	add_cmd_options(&redir->args_list, node->args, 1);
 	printf("\n\nargs of %s added %s\n\n", node->args[0], node->args[1]);
 
-	if (*type == REDIRECTION_OUT || *type == APPEND)
+	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 	{
-		open_outfile(node->args[0], entry_node, *type);
+		open_outfile(node->args[0], redir);
 	}
-	else if (*type == REDIRECTION_IN)
+	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)
 	{
-		open_infile(node->args[0], entry_node);
+		open_infile(node->args[0], redir);
 	}
-	else if (*type == HEREDOC)
+	else if (*(redir->type) == HEREDOC)
 	{
-		open_heredoc(node->args[0], entry_node);
+		open_heredoc(node->args[0], redir);
 	}
 
 	// decide how we should open the fd ;
 }
 
 
-void    traverse_branch(t_tree *node, t_tree *entry_node, t_type_node *type, t_list	**args_list)
+void    traverse_branch(t_tree *node, t_redir *redir)
 {
-
-
 	if (node->left)
-		open_fd(node->left, entry_node,  type, args_list);
+		open_fd(node->left, redir);
 	else 
-		open_fd(node, entry_node, type, args_list);
+		open_fd(node, redir);
 
-	*type = node->type;
+	*(redir->type) = node->type;//comment
 	if (node->right)
-		traverse_branch(node->right, entry_node, type, args_list); // should be returned;
-	
-	// end of a series of recursion 
-
-
-
-
-
-	// the code should be called only at the end of a branch;
-	
+		traverse_branch(node->right, redir);
 }
 
-void	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
+int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 {
-	t_list *args_list;
+	t_redir redir;
 
-	args_list = NULL;
-	if (entry_node->left)
+	redir.args_list = NULL;
+	redir.node = node;
+	redir.entry_node = entry_node;
+	redir.type = type;
+	redir.open_error = 0;
+
+	if (redir.entry_node->left)
 	{
-		add_cmd_options(&args_list, entry_node->left->args, 0);
-		printf("initial args %s added \n", entry_node->left->args[0]);
+		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
+		printf("initial args %s added \n", redir.entry_node->left->args[0]);
 	}
-
-
-	traverse_branch(node, entry_node, type, &args_list);
+	traverse_branch(node, &redir);
 
 	// end of recursion
 
-	if (entry_node->type == REDIRECTION_IN || entry_node->type == REDIRECTION_OUT 
-			|| entry_node->type == APPEND || entry_node->type == HEREDOC)
+	if (redir.entry_node->type == REDIRECTION_IN || redir.entry_node->type == REDIRECTION_OUT 
+			|| redir.entry_node->type == APPEND || redir.entry_node->type == HEREDOC)
 	{
-		printf("\nentry node type %d\n", entry_node->type);
+		printf("\nentry node type %d\n", redir.entry_node->type);
 		
-		entry_node->args = list_to_char(args_list); // NULL check
+		redir.entry_node->args = list_to_char(redir.args_list); // NULL check
 		printf("cmd to execute ");
-		print_list(args_list);
-		entry_node->type = CMD;
-		printf("in fd %d\n", entry_node->fd[0]);
-		printf("out fd %d\n", entry_node->fd[1]);
-		printf("\nentry node type %d\n", entry_node->type);
-		printf("\nentry node %s has been modified to : \n", entry_node->cmd);
+		print_list(redir.args_list);
+		redir.entry_node->type = CMD;
+		printf("in fd %d\n", redir.entry_node->fd[0]);
+		printf("out fd %d\n", redir.entry_node->fd[1]);
+		printf("\nentry node type %d\n", redir.entry_node->type);
+		printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
 	}
+	return (redir.open_error);
 }
 
 
-void	pre_execution(t_tree *node, t_data *data)
+int	pre_execution(t_tree *node, t_data *data)
 {
 	t_type_node	type;
+	int			open_error;
 
+	open_error = 0;
 	if (!node)
 	{
 		printf("tree node is null segfault\n");
-		return ;
+		return (1);
 	}
 	type = node->type;
 	if (node->type == PIPE || node->type == OR || node->type == AND)
 	{
-		// call with left node
 		pre_execution(node->left, data);
-		// return ;
 	}
 	if (node->right)
 	{
@@ -212,17 +207,14 @@ void	pre_execution(t_tree *node, t_data *data)
 		if (node->type == PIPE || node->type == OR || node->type == AND)
 		{
 			pre_execution(node->right, data);
-			// node = node->right;
 		}
 
 		
 		if (node->right && (node->type == REDIRECTION_IN || node->type == REDIRECTION_OUT 
 			|| node->type == APPEND || node->type == HEREDOC))
 		{
-			bridge(node->right, node, &type); // when we reach the start of a series of redirections;
-			// pre_execution(node->left, data);
+			open_error = bridge(node->right, node, &type);
 		}
 	}
-
-	// call with right
+	return (open_error);
 }

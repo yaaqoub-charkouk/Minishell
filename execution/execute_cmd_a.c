@@ -67,16 +67,16 @@ void	exec_cmd(t_tree *node, char **env)
 
 void    identify_read_write(t_tree *node)
 {
-    if (node->fd[1]!= -1) // change the read fd
-    {
-        dup2(node->fd[1], STDOUT_FILENO);
-        close(node->fd[1]);
-    }
-    if (node->fd[0]!= -1) // change the read fd
-    {
-        dup2(node->fd[0], STDIN_FILENO);
-        close(node->fd[0]);
-    }
+	if (node->fd[1]!= -1) // change the read fd
+	{
+		dup2(node->fd[1], STDOUT_FILENO);
+		close(node->fd[1]);
+	}
+	if (node->fd[0]!= -1) // change the read fd
+	{
+		dup2(node->fd[0], STDIN_FILENO);
+		close(node->fd[0]);
+	}
 }
 
 int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
@@ -104,7 +104,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 			return (perror("fork"), 1);
 		if (pid == 0)
 		{
-            identify_read_write(node);
+			identify_read_write(node);
 			exec_cmd(node, data->env);
 		}
 		waitpid(pid, &status, 0);
