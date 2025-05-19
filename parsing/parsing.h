@@ -33,6 +33,7 @@ typedef struct	s_queue // FIFO stack
 	t_type_node		type;
 	struct	s_queue *next;
 }	t_queue;
+
  /*======= shunting yard ========*/
 
 /**** tokenization ***/
@@ -56,5 +57,5 @@ char	**free_string(char **string, int i);
 
 
 void	print_list(t_list	*list);
-
+int		is_redirection(t_type_node type);
 #endif

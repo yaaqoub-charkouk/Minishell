@@ -37,6 +37,27 @@ t_tree	*build_tree_from_rqueue(t_list **current)
 	return (node);
 }
 
+void	fill_cmd(t_list *lst)
+{
+	t_list	*node;
+	t_list	*temp;
+
+	node = NULL;
+	while (lst)
+	{
+		if (is_redirection(lst->type) && (!lst->next ||lst->next->type == CMD) 
+			&& (!lst->next->next || lst->next->next->type != CMD))
+		{
+			node = ft_lstnew(NULL);
+			node->type = CMD;
+			temp = lst->next->next;
+			lst->next->next = node;
+			node->next = temp;
+		}
+		lst = lst->next;
+	}
+}
+
 t_tree	*build_tree(t_list	*tokens)
 {
 	t_list	*reversed_queue;
@@ -53,8 +74,9 @@ t_tree	*build_tree(t_list	*tokens)
 		queue = queue->next;
 	}
 	temp = reversed_queue; // to free it later;
+	fill_cmd(reversed_queue);
 	root = build_tree_from_rqueue(&reversed_queue);
-	// print_list(temp);
+	print_list(temp);
 	print_tree(root, 0);
 	return (root);
 }

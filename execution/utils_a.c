@@ -16,3 +16,11 @@ void	free_split(char **str)
 	free(str);
 	str = NULL;
 }
+
+int	is_redirection(t_type_node type)
+{
+	if (type == REDIRECTION_IN || type == REDIRECTION_OUT 
+			|| type == APPEND || type == HEREDOC)
+		return (1);
+	return (0);
+}
