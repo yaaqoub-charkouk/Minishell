@@ -1,24 +1,5 @@
 #include "parsing.h"
 
-// t_tree	*help(t_list	*r_list, t_list	*right, t_list	*left)
-// {
-// 	t_tree *tree_root;
-
-// 	tree_root = NULL;
-// 	if (!right || !left)
-// 		return (tree_root);
-// 	tree_root = new_tree_node(r_list);
-// 	if (right && right->type != CMD)
-// 		tree_root->right = help(right, left, left->next);
-// 	else
-// 	{
-// 		tree_root->right = new_tree_node(right);
-// 		tree_root->left = new_tree_node(left); // in the case of one operator with two command
-// 	}
-// 	return (tree_root);
-// }
-
-
 t_tree	*build_tree_from_rqueue(t_list **current)
 {
 	t_tree	*node;
@@ -37,6 +18,60 @@ t_tree	*build_tree_from_rqueue(t_list **current)
 	return (node);
 }
 
+void	fill_cmd(t_list *lst)
+{
+	t_list	*node;
+	// t_list	*temp;
+	int		redirections;
+	int		commands;
+	int		is_start;
+
+	is_start = 1;
+	redirections = 0;
+	commands = 0;
+	node = NULL;
+	while (lst)
+	{
+		// printf("node : %s\n", lst->content);
+
+		// if (is_redirection(lst->type) && (!lst->next ||lst->next->type == CMD) 
+		// 	&& (!lst->next->next || lst->next->next->type != CMD))
+		// {
+		// 	node = ft_lstnew(NULL);
+		// 	node->type = CMD;
+		// 	temp = lst->next->next;
+		// 	lst->next->next = node;
+		// 	node->next = temp;
+		// }
+		if (is_redirection(lst->type))
+		{
+			commands = 0;
+			redirections++;
+		}
+		else if (lst->type == CMD)
+			commands++;
+		if (commands == redirections && !is_start && !is_operator(lst->type))
+		{
+			if (!lst->next || lst->next->type != CMD)
+			{
+				// printf("n : %s\n", lst->content);
+				node = ft_lstnew(NULL);
+				node->type = CMD;
+				node->next = lst->next;
+				lst->next = node;
+			}
+			redirections = 0;
+		}
+		if (lst->type == PIPE)
+		{
+			commands = 0;
+			redirections = 0;
+		}
+		is_start = 0;
+		lst = lst->next;
+	}
+}
+
 t_tree	*build_tree(t_list	*tokens)
 {
 	t_list	*reversed_queue;
@@ -53,8 +88,9 @@ t_tree	*build_tree(t_list	*tokens)
 		queue = queue->next;
 	}
 	temp = reversed_queue; // to free it later;
+	fill_cmd(reversed_queue);
 	root = build_tree_from_rqueue(&reversed_queue);
-	// print_list(temp);
+	print_list(temp);
 	print_tree(root, 0);
 	return (root);
 }

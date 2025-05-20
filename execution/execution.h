@@ -40,4 +40,5 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i);
 char	**list_to_char(t_list  *env);
 int		execute_red_in(t_tree *node, t_data *data);
 int		pre_execution(t_tree *node, t_data *data);
+int		is_redirection(t_type_node type);
 #endif
