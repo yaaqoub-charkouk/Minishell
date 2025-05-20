@@ -59,16 +59,16 @@ t_queue	*build_sy_queue(t_list	*token)
 	while (token)
 	{
 		if (token->type == CMD)
-			add_token_to_queue(&queue, token);
+			add_token_to_queue(&queue, token); // ft lst add back
 		else if (token->type == P_OPEN)
-			push_to_op_stack(&stack_op, token);
+			push_to_op_stack(&stack_op, token); // push
 		else if (token->type == P_CLOSE)
 			parenthesis_priority(&stack_op, &queue);
 		else
 		{
 			while (stack_op && precedence(token->type) < precedence(stack_op->type))
-				add_op_to_queue(&queue, &stack_op);
-			push_to_op_stack(&stack_op, token);
+				add_op_to_queue(&queue, &stack_op); // ft lst add back
+			push_to_op_stack(&stack_op, token); // push
 		}
 		token = token->next;
 	}

@@ -117,7 +117,7 @@ void	open_heredoc(char	*limiter, t_redir *redir)
 void	open_fd(t_tree	*node, t_redir *redir)
 {
 	add_cmd_options(&redir->args_list, node->args, 1);
-	printf("\n\nargs of %s added %s\n\n", node->args[0], node->args[1]);
+	// printf("\n\nargs of %s added %s\n\n", node->args[0], node->args[1]);
 
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 	{
@@ -131,8 +131,6 @@ void	open_fd(t_tree	*node, t_redir *redir)
 	{
 		open_heredoc(node->args[0], redir);
 	}
-
-	// decide how we should open the fd ;
 }
 
 
@@ -143,7 +141,7 @@ void    traverse_branch(t_tree *node, t_redir *redir)
 	else 
 		open_fd(node, redir);
 
-	*(redir->type) = node->type;//comment
+	*(redir->type) = node->type;
 	if (node->right)
 		traverse_branch(node->right, redir);
 }
@@ -161,7 +159,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 	if (redir.entry_node->left)
 	{
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
-		printf("initial args %s added \n", redir.entry_node->left->args[0]);
+		// printf("initial args %s added \n", redir.entry_node->left->args[0]);
 	}
 	traverse_branch(node, &redir);
 
@@ -173,9 +171,11 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 		printf("\nentry node type %d\n", redir.entry_node->type);
 		
 		redir.entry_node->args = list_to_char(redir.args_list); // NULL check
+		redir.entry_node->type = CMD;
+
+		// print statements
 		printf("cmd to execute ");
 		print_list(redir.args_list);
-		redir.entry_node->type = CMD;
 		printf("in fd %d\n", redir.entry_node->fd[0]);
 		printf("out fd %d\n", redir.entry_node->fd[1]);
 		printf("\nentry node type %d\n", redir.entry_node->type);

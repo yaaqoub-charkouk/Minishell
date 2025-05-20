@@ -108,3 +108,5 @@ char	**ft_split_pipex(char const *s, char c)
 		return (NULL);
 	return (split_string(s, c, string));
 }
+
+

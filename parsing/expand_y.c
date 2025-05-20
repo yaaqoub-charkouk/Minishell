@@ -2,7 +2,9 @@
 
 char    **expand(char *cmd)
 {
-    char    **args;
+	char    **args;
 
-    
+	if (!cmd)
+		return (NULL);
+	args = 
 }

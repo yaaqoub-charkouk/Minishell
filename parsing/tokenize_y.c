@@ -36,7 +36,8 @@ t_list	*tokenize(char	*line)
 	int			i;
 	int			start;
 	int			op_len;
-	int			in_quotes;
+	int			in_dquotes;
+	int			in_squotes;
 	char		*word;
 	char		*operator;
 	char		*temp;
@@ -51,14 +52,18 @@ t_list	*tokenize(char	*line)
 	new_node = NULL;
 	start = 0;
 	i = 0;
-	in_quotes = 0;
+	in_dquotes = 0;
+	in_squotes = 0;
 
 	while (line[i])
 	{
 		type = get_type(&line[i]);
-		if (line[i] == 34 || line[i] == 39) // " '
-			in_quotes = !in_quotes;
-		if (type != CMD && !in_quotes) // if we are in quotes , don't split;
+		if (line[i] == 34) // " '
+			in_dquotes = !in_dquotes;
+		if (line[i] == 39 && !in_dquotes)
+			in_squotes = !in_squotes;
+		
+		if (type != CMD && !(in_squotes + in_dquotes)) // if we are in quotes , don't split;
 		{
 			if (i > start)
 			{
@@ -182,7 +187,7 @@ void	print_queue(t_queue *queue)
 {
 	while (queue)
 	{
-		printf("%s  ", queue->content);
+		printf("%s ", queue->content);
 		queue = queue->next;
 	}
 	printf("\n");
