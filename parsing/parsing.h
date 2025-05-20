@@ -53,9 +53,12 @@ t_tree		*new_tree_node_args(char	**arguments);
 void		print_tree(t_tree *node, int level);
 int			push(t_queue *queue, t_list **list);
 char		**ft_split_pipex(char const *s, char c);
-char	**free_string(char **string, int i);
-
+char		**free_string(char **string, int i);
 
 void	print_list(t_list	*list);
+void	print_queue(t_queue *queue);
+
+int		is_operator(t_type_node type); // from execution
 int		is_redirection(t_type_node type);
+
 #endif

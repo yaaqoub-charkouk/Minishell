@@ -187,7 +187,7 @@ void	print_queue(t_queue *queue)
 {
 	while (queue)
 	{
-		printf("%s  ", queue->content);
+		printf("%s ", queue->content);
 		queue = queue->next;
 	}
 	printf("\n");

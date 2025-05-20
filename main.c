@@ -54,19 +54,18 @@ int	main(int ac, char **av, char **envp)
 		if (pre_execution(tree, &data))
 			continue ;
 
-		// print_tree(tree, 0);
-		execution(tree, &data, 0);
-		(void)tree;
+		// // print_tree(tree, 0);
+		// execution(tree, &data, 0);
+		// (void)tree;
 	}
 	rl_clear_history();
 	return (0);
 }
-
-// ls > l && >> l && cat l 
-
+// ls > a | < b ls > c
+// ls > out | < out ls > out7 && < out grep HOME<< here  > out
+// ls > out | < out ls > out7 && < out cat << here | grep HOME > out
 
 // cat << a > output done
-//  >> h>> k>> l (SEGV)
 // CTR C for here_doc
 
 // ls | cat > a < main.c
