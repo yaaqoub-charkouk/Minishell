@@ -56,6 +56,7 @@ void	open_outfile(char	*filename, t_redir *redir)
 		redir->open_error = 1;
 		return ;
 	}
+	printf("flag : %d\n", flag);
 	close(fd);
 	redir->entry_node->red.outfile = filename;
 	redir->entry_node->red.flag = flag;

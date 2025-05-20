@@ -61,6 +61,10 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (0);
 }
+// some commands does not write / reopen on it's associated outfile
+// < out cat > out // what happens
+
+
 // ls > a | < b ls > c
 // ls > out | < out ls > out7 && < out cat << here | grep HOME > out
 // syntax error "      " segfault;

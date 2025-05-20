@@ -27,8 +27,8 @@ int	check_built_in(char **args, t_env **env, int is_pipe)
 
 int	execute_and(t_tree *node, t_data *data, int is_pipe)
 {
-	if (!node->left)
-		return (execution(node->right, data, is_pipe));
+	// if (!node->left)
+	// 	return (execution(node->right, data, is_pipe));
 	if (execution(node->left, data, is_pipe) == 0)
 		return (execution(node->right, data, is_pipe));
 	return (1);
