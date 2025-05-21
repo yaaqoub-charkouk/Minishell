@@ -67,15 +67,23 @@ void	exec_cmd(t_tree *node, char **env)
 
 void    identify_read_write(t_tree *node)
 {
-	if (node->fd[1]!= -1) // change the read fd
+	int	fd;
+	if (node->red.outfile) // change the read fd
 	{
-		dup2(node->fd[1], STDOUT_FILENO);
-		close(node->fd[1]);
+		printf("flag cmd %d\n",node->red.flag);
+		fd = open(node->red.outfile, node->red.flag, 0777);
+		if (fd < 0)
+		{
+			perror("identify read write");
+			close (fd);
+		}
+		dup2(fd, STDOUT_FILENO);
+		
 	}
-	if (node->fd[0]!= -1) // change the read fd
+	if (node->red.in_fd != -1) // change the read fd
 	{
-		dup2(node->fd[0], STDIN_FILENO);
-		close(node->fd[0]);
+		dup2(node->red.in_fd, STDIN_FILENO);
+		close(node->red.in_fd);
 	}
 }
 

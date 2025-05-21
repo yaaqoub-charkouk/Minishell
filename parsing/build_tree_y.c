@@ -62,7 +62,7 @@ void	fill_cmd(t_list *lst)
 			}
 			redirections = 0;
 		}
-		if (lst->type == PIPE)
+		if (is_operator(lst->type))
 		{
 			commands = 0;
 			redirections = 0;

@@ -8,12 +8,19 @@
 # include "readline/readline.h"
 // linked list , basic , before the binary tree
 
+typedef struct s_redirection
+{
+	char	*outfile;
+	int		in_fd;
+	int		flag;
+} t_redirection;
+
 typedef struct	s_tree
 {
 	char			*cmd;
 	char			**args;
 	t_type_node		type;
-	int				fd[2]; // each cmd must have its own read and write fd;
+	t_redirection	red;
 	struct s_tree	*right;
 	struct s_tree	*left;
 }	t_tree;
