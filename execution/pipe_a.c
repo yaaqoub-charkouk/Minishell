@@ -16,6 +16,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 	if (pidl == 0)
 	{
 		close(fd[0]);
+
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
 		if (node->left->type == CMD)
