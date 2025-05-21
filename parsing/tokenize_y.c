@@ -129,13 +129,7 @@ t_list	*tokenize(char	*line)
 	return (head);
 }
 
-/* i think i will work recursive descent algo , 
- first i will look for the lowest precedence operator in this order
- || , && , | , < > , >> << .
- then i will split by it , to get two nodes , the left node will be a leaf then the 
- i will call back , a recursion , to do the same work again .
 
-*/
 
 
 void print_tokens(t_list *tokens)
