@@ -4,11 +4,6 @@
 // store the command to execute and build its args
 // open all outfiles and return the last one 
 
-
-
-
-
-
 char	*open_return_outfile(t_tree *node, t_data *data, t_list	**args_list, t_type_node *red_type)
 {
 	int	fd;
@@ -27,7 +22,6 @@ char	*open_return_outfile(t_tree *node, t_data *data, t_list	**args_list, t_type
 			flag |= O_APPEND;
 		else
 			flag |= O_TRUNC;
-		
 		
 		fd = open(node->left->args[0], flag, 0777);
 		add_cmd_options(args_list, node->left->args, 1);

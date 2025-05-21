@@ -69,3 +69,15 @@ int	push_to_op_stack(t_op **op_stack, t_list	*token) // push the operator to op 
 	*op_stack = new_node;
 	return (1);
 }
+
+
+int	is_redirection(t_type_node type)
+{
+	return (type == REDIRECTION_IN || type == REDIRECTION_OUT 
+			|| type == APPEND || type == HEREDOC);
+}
+
+int	is_operator(t_type_node type)
+{
+	return (type == PIPE || type == OR || type == AND);
+}

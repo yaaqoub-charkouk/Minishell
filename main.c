@@ -54,17 +54,20 @@ int	main(int ac, char **av, char **envp)
 		if (pre_execution(tree, &data))
 			continue ;
 
-		// // print_tree(tree, 0);
-		// execution(tree, &data, 0);
+		print_tree(tree, 0);
+		execution(tree, &data, 0);
 		// (void)tree;
 	}
 	rl_clear_history();
 	return (0);
 }
-// ls > a | < b ls > c
-// ls > out | < out ls > out7 && < out grep HOME<< here  > out
-// ls > out | < out ls > out7 && < out cat << here | grep HOME > out
+// some commands does not write / reopen on it's associated outfile
+// < out cat > out // what happens
 
+
+// ls > a | < b ls > c
+// ls > out | < out ls > out7 && < out cat << here | grep HOME > out
+// syntax error "      " segfault;
 // cat << a > output done
 // CTR C for here_doc
 

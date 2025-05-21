@@ -43,8 +43,10 @@ void print_tree(t_tree *node, int level)
 
     for (int i = 0; i < level; i++)
         printf("   ");  // Indentation
-    printf("%s\n", node->cmd);  // Print current node
-
+	if (node->args)
+   		printf("%s\n", node->cmd);  // Print current node
+	else
+		printf("%s\n", NULL);
     print_tree(node->left, level + 1);  // Print left subtree
 }
 
@@ -61,8 +63,8 @@ t_tree *new_tree_node(t_list	*token)
 	tree_node->type = token->type;
 	tree_node->left = NULL;
 	tree_node->right = NULL;
-	tree_node->fd[0] = -1;
-	tree_node->fd[1] = -1;
+	tree_node->red.in_fd = -1;
+	tree_node->red.outfile = NULL;
 	return (tree_node);
 }
 
