@@ -44,7 +44,7 @@ void	open_outfile(char	*filename, t_redir *redir)
 	int	fd;
 
 	printf("outfile : %s\n", filename);
-	flag = O_CREAT | O_RDWR;
+	flag = O_CREAT | O_WRONLY;
 	if (*(redir->type) == REDIRECTION_OUT)
 		flag |= O_TRUNC;
 	else
