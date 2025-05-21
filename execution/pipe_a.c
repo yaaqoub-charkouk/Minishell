@@ -16,22 +16,13 @@ int	execute_pipe(t_tree *node, t_data *data)
 	if (pidl == 0)
 	{
 		close(fd[0]);
-		// if (node->left->red.outfile != -1)
-		// {
-		// 	dup2(node->fd[1], STDOUT_FILENO);
-		// 	// close(node->fd[1]);
-		// 	// close(fd[1]);
-		// }
-		// else
-		// {
-			dup2(fd[1], STDOUT_FILENO);
-			close(fd[1]);
-			if (node->left->type == CMD)
-				exit(execution(node->left, data, 1));
-			else
-				exit(execution(node->left, data, 0));
 
-		// }
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		if (node->left->type == CMD)
+			exit(execution(node->left, data, 1));
+		else
+			exit(execution(node->left, data, 0));
 	}
 	pidr = fork();
 	if (pidr < 0)
@@ -42,7 +33,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
 		if (node->right->type == CMD)
-			exit(execution(node->right, data, 1));
+				exit(execution(node->right, data, 1));
 		else
 			exit(execution(node->right, data, 0));
 	}

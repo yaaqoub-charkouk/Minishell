@@ -87,14 +87,6 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (0);
 }
-/* bad tree (SEGV)
-minishell-1.7$ ls | < main.c cat
-| < main.c cat ls 
-      main.c cat
-   <
-      ls
-|
-*/
 
 // some commands does not write / reopen on it's associated outfile
 // < out cat > out // what happens
