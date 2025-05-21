@@ -70,7 +70,6 @@ void    identify_read_write(t_tree *node)
 	int	fd;
 	if (node->red.outfile) // change the read fd
 	{
-		printf("flag cmd %d\n",node->red.flag);
 		fd = open(node->red.outfile, node->red.flag, 0777);
 		if (fd < 0)
 		{

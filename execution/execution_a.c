@@ -27,8 +27,6 @@ int	check_built_in(char **args, t_env **env, int is_pipe)
 
 int	execute_and(t_tree *node, t_data *data, int is_pipe)
 {
-	// if (!node->left)
-	// 	return (execution(node->right, data, is_pipe));
 	if (execution(node->left, data, is_pipe) == 0)
 		return (execution(node->right, data, is_pipe));
 	return (1);
@@ -45,8 +43,6 @@ int	execution(t_tree *node, t_data *data, int is_pipe)
 {
 	if (!node)
 		return (printf("no cmd to execute\n"),1);
-	if (node->type == REDIRECTION_OUT)
-		execution(node->left, data, is_pipe);
 	if (node->type == CMD)
 		return (execute_cmd(node, data, is_pipe));
 	if (node->type == PIPE)
@@ -57,6 +53,3 @@ int	execution(t_tree *node, t_data *data, int is_pipe)
 		return (execute_and(node, data, is_pipe));
 	return (1);
 }
-
-// the command that should read from heredoc does not;
-// 
