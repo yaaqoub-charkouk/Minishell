@@ -44,21 +44,21 @@ void print_tree(t_tree *node, int level)
     for (int i = 0; i < level; i++)
         printf("   ");  // Indentation
 	if (node->args)
-   		printf("%s\n", node->args[0]);  // Print current node
+   		printf("%s\n", node->cmd);  // Print current node
 	else
 		printf("%s\n", NULL);
     print_tree(node->left, level + 1);  // Print left subtree
 }
 
-t_tree *new_tree_node(t_list	*token)
+t_tree *new_tree_node(t_list	*token, t_data *data)
 {
 	t_tree	*tree_node;
 
 	if (!token)
 		return (NULL);
 	tree_node = malloc(sizeof(t_tree));
-	tree_node->args = ft_split(token->content, ' '); // expand here
-	
+	// tree_node->args = ft_split(token->content, ' '); // expand here
+	tree_node->args = expand(token->content, data);
 	tree_node->cmd = token->content; // a copy from the first allocated token ;
 	tree_node->type = token->type;
 	tree_node->left = NULL;

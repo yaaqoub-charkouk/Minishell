@@ -31,6 +31,7 @@ char	*get_env_content(t_env *env, char *value)
 {
 	int	len;
 
+	
 	len = ft_strlen(value);
 	while (env)
 	{
