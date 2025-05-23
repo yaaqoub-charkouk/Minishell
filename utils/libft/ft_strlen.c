@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 19:41:41 by akharkho          #+#    #+#             */
-/*   Updated: 2025/04/18 11:00:00 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:28:16 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ size_t	ft_strlen(const	char *str)
 {
 	size_t	i;
 
+	if (!str)
+		return (NULL);
 	i = 0;
 	while (str[i] != '\0')
 		i++;

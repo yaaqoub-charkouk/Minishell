@@ -7,6 +7,7 @@ char    **expand(char *cmd, t_data *data)
 	char	**args;
 	char	*string;
 	char	*new_str;
+	char	*temp;
 	int		i;
 	int		j;
 	int		k;
@@ -24,9 +25,14 @@ char    **expand(char *cmd, t_data *data)
 	args = ft_split_pipex(cmd, ' ');// modify it later;
 	while (args[k])
 	{
+		// printf("args %d %s\n", k, args[k]);
 		i = 0;
+		// free(string);
+		
 		while (args[k][i])
 		{
+
+			// printf("args %d %d %c\n", k, i, args[k][i]);
 			if (args[k][i] == '\"' && !in_squotes)
 			{
 				in_dquotes = !in_dquotes;
@@ -41,11 +47,18 @@ char    **expand(char *cmd, t_data *data)
 			} // just determine if we are in quotes
 			if (args[k][i] == '$' && !in_squotes)
 			{
+				printf("expanding variable\n");
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
-				// skip the variable
-				// i += variable lenght;
-				printf("dollar\n");
+				if (!new_str)
+					new_str = ft_strdup("");
+
+				string = ft_strjoin(string, new_str);
 				i++;
+				while (args[k][i] && args[k][i] != '"' && args[k][i] != ' ')
+				{
+					i++;
+				}
+				
 				continue ;
 			}
 			if (in_squotes)
@@ -56,7 +69,7 @@ char    **expand(char *cmd, t_data *data)
 			}
 			else if (in_dquotes)
 			{
-				printf("iN DOUBLE QUOTES\n");
+				// printf("iN DOUBLE QUOTES\n");
 				new_str = malloc(2);
 				new_str[0] = args[k][i];
 				new_str[1] = '\0';
@@ -68,16 +81,27 @@ char    **expand(char *cmd, t_data *data)
 				new_str[1] = '\0';
 			}
 			string = ft_strjoin(string, new_str);
-			printf("string : %s\n", string);
 			free(new_str);
 			new_str = NULL;
 			i++;
 		}
 		free(args[k]);
+		// temp = ft_strdup(string);
+		temp = NULL;
 		args[k] = string;
-		printf("string : %s\n", string);
+		// free(string);
+		string = NULL;
+		string = malloc(1);
+		string[0] = '\0';
 
 		k++;
 	}
+	 i = 0;
+	while (args[i])
+	{
+		printf("args: [%d] %s\n", i, args[i]);
+		i++;
+	}
+	
 	return (args);
 }
