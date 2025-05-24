@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/05/05 20:20:08 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/05/24 15:47:51 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_env	*ft_new(void *content);
 char	*get_env_content(t_env *env, char *value);
 void	copy_env(char **envp, t_env **env);
 int		built_in_cd(char **args, t_env *env);
-int		built_in_echo(char **args, t_env *env);
+int		built_in_echo(char **args);
 int		built_in_env(t_env *env);
 int		built_in_exit(void);
 int		built_in_pwd(void);

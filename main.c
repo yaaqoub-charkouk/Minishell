@@ -53,7 +53,7 @@ int	main(int ac, char **av, char **envp)
   
 	while (1)
 	{
-		line = readline(SKY_BLUE"minishell-1.8$ "RESET_COLOR);
+		line = readline(SKY_BLUE"minishell-1.9$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
@@ -88,6 +88,20 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
+// $PWD ----> is a directory
+// ls > "" && ls he has to not execute ls because empty file name :
+// expand heredoc
+// ------
+// minishell-1.9$ cat << $PWD
+// entry node : << 
+// limiter /Users/ycharkou/cursus/minishell
+
+// >/Users/ycharkou/cursus/minishell
+// -------
+// !! shouldn,t exit 
+// export a="ls -la" $a -> execute ls -la
+// minishell-1.9$ "" -> command not found
+// echo -nnnnnnnn hello
 // some commands does not write / reopen on it's associated outfile
 // < out cat > out // what happens
 

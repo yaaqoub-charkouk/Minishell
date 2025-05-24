@@ -7,7 +7,7 @@ int	check_built_in(char **args, t_env **env, int is_pipe)
 	if (ft_strncmp(args[0], "cd", 3) == 0)
 		return (built_in_cd(args, *env), 1);
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
-		return (built_in_echo(args, *env), 1);
+		return (built_in_echo(args), 1);
 	else if (ft_strncmp(args[0], "env", 4) == 0)
 		return (built_in_env(*env), 1);
 	else if (ft_strncmp(args[0], "exit", 5) == 0)

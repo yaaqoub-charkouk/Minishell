@@ -33,11 +33,10 @@ char	*get_env_content(t_env *env, char *value)
 	
 	len = 0;
 	
-	while (value[len] && ft_isalpha(value[len]))
+	while (value[len] && ft_isalnum(value[len]))
 	{
 		len++;
 	}
-	
 	while (env)
 	{
 		if (ft_strncmp(env->content, value, len) == 0 
@@ -77,24 +76,6 @@ int	built_in_cd(char **args, t_env *env)
 		}
 		printf("%s\n", prev_oldpwd);
 		path = prev_oldpwd;
-	}
-	else if (args[1][0] == '\"' || args[1][0] == '$')
-	{
-		char *special;
-		while (*args[1] == '\"')
-			args[1]++;
-		special = args[1];
-		while (*args[1] && *args[1] != '\"')
-			args[1]++;
-		*args[1] = '\0';
-		if (!special)
-			return (free(oldpwd), 1);
-		if (*special == '$')
-			special++;
-		path = get_env_content(env, special);
-		if (!path)
-			return (write(2, "cd: ", 4), write(2, special, ft_strlen(special)),
-				write(2, " not set\n", 9), free(oldpwd), 1);
 	}
 	else
 		path = args[1];
