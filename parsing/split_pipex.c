@@ -1,21 +1,11 @@
 #include "parsing.h"
 
-
-char	**free_string(char **string, int i)
+static void	update_quotes(char c, int *d, int *s)
 {
-	while (i >= 0)
-	{
-		free(string[i]);
-		i--;
-	}
-	free(string);
-	return (NULL);
-}
-
-void	ft_quotes(const char *str, int *in_quote)
-{
-	if (*str == '\'')
-		*in_quote = !(*in_quote);
+	if (c == '\"' && !(*s))
+		*d = !(*d);
+	else if (c == '\'' && !(*d))
+		*s = !(*s);
 }
 
 static int	check_sep(char c, char sep)
@@ -23,90 +13,87 @@ static int	check_sep(char c, char sep)
 	return (c == sep);
 }
 
-static int	count_words(char const *str, char sep)
+static int	word_len(const char *str, char sep)
 {
-	int	c;
-
-	c = 0;
-	while (*str != '\0')
-	{
-		while (check_sep(*str, sep) && *str != '\0')
-			str++;
-		if (*str != '\0')
-			c++;
-		while (!check_sep(*str, sep) && *str != '\0')
-			str++;
-	}
-	return (c);
-}
-
-static char	*ft_word_allocator(const char *str, char sep)
-{
-	int		i;
-	int		j;
-	int		len;
-	int		in_qoute;
-	char	*word;
+	int	len;
+	int	in_d;
+	int	in_s;
 
 	len = 0;
-	in_qoute = 0;
-	while (str[len] && (!check_sep(str[len], sep) || in_qoute))
+	in_d = 0;
+	in_s = 0;
+	while (str[len] && (!check_sep(str[len], sep) || in_d || in_s))
 	{
-		ft_quotes(&str[len], &in_qoute);
+		update_quotes(str[len], &in_d, &in_s);
 		len++;
 	}
-	word = malloc(sizeof(char) * (len + 1));
-	if (!word)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (i < len)
-	{
-		if (str[i] != '\'')
-			word[j++] = str[i];
-		i++;
-	}
-	return (word[i] = '\0', word);
+	return (len);
 }
 
-char	**split_string(const char *s, char c, char **string)
+static int	count_words(const char *s, char sep)
 {
-	int	i;
-	int	in_quote;
+	int	count;
+	int	in_d;
+	int	in_s;
 
-	i = 0;
-	in_quote = 0;
+	count = 0;
+	in_d = 0;
+	in_s = 0;
 	while (*s)
 	{
-		while (check_sep(*s, c) && *s)
+		while (*s && check_sep(*s, sep) && !in_d && !in_s)
 			s++;
-		if (*s)
-		{
-			string[i] = ft_word_allocator(s, c);
-			if (!string[i])
-				return (free_string(string, i));
-			i++;
-		}
-		while (*s && (!check_sep(*s, c) || in_quote))
-		{
-			ft_quotes(s, &in_quote);
-			s++;
-		}
+		count += (*s != 0);
+		while (*s && (!check_sep(*s, sep) || in_d || in_s))
+			update_quotes(*s++, &in_d, &in_s);
 	}
-	string[i] = NULL;
-	return (string);
+	return (count);
 }
 
-char	**ft_split_pipex(char const *s, char c)
+char	**free_strs(char **strs, int i)
 {
-	char	**string;
+	while (i >= 0)
+		free(strs[i--]);
+	free(strs);
+	return (NULL);
+}
+
+static char	**fill_strs(const char *s, char c, char **strs)
+{
+	int	i;
+	int	len;
+	int	in_d;
+	int	in_s;
+
+	i = 0;
+	in_d = 0;
+	in_s = 0;
+	while (*s)
+	{
+		while (check_sep(*s, c) && !in_d && !in_s)
+			s++;
+		if (!*s)
+			break ;
+		len = word_len(s, c);
+		strs[i] = ft_substr(s, 0, len);
+		if (!strs[i++])
+			return (free_strs(strs, i - 1));
+		s += len;
+	}
+	strs[i] = NULL;
+	return (strs);
+}
+
+char	**ft_split_pipex(const char *s, char c)
+{
+	char	**strs;
+	int		word_count;
 
 	if (!s)
 		return (NULL);
-	string = malloc(sizeof(char *) * (count_words(s, c) + 1));
-	if (!string)
+	word_count = count_words(s, c);
+	strs = malloc(sizeof(char *) * (word_count + 1));
+	if (!strs)
 		return (NULL);
-	return (split_string(s, c, string));
+	return (fill_strs(s, c, strs));
 }
-
-

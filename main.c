@@ -68,11 +68,11 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 		}
 		function(&tokens);
-		tree = build_tree(tokens); // free queue , op stack , tokens
 		data.env = env_struct_to_char(env);
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.done_with_heredoc = 0;
+		tree = build_tree(tokens, &data); // free queue , op stack , tokens
 		// here_doc(tree, &data); // prepare all heredoc first
 		
 		// print_tokens(tokens);
