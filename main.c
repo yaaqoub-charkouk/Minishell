@@ -8,6 +8,32 @@ void	ll()
 #define SKY_BLUE "\033[38;5;39m"
 #define RESET_COLOR "\033[0m"
 
+void	function(t_list **lst)
+{
+	t_list	*node;
+	t_list	*temp;
+
+	if (is_redirection((*lst)->type))
+	{
+		node = ft_lstnew(NULL);
+		node->type = CMD;
+		node->next = *lst;
+		*lst = node;
+	}
+	temp = *lst;
+	while (temp)
+	{
+		if (is_operator(temp->type) && is_redirection(temp->next->type))
+		{
+			node = ft_lstnew(NULL);
+			node->type = CMD;
+			node->next = temp->next;
+			temp->next = node;
+		}
+		temp = temp->next;
+	}
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
@@ -27,7 +53,7 @@ int	main(int ac, char **av, char **envp)
   
 	while (1)
 	{
-		line = readline(SKY_BLUE"minishell-1.7$ "RESET_COLOR);
+		line = readline(SKY_BLUE"minishell-1.8$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
@@ -41,7 +67,7 @@ int	main(int ac, char **av, char **envp)
 			printf("skipping\n");    // need to free tokens
 			continue ;
 		}
-		
+		function(&tokens);
 		tree = build_tree(tokens); // free queue , op stack , tokens
 		data.env = env_struct_to_char(env);
 		data.envl = &env;
@@ -61,6 +87,7 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (0);
 }
+
 // some commands does not write / reopen on it's associated outfile
 // < out cat > out // what happens
 

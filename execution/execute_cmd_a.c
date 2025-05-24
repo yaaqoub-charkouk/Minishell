@@ -50,9 +50,8 @@ void	exec_cmd(t_tree *node, char **env)
 {
 	char	**path;
 
-	if (access(node->args[0], X_OK) == 0)
+	if (ft_strchr(node->args[0], '/') && access(node->args[0], X_OK) == 0)
 	{
-		printf("cmd %s\n", node->args[0]);
 		execve(node->args[0], node->args, env);
 		perror("execve");
 	}
@@ -103,6 +102,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	{
 		identify_read_write(node);
 		exec_cmd(node, data->env);
+		return (0);
 	}
 	else
 	{
