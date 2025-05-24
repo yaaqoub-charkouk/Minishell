@@ -12,8 +12,15 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 			new_pwd = ft_strjoin("PWD=", path);
 			if (!new_pwd)
 				return ;
-			// free(env->content);
-			env->content = new_pwd;
+			// free(env->content);			env->content = new_pwd;
+		}
+		else
+		{
+			// if (new_pwd)
+			// {
+			// 	char *join2 = ft_strjoin("PWD=", new_pwd);
+			// 	built_in_export(&join2, &env);
+			// }
 		}
 		if (ft_strncmp(env->content, "OLDPWD=", 7) == 0)
 		{
@@ -22,6 +29,14 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 				return ;
 			// free(env->content);
 			env->content = old_pwd;
+		}
+		else
+		{
+			// if (old_pwd)
+			// {
+			// 	char *join = ft_strjoin("OLDPWD=", old_pwd);
+			// 	built_in_export(&join, &env);
+			// }
 		}
 		env = env->next;
 	}
