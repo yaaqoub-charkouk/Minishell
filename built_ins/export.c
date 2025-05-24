@@ -32,6 +32,25 @@ int	is_unvalid_name(char *value)
 	return (0);
 }
 
+void	ft_putvariable(char *var)
+{
+	write (1, "declare -x ", 11);
+	while (*var && *var != '=')
+	{
+		write (1, var, 1);
+		var++;
+	}
+	if (*var == '=')
+	{
+		write (1, var, 1);
+		var++;
+		write (1, "\"", 1);
+		write (1, var, ft_strlen(var));
+		write (1, "\"", 1);
+	}
+	write (1, "\n", 1);
+}
+
 int	built_in_export(char **args, t_env **env)
 {
 	t_env	*curr;
@@ -45,7 +64,7 @@ int	built_in_export(char **args, t_env **env)
 	{
 		while (curr)
 		{
-			printf("declare -x %s\n", curr->content);
+			ft_putvariable(curr->content);
 			curr = curr->next;
 		}
 	}

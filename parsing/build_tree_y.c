@@ -37,7 +37,7 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	}
 	temp = reversed_queue; // to free it later;
 	root = build_tree_from_rqueue(&reversed_queue, data);
-	print_list(temp);
-	print_tree(root, 0);
+	// print_list(temp);
+	// print_tree(root, 0);
 	return (root);
 }
