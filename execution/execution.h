@@ -6,13 +6,7 @@
 # include "../built_ins/built_ins.h"
 # include <fcntl.h>
 
-typedef struct s_data
-{
-	t_env	**envl;
-	char	**env;
-	int		read_fd;
-	int		done_with_heredoc;
-}	t_data;
+
 
 typedef struct s_redir
 {

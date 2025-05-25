@@ -45,8 +45,14 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 char	*get_env_content(t_env *env, char *value)
 {
 	int	len;
-
-	len = ft_strlen(value);
+	
+	len = 0;
+	
+	while (value[len] && ft_isalpha(value[len]))
+	{
+		len++;
+	}
+	
 	while (env)
 	{
 		if (ft_strncmp(env->content, value, len) == 0 
