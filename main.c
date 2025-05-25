@@ -53,6 +53,11 @@ int	main(int ac, char **av, char **envp)
   
 	while (1)
 	{
+		data.env = env_struct_to_char(env);
+		data.envl = &env;
+		data.read_fd = STDIN_FILENO;
+		data.done_with_heredoc = 0;
+		data.exit_status = 0;
 		line = readline(SKY_BLUE"minishell-1.9$ "RESET_COLOR);
 		if (!line)
 		{
@@ -65,13 +70,10 @@ int	main(int ac, char **av, char **envp)
 		if (is_syntax_error(line, tokens))
 		{
 			printf("skipping\n");    // need to free tokens
+			data.exit_status = 258;
 			continue ;
 		}
 		function(&tokens);
-		data.env = env_struct_to_char(env);
-		data.envl = &env;
-		data.read_fd = STDIN_FILENO;
-		data.done_with_heredoc = 0;
 		tree = build_tree(tokens, &data); // free queue , op stack , tokens
 		// here_doc(tree, &data); // prepare all heredoc first
 		
@@ -81,7 +83,7 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 
 		print_tree(tree, 0);
-		execution(tree, &data, 0);
+		data.exit_status = execution(tree, &data, 0);
 		// (void)tree;
 	}
 	rl_clear_history();
