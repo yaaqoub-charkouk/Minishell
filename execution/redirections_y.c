@@ -1,4 +1,5 @@
 #include "execution.h"
+# include <errno.h>
 
 t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 {
@@ -43,7 +44,9 @@ void	open_outfile(char	*filename, t_redir *redir)
 	int	flag;
 	int	fd;
 
+
 	printf("outfile : %s\n", filename);
+	// printf("outfile : %c\n", filename[1]);
 	flag = O_CREAT | O_WRONLY;
 	if (*(redir->type) == REDIRECTION_OUT)
 		flag |= O_TRUNC;

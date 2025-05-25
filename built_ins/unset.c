@@ -15,8 +15,8 @@ int	built_in_unset(char **args, t_env **env)
 		while (curr)
 		{
 			len = ft_strlen(args[i]);
-			if (ft_strncmp(curr->content, args[i], len) == 0 
-				)
+			if (ft_strncmp(curr->content, args[i], len) == 0)
+
 			{
 				if (prev == NULL)
 					*env = curr->next;

@@ -54,6 +54,7 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 {
 	t_tree	*tree_node;
 
+	(void)data;
 	if (!token)
 		return (NULL);
 	tree_node = malloc(sizeof(t_tree));
@@ -67,6 +68,4 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	tree_node->red.outfile = NULL;
 	return (tree_node);
 }
-
-
 
