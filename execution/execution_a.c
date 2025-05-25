@@ -53,4 +53,3 @@ int	execution(t_tree *node, t_data *data, int is_pipe)
 		return (execute_and(node, data, is_pipe));
 	return (1);
 }
-

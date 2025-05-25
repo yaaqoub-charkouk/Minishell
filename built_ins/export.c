@@ -56,6 +56,15 @@ int	built_in_export(char **args, t_env **env)
 	t_env	*curr;
 	int		i;
 	int		return_value;
+	char	*plus;
+	char	*equal;
+	char	*name;
+	char	*value;
+	char	*temp;
+	char	*joined;
+	char	*joined2;
+	char	*last_joined;
+	char	*prev_value;
 
 	i = 1;
 	return_value = 0;
@@ -70,11 +79,6 @@ int	built_in_export(char **args, t_env **env)
 	}
 	while (args[i])
 	{
-		char	*plus;
-		char	*equal;
-		char	*name;
-		char *value;
-		char *temp;
 		if (is_unvalid_name(args[i]))
 		{
 			ft_putstr_fd("export: `", 2);
@@ -94,15 +98,14 @@ int	built_in_export(char **args, t_env **env)
 			*plus = '\0';
 			name = temp;
 			value = plus + 2;
-			value = ft_strtrim(value, "\"", "\'");
 			if (curr)
 			{
-				char *prev_value  = ft_strchr(curr->content, '=');
+				prev_value = ft_strchr(curr->content, '=');
 				if (prev_value)
 				{
-					char *joined = ft_strjoin(prev_value + 1, value);
-					char *joined2 = ft_strjoin(temp, "=");
-					char *last_joined = ft_strjoin(joined2, joined);
+					joined = ft_strjoin(prev_value + 1, value);
+					joined2 = ft_strjoin(temp, "=");
+					last_joined = ft_strjoin(joined2, joined);
 					// free old content
 					free(curr->content);
 					curr->content = last_joined;
@@ -113,24 +116,24 @@ int	built_in_export(char **args, t_env **env)
 				}
 				else
 				{
-					char *joined_str = ft_strjoin(temp, "=");
-					char *joined_str_final = ft_strjoin(joined_str, value);
+					joined = ft_strjoin(temp, "=");
+					joined2 = ft_strjoin(joined, value);
 					// free old content
 					free(curr->content);
-					curr->content = joined_str_final;
+					curr->content = joined2;
 					// free the temp variables
-					// free(joined_str);
-					// free(joined_str_final);
+					// free(joined);
+					// free(joined2);
 				}
 			}
 			else
 			{
-				char *joined_str = ft_strjoin(temp, "=");
-				char *joined_str_final = ft_strjoin(joined_str, value);
-				ft_add_back(env, ft_new(joined_str_final));
+				joined = ft_strjoin(temp, "=");
+				joined2 = ft_strjoin(joined, value);
+				ft_add_back(env, ft_new(joined2));
 				// free the temp variables
-				// free(joined_str);
-				// free(joined_str_final);
+				// free(joined);
+				// free(joined2);
 			}
 		}
 		else if (equal)
