@@ -30,6 +30,7 @@ char    **expand(char *cmd, t_data *data)
 		
 		while (args[k][i])
 		{
+			
 
 			// printf("args %d %d %c\n", k, i, args[k][i]);
 			if (args[k][i] == '\"' && !in_squotes)
@@ -72,6 +73,7 @@ char    **expand(char *cmd, t_data *data)
 			i++;
 		}
 		free(args[k]);
+
 		args[k] = string;
 		// free(string);
 		string = NULL;
@@ -81,11 +83,11 @@ char    **expand(char *cmd, t_data *data)
 		k++;
 	}
 	 i = 0;
-	while (args[i])
-	{
-		printf("args: [%d] %s\n", i, args[i]);
-		i++;
-	}
+	// while (args[i])
+	// {
+	// 	// printf("args: [%d] %s\n", i, args[i]);
+	// 	i++;
+	// }
 	
 	return (args);
 }
