@@ -63,7 +63,7 @@ char	*get_env_content(t_env *env, char *value)
 	return (NULL);
 }
 
-int	built_in_cd(char **args, t_env *env)
+int	built_in_cd(char **args, t_data *data)
 {
 	char	*path;
 	char	*oldpwd;
@@ -75,7 +75,7 @@ int	built_in_cd(char **args, t_env *env)
 		return (perror("minishell: getcwd"), 1);
 	if (!args[1] || !*args[1] || args[1][0] == '~')
 	{
-		path = get_env_content(env, "HOME");
+		path = get_env_content(*data->envl, "HOME");
 		if (!path)
 		{
 			write(2, "cd: HOME not set\n", 17);
@@ -84,7 +84,7 @@ int	built_in_cd(char **args, t_env *env)
 	}
 	else if (args[1] && args[1][0] == '-')
 	{
-		prev_oldpwd = get_env_content(env, "OLDPWD");
+		prev_oldpwd = get_env_content(*data->envl, "OLDPWD");
 		if (!prev_oldpwd)
 		{
 			write(2, "cd: OLDPWD not set\n", 19);
@@ -101,6 +101,6 @@ int	built_in_cd(char **args, t_env *env)
 		return (free(oldpwd), 1);
 	}
 	newpwd = getcwd(NULL, 0);
-	update_pwd(env, newpwd, oldpwd);
+	update_pwd(*data->envl, newpwd, oldpwd);
 	return (free(oldpwd), free(newpwd), 0);
 }

@@ -41,13 +41,16 @@ void	copy_env(char **envp, t_env **env)// char ** -> t_env **.
 	}
 }
 
-int	built_in_env(t_env *env)
+int	built_in_env(t_data *data)
 {
-	while (env)
+	t_env *current;
+
+	current = *data->envl;
+	while (current)
 	{
-		if (ft_strchr(env->content, '='))
-			printf("%s\n", env->content);
-		env = env->next;
+		if (ft_strchr(current->content, '='))
+			printf("%s\n", current->content);
+		current = current->next;
 	}
 	return (0);
 }

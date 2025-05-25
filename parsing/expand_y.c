@@ -45,9 +45,18 @@ char    **expand(char *cmd, t_data *data)
 				i++;
 				continue ;
 			} // just determine if we are in quotes
+			if (args[k][i] == '$' && args[k][i + 1] == '?' && !in_squotes)
+			{
+				new_str = ft_itoa(data->exit_status);
+				if (!new_str)
+					new_str = ft_strdup("");
+				string = ft_strjoin(string, new_str);
+				free(new_str);
+				i += 2;
+				continue ;
+			}
 			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes)
 			{
-
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
 				if (!new_str)
 					new_str = ft_strdup("");
@@ -85,7 +94,7 @@ char    **expand(char *cmd, t_data *data)
 	 i = 0;
 	// while (args[i])
 	// {
-	// 	// printf("args: [%d] %s\n", i, args[i]);
+	// 	printf("args: [%d] %s\n", i, args[i]);
 	// 	i++;
 	// }
 	
