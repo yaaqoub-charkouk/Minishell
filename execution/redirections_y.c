@@ -1,4 +1,5 @@
 #include "execution.h"
+# include <errno.h>
 
 t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 {
@@ -43,7 +44,9 @@ void	open_outfile(char	*filename, t_redir *redir)
 	int	flag;
 	int	fd;
 
+
 	printf("outfile : %s\n", filename);
+	// printf("outfile : %c\n", filename[1]);
 	flag = O_CREAT | O_WRONLY;
 	if (*(redir->type) == REDIRECTION_OUT)
 		flag |= O_TRUNC;
@@ -82,63 +85,62 @@ void	open_infile(char *filename,	t_redir	*redir)
 void	open_heredoc(char	*limiter, t_redir *redir)
 {
 	int		fd[2];
+	int		pid;
 	char	*line;
 	size_t		limiter_len;
 
-	printf("limiter %s\n\n\n", limiter);
-	limiter_len = ft_strlen(limiter);
-	if (pipe(fd) == -1)
+	pid = fork();
+	if (pid < 0)
+		perror("heredoc");
+	if (pid == 0)
 	{
-		perror("pipe"); 
-		
-		return ;
+		printf("limiter %s\n\n\n", limiter);
+		limiter_len = ft_strlen(limiter);
+		if (pipe(fd) == -1)
+		{
+			perror("pipe"); 
+			
+			return ;
+		}
+		while (1)
+		{
+			line = readline(">");
+			if (!line)
+				exit (0);
+			if (!ft_strncmp(line, limiter, limiter_len) 
+				&& (ft_strlen(line)) == limiter_len)
+				break ;
+			write(fd[1], line, ft_strlen(line));
+			write(fd[1], "\n", 1);
+			free(line);
+		}
+		free(line);
+		if (redir->entry_node->red.in_fd != -1)
+			close(redir->entry_node->red.in_fd);
+		redir->entry_node->red.in_fd = fd[0];
+		close(fd[1]);
 	}
-	while (1)
-	{
-		line = readline(">");
-		if (!line)
-			exit (0);
-		if (!ft_strncmp(line, limiter, limiter_len) 
-			&& (ft_strlen(line)) == limiter_len)
-			break ;
-		write(fd[1], line, ft_strlen(line));
-		write(fd[1], "\n", 1);
-		free(line); // freeeeeee  !!!!!!!!!!!
-	}
-	free(line);
-	if (redir->entry_node->red.in_fd != -1)
-		close(redir->entry_node->red.in_fd);
-	redir->entry_node->red.in_fd = fd[0];
-	close(fd[1]);
+	waitpid(pid, NULL, 0);
 }
 
 void	open_fd(t_tree	*node, t_redir *redir)
 {
 	add_cmd_options(&redir->args_list, node->args, 1);
-	// printf("\n\nargs of %s added %s\n\n", node->args[0], node->args[1]);
-
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
-	{
 		open_outfile(node->args[0], redir);
-	}
 	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)
-	{
 		open_infile(node->args[0], redir);
-	}
 	else if (*(redir->type) == HEREDOC)
-	{
 		open_heredoc(node->args[0], redir);
-	}
 }
 
 
 void    traverse_branch(t_tree *node, t_redir *redir)
 {
 	if (node->left)
-		open_fd(node->left, redir); // open the outfile
+		open_fd(node->left, redir);
 	else 
-		open_fd(node, redir); // set outfile 
-
+		open_fd(node, redir);
 	*(redir->type) = node->type;
 	if (node->right)
 		traverse_branch(node->right, redir);
@@ -155,27 +157,16 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 	redir.open_error = 0;
 
 	if (redir.entry_node->left)
-	{
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
-		// printf("initial args %s added \n", redir.entry_node->left->args[0]);
-	}
 	traverse_branch(node, &redir);
-
-	// end of recursion
-
 	if (redir.entry_node->type == REDIRECTION_IN || redir.entry_node->type == REDIRECTION_OUT 
 			|| redir.entry_node->type == APPEND || redir.entry_node->type == HEREDOC)
 	{
-		
-		redir.entry_node->args = list_to_char(redir.args_list); // NULL check
+		redir.entry_node->args = list_to_char(redir.args_list);
 		redir.entry_node->type = CMD;
-
-		// print statements
 		printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
 		printf("cmd to execute ");
 		print_list(redir.args_list);
-		// printf("in fd %d\n", redir.entry_node->fd[0]);
-		// printf("out fd %d\n", redir.entry_node->fd[1]);
 	}
 	return (redir.open_error);
 }

@@ -2,26 +2,26 @@
 
 
 
-int	check_built_in(char **args, t_env **env, int is_pipe)
+int	check_built_in(char **args, t_data *data, int is_pipe)
 {
 	if (ft_strncmp(args[0], "cd", 3) == 0)
-		return (built_in_cd(args, *env), 1);
+		return (built_in_cd(args, data), 1);
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
-		return (built_in_echo(args, *env), 1);
+		return (built_in_echo(args), 1);
 	else if (ft_strncmp(args[0], "env", 4) == 0)
-		return (built_in_env(*env), 1);
+		return (built_in_env(data), 1);
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
 	{
 		if (!is_pipe)
 			printf("exit\n");
-		return (built_in_exit(), 1);//exit need argument
+		return (built_in_exit(args, data), 1);//exit need argument
 	}
 	else if (ft_strncmp(args[0], "export", 7) == 0)
-		return (built_in_export(args, env), 1);
+		return (built_in_export(args, data), 1);
 	else if (ft_strncmp(args[0], "pwd", 4) == 0)
 		return (built_in_pwd(), 1);
 	else if (ft_strncmp(args[0], "unset", 6) == 0)
-		return (built_in_unset(args, env), 1);
+		return (built_in_unset(args, data), 1);
 	return (0);
 }
 

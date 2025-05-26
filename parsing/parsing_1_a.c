@@ -254,8 +254,8 @@ int	is_syntax_error(char *line, t_list *list)
 	// int		len;
 	// char	token[3];
 
-	if (!line || !*line)
-		return (1);
+	if (!line || !*line || !list)
+		return (1337);
 	if (handle_redirections(list))
 		return (1);
 	// checking differnt combinations of operators ||&& or &&|| etc ..

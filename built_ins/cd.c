@@ -45,8 +45,14 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 char	*get_env_content(t_env *env, char *value)
 {
 	int	len;
+	
+	len = 0;
+	
 
-	len = ft_strlen(value);
+	while (value[len] && ft_isalnum(value[len]))
+	{
+		len++;
+	}
 	while (env)
 	{
 		if (ft_strncmp(env->content, value, len) == 0 
@@ -57,7 +63,7 @@ char	*get_env_content(t_env *env, char *value)
 	return (NULL);
 }
 
-int	built_in_cd(char **args, t_env *env)
+int	built_in_cd(char **args, t_data *data)
 {
 	char	*path;
 	char	*oldpwd;
@@ -69,7 +75,7 @@ int	built_in_cd(char **args, t_env *env)
 		return (perror("minishell: getcwd"), 1);
 	if (!args[1] || !*args[1] || args[1][0] == '~')
 	{
-		path = get_env_content(env, "HOME");
+		path = get_env_content(*data->envl, "HOME");
 		if (!path)
 		{
 			write(2, "cd: HOME not set\n", 17);
@@ -78,7 +84,7 @@ int	built_in_cd(char **args, t_env *env)
 	}
 	else if (args[1] && args[1][0] == '-')
 	{
-		prev_oldpwd = get_env_content(env, "OLDPWD");
+		prev_oldpwd = get_env_content(*data->envl, "OLDPWD");
 		if (!prev_oldpwd)
 		{
 			write(2, "cd: OLDPWD not set\n", 19);
@@ -86,24 +92,6 @@ int	built_in_cd(char **args, t_env *env)
 		}
 		printf("%s\n", prev_oldpwd);
 		path = prev_oldpwd;
-	}
-	else if (args[1][0] == '\"' || args[1][0] == '$')
-	{
-		char *special;
-		while (*args[1] == '\"')
-			args[1]++;
-		special = args[1];
-		while (*args[1] && *args[1] != '\"')
-			args[1]++;
-		*args[1] = '\0';
-		if (!special)
-			return (free(oldpwd), 1);
-		if (*special == '$')
-			special++;
-		path = get_env_content(env, special);
-		if (!path)
-			return (write(2, "cd: ", 4), write(2, special, ft_strlen(special)),
-				write(2, " not set\n", 9), free(oldpwd), 1);
 	}
 	else
 		path = args[1];
@@ -113,6 +101,6 @@ int	built_in_cd(char **args, t_env *env)
 		return (free(oldpwd), 1);
 	}
 	newpwd = getcwd(NULL, 0);
-	update_pwd(env, newpwd, oldpwd);
+	update_pwd(*data->envl, newpwd, oldpwd);
 	return (free(oldpwd), free(newpwd), 0);
 }
