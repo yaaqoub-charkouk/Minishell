@@ -14,7 +14,7 @@ int	built_in_unset(char **args, t_data *data)
 	{
 		if (is_unvalid_name(args[i]))
 		{
-			ft_putstr_fd("export: `", 2);
+			ft_putstr_fd("unset: `", 2);
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
 			i++;

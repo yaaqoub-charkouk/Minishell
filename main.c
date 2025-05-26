@@ -1,9 +1,10 @@
 #include "minishell.h"
+ int 	g_sig;
 
-void	ll()
-{
-	system("leaks minishell");
-}
+// void	ll()
+// {
+// 	system("leaks minishell");
+// }
 
 #define SKY_BLUE "\033[38;5;39m"
 #define RESET_COLOR "\033[0m"
@@ -47,30 +48,26 @@ int	main(int ac, char **av, char **envp)
 	copy_env(envp, &env);
 	tokens = NULL;
 	tree = NULL;
-  
 	rl_catch_signals = 0;
+	data.exit_status = 0;
 	setup_signals();
-  
 	while (1)
 	{
-		data.env = env_struct_to_char(env);
-		data.envl = &env;
-		data.read_fd = STDIN_FILENO;
-		data.done_with_heredoc = 0;
-		data.exit_status = 0;
 		line = readline(SKY_BLUE"minishell-1.9$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
+			data.exit_status = 0;
 			break;
 		}
 
 		add_history(line);
 		tokens = tokenize(line);
-		if (is_syntax_error(line, tokens))
+		int syntax;
+		syntax = is_syntax_error(line, tokens);
+		if (syntax)
 		{
 			printf("skipping\n");    // need to free tokens
-			data.exit_status = 258;
 			continue ;
 		}
 		function(&tokens);
@@ -87,7 +84,7 @@ int	main(int ac, char **av, char **envp)
 		// (void)tree;
 	}
 	rl_clear_history();
-	return (0);
+	return (data.exit_status);
 }
 
 // $PWD ----> is a directory

@@ -47,6 +47,11 @@ char    **expand(char *cmd, t_data *data)
 			} // just determine if we are in quotes
 			if (args[k][i] == '$' && args[k][i + 1] == '?' && !in_squotes)
 			{
+				if (g_sig)
+				{
+					data->exit_status = g_sig;
+					g_sig = 0;
+				}
 				new_str = ft_itoa(data->exit_status);
 				if (!new_str)
 					new_str = ft_strdup("");

@@ -10,6 +10,7 @@ void	display_new_prompt(int signal, siginfo_t *info, void *context)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	g_sig = 1;
 }
 
 void	do_nothing(int signal, siginfo_t *info, void *context)

@@ -7,7 +7,7 @@
 # include "readline/history.h"
 # include "readline/readline.h"
 // linked list , basic , before the binary tree
-
+extern int g_sig;
 typedef struct s_redirection
 {
 	char	*outfile;
