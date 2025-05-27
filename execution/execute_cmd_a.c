@@ -92,7 +92,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
-	if (check_built_in(&node->args[0], data->envl, is_pipe))
+	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)
 			exit(0);

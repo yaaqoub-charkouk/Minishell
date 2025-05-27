@@ -7,7 +7,7 @@
 # include "readline/history.h"
 # include "readline/readline.h"
 // linked list , basic , before the binary tree
-
+extern int g_sig;
 typedef struct s_redirection
 {
 	char	*outfile;
@@ -25,13 +25,7 @@ typedef struct	s_tree
 	struct s_tree	*left;
 }	t_tree;
 
-typedef struct s_data
-{
-	t_env	**envl;
-	char	**env;
-	int		read_fd;
-	int		done_with_heredoc;
-}	t_data;
+
 
 /*==== stack to use for shunting yard algorithm ==== */
 
