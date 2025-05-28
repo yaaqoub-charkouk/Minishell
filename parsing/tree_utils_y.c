@@ -66,6 +66,8 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	tree_node->right = NULL;
 	tree_node->red.in_fd = -1;
 	tree_node->red.outfile = NULL;
+	tree_node->red.erno = 0;
+	tree_node->red.file_name = NULL;
 	return (tree_node);
 }
 

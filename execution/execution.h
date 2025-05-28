@@ -5,7 +5,8 @@
 # include <signal.h>
 # include "../built_ins/built_ins.h"
 # include <fcntl.h>
-
+# include <errno.h>
+# include <dirent.h>
 
 typedef struct s_redir
 {

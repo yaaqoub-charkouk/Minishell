@@ -5,7 +5,6 @@
 # include "execution/execution.h"
 # include "signals/signals.h"
 #include <stdlib.h>
-#include <dirent.h>
 // extern int g_sig;
 
 
