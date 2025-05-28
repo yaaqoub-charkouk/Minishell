@@ -73,10 +73,10 @@ void    identify_read_write(t_tree *node)
 		if (fd < 0)
 		{
 			perror("identify read write");
-			close (fd);
+			return ;
 		}
 		dup2(fd, STDOUT_FILENO);
-		
+		close (fd);
 	}
 	if (node->red.in_fd != -1) // change the read fd
 	{
@@ -84,24 +84,44 @@ void    identify_read_write(t_tree *node)
 		close(node->red.in_fd);
 	}
 }
-
+#include <string.h>
 int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 {
 	int		pid;
 	int		status;
+	DIR		*dir;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
+	if (node->red.erno)
+	{
+		ft_putstr_fd("minishell :" ,2);
+		ft_putstr_fd(node->red.file_name,2);
+		write(2, ": " , 2);
+		ft_putstr_fd(strerror(node->red.erno), 2);
+		write(2, "\n" , 1);
+		if (is_pipe)
+			exit(1);
+		else	
+			return (1);
+	}
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)
-			exit(0);
-		return (0);
+			exit(1);
+		return (data->exit_status);
 	}
 	if (is_pipe == 1)
 	{
 		identify_read_write(node);
-		exec_cmd(node, data->env);
+		dir = opendir(node->args[0]);
+		if (dir)
+		{
+			printf("minishell: %s: is a directory\n", node->args[0]);
+			closedir(dir);
+		}
+		else
+			exec_cmd(node, data->env);
 		return (0);
 	}
 	else
@@ -112,10 +132,28 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		if (pid == 0)
 		{
 			identify_read_write(node);
-			exec_cmd(node, data->env);
+			dir = opendir(node->args[0]);
+			if (dir)
+			{
+				printf("minishell: %s: is a directory\n", node->args[0]);
+				closedir(dir);
+				exit(126);
+			}
+			else
+				exec_cmd(node, data->env);
 		}
 		waitpid(pid, &status, 0);
-		return (WEXITSTATUS(status));
+		if (node->red.in_fd != -1) // closing the read fd in parent
+		{
+			close(node->red.in_fd);
+			node->red.in_fd = -1;
+		}
+		if (WIFEXITED(status))
+			return WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			return 128 + WTERMSIG(status);
+		else
+			return 1;
 	}
 	return (1);
 }

@@ -1,5 +1,4 @@
 #include "execution.h"
-# include <errno.h>
 
 t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 {
@@ -55,8 +54,10 @@ void	open_outfile(char	*filename, t_redir *redir)
 	fd = open(filename, flag, 0777);
 	if (fd < 0)
 	{
-		perror("open_file");
-		redir->open_error = 1;
+		// perror("open_file");
+		redir->open_error = errno;
+		redir->entry_node->red.file_name = filename;
+		redir->entry_node->red.erno = redir->open_error;
 		return ;
 	}
 	printf("flag : %d\n", flag);
@@ -73,8 +74,12 @@ void	open_infile(char *filename,	t_redir	*redir)
 	fd = open(filename, O_RDONLY, 0777);
 	if (fd < 0)	
 	{
-		perror("open_infile");
-		redir->open_error = 1;
+		// perror("open_infile");
+		redir->entry_node->red.file_name = filename;
+		redir->open_error = errno;
+		redir->entry_node->red.erno = redir->open_error;
+		// printf (" ---- -----eerrno %d", errno);
+		// printf (" ---- -----redir->open_error %d", redir->open_error);
 		return ;
 	}
 	if (redir->entry_node->red.in_fd != -1)
@@ -115,12 +120,12 @@ void	open_heredoc(char	*limiter, t_redir *redir)
 			free(line);
 		}
 		free(line);
-		if (redir->entry_node->red.in_fd != -1)
-			close(redir->entry_node->red.in_fd);
-		redir->entry_node->red.in_fd = fd[0];
-		close(fd[1]);
 	}
 	waitpid(pid, NULL, 0);
+	if (redir->entry_node->red.in_fd != -1)
+		close(redir->entry_node->red.in_fd);
+	redir->entry_node->red.in_fd = fd[0];
+	close(fd[1]);
 }
 
 void	open_fd(t_tree	*node, t_redir *redir)
@@ -151,6 +156,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 	t_redir redir;
 
 	redir.args_list = NULL;
+
 	redir.node = node;
 	redir.entry_node = entry_node;
 	redir.type = type;
@@ -164,9 +170,16 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 	{
 		redir.entry_node->args = list_to_char(redir.args_list);
 		redir.entry_node->type = CMD;
-		printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
+		// redir.entry_node->red.erno = redir.open_error;
+		// printf ("------asdasd%dredir.open_error%d",redir.entry_node->red.erno , redir.open_error);
+		// printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
 		printf("cmd to execute ");
 		print_list(redir.args_list);
+	}
+	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it
+	{
+		close(entry_node->red.in_fd);
+		entry_node->red.in_fd = -1;
 	}
 	return (redir.open_error);
 }
@@ -175,7 +188,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 int	pre_execution(t_tree *node, t_data *data)
 {
 	t_type_node	type;
-	int			open_error;
+	int	open_error;
 
 	open_error = 0;
 	if (!node)
@@ -198,7 +211,7 @@ int	pre_execution(t_tree *node, t_data *data)
 		if (node->right && (node->type == REDIRECTION_IN || node->type == REDIRECTION_OUT 
 			|| node->type == APPEND || node->type == HEREDOC))
 		{
-			open_error = bridge(node->right, node, &type);
+			open_error = bridge(node->right, node, &type); // traverse a branch
 		}
 	}
 	return (open_error);
