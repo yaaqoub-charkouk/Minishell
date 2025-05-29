@@ -1,6 +1,46 @@
 #include "parsing.h"
 
+char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
+{
+	int		i;
+	int		j;
+	int		var_count;
+	int		o_index;
+	char	**new_args;
+	char	**variable;
 
+	var_count = count_words(var, ' ');
+	new_args = malloc(sizeof(char *) * (init_size + var_count));
+	variable = ft_split_pipex(var, ' ');
+	i = 0;
+	while (i < *k)
+	{
+		new_args[i] = ft_strdup(args[i]);
+		i++;
+	}
+	*string = ft_strjoin(*string, variable[0]);
+	new_args[*k] = *string;
+	// i--;
+	j = 1;
+	while (j < var_count)
+	{
+		new_args[i] = ft_strdup(variable[j]);
+		i++;
+		j++;
+	}
+	// j--;
+	// *string = variable[j];
+	o_index = *k + 1;
+	while (args[o_index])
+	{
+		new_args[i] = ft_strdup(args[o_index]);
+		i++;
+		o_index++;
+	}
+	new_args[i] = NULL;
+	*k = *k + var_count - 1;
+	return (new_args);
+}
 
 char    **expand(char *cmd, t_data *data)
 {
@@ -26,13 +66,8 @@ char    **expand(char *cmd, t_data *data)
 	{
 		// printf("args %d %s\n", k, args[k]);
 		i = 0;
-		// free(string);
-		
 		while (args[k][i])
 		{
-			
-
-			// printf("args %d %d %c\n", k, i, args[k][i]);
 			if (args[k][i] == '\"' && !in_squotes)
 			{
 				in_dquotes = !in_dquotes;
@@ -60,14 +95,18 @@ char    **expand(char *cmd, t_data *data)
 				i += 2;
 				continue ;
 			}
+
 			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes)
 			{
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
 				if (!new_str)
 					new_str = ft_strdup("");
-				string = ft_strjoin(string, new_str);
+				if (in_dquotes)
+					string = ft_strjoin(string, new_str);
+				// else if (!in_dquotes)
+				// 	args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));
 				i++;
-				while (args[k][i] && ft_isalnum(args[k][i]))
+				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
 				{
 					if (ft_isdigit(args[k][i]))
 					{
@@ -89,19 +128,12 @@ char    **expand(char *cmd, t_data *data)
 		free(args[k]);
 
 		args[k] = string;
-		// free(string);
 		string = NULL;
 		string = malloc(1);
 		string[0] = '\0';
 
 		k++;
 	}
-	 i = 0;
-	// while (args[i])
-	// {
-	// 	printf("args: [%d] %s\n", i, args[i]);
-	// 	i++;
-	// }
 	
 	return (args);
 }

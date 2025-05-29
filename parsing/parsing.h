@@ -73,5 +73,5 @@ void	print_list(t_list	*list);
 void	print_queue(t_queue *queue);
 int		is_operator(t_type_node type); // from execution
 int		is_redirection(t_type_node type);
-
+int	count_words(const char *s, char sep);
 #endif
