@@ -1,5 +1,25 @@
 #include "built_ins.h"
 
+int	check_option(char *line)
+{
+	int	i;
+
+	i = 0;
+	if (line[i] == '-')
+	{
+		i++;
+		while (line[i])
+		{
+			if(line[i] != 'n')
+				return (0);
+			i++;
+		}
+	}
+	else
+		return (0);
+	return (1);
+}
+
 int	built_in_echo(char **args)
 {
 	int	nl_flag;
@@ -12,7 +32,7 @@ int	built_in_echo(char **args)
 		printf("\n");
 		return (0);
 	}
-	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
+	while (args[i] && check_option(args[i]))
 	{
 		nl_flag = 1;
 		i++;

@@ -8,11 +8,15 @@
 # include "readline/readline.h"
 // linked list , basic , before the binary tree
 extern int g_sig;
+typedef struct s_redir t_redir;
+
 typedef struct s_redirection
 {
 	char	*outfile;
 	int		in_fd;
 	int		flag;
+	int		erno;
+	char	*file_name;
 } t_redirection;
 
 typedef struct	s_tree

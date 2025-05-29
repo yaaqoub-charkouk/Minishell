@@ -49,10 +49,14 @@ int	main(int ac, char **av, char **envp)
 	tokens = NULL;
 	tree = NULL;
 	rl_catch_signals = 0;
-	data.exit_status = 0;
 	setup_signals();
+	data.exit_status = 0;
 	while (1)
 	{
+		data.env = env_struct_to_char(env);
+		data.envl = &env;
+		data.read_fd = STDIN_FILENO;
+		data.done_with_heredoc = 0;
 		line = readline(SKY_BLUE"minishell-1.9$ "RESET_COLOR);
 		if (!line)
 		{
@@ -68,6 +72,7 @@ int	main(int ac, char **av, char **envp)
 		if (syntax)
 		{
 			printf("skipping\n");    // need to free tokens
+			data.exit_status = 258;
 			continue ;
 		}
 		function(&tokens);
@@ -76,9 +81,7 @@ int	main(int ac, char **av, char **envp)
 		
 		// print_tokens(tokens);
 
-		if (pre_execution(tree, &data))
-			continue ;
-
+		pre_execution(tree, &data);
 		print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
 		// (void)tree;
