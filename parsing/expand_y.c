@@ -1,5 +1,7 @@
 #include "parsing.h"
 
+
+
 char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
 {
 	int		i;
@@ -10,7 +12,8 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	char	**variable;
 
 	var_count = count_words(var, ' ');
-	new_args = malloc(sizeof(char *) * (init_size + var_count));
+	printf("var_count %d\n", var_count);
+	new_args = malloc(sizeof(char *) * (init_size + var_count + 1));
 	variable = ft_split_pipex(var, ' ');
 	i = 0;
 	while (i < *k)
@@ -20,7 +23,8 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	}
 	*string = ft_strjoin(*string, variable[0]);
 	new_args[*k] = *string;
-	// i--;
+
+	i++;
 	j = 1;
 	while (j < var_count)
 	{
@@ -28,8 +32,7 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 		i++;
 		j++;
 	}
-	// j--;
-	// *string = variable[j];
+
 	o_index = *k + 1;
 	while (args[o_index])
 	{
@@ -49,6 +52,7 @@ char    **expand(char *cmd, t_data *data)
 	char	*new_str;
 	int		i;
 	int		k;
+	int		j = 0;
 	int		in_dquotes;
 	int		in_squotes;
 
@@ -103,8 +107,14 @@ char    **expand(char *cmd, t_data *data)
 					new_str = ft_strdup("");
 				if (in_dquotes)
 					string = ft_strjoin(string, new_str);
-				// else if (!in_dquotes)
-				// 	args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));
+				printf("k = %d\n", k);
+				if (!in_dquotes)
+				{
+					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					// break ;
+				}
+				printf("k = %d\n", k);
+				// printf("---------------------------------------\n");
 				i++;
 				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
 				{
@@ -121,6 +131,7 @@ char    **expand(char *cmd, t_data *data)
 			new_str[0] = args[k][i];
 			new_str[1] = '\0';
 			string = ft_strjoin(string, new_str);
+			printf("string %s\n", string);
 			free(new_str);
 			new_str = NULL;
 			i++;
@@ -133,6 +144,11 @@ char    **expand(char *cmd, t_data *data)
 		string[0] = '\0';
 
 		k++;
+	}
+	while(args[j])
+	{
+		printf("%d %s\n", j, args[j]);
+		j++;
 	}
 	
 	return (args);
