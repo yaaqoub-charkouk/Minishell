@@ -4,37 +4,37 @@
 
 int	check_built_in(char **args, t_data *data, int is_pipe)
 {
-	int	pid;
-	int	status;
+	// int	pid;
+	// int	status;
 
-	pid = fork();
-	if (pid < 0)
-		perror("fork");
-	if (pid == 0)
+	// pid = fork();
+	// if (pid < 0)
+	// 	perror("fork");
+	// if (pid == 0)
+	// {
+	if (ft_strncmp(args[0], "cd", 3) == 0)
+		return (data->exit_status = built_in_cd(args, data), 1);
+	else if (ft_strncmp(args[0], "echo", 5) == 0)
+		return (data->exit_status = built_in_echo(args), 1);
+	else if (ft_strncmp(args[0], "env", 4) == 0)
+		return (data->exit_status = built_in_env(data), 1);
+	else if (ft_strncmp(args[0], "exit", 5) == 0)
 	{
-		if (ft_strncmp(args[0], "cd", 3) == 0)
-			return (data->exit_status = built_in_cd(args, data), 1);
-		else if (ft_strncmp(args[0], "echo", 5) == 0)
-			return (data->exit_status = built_in_echo(args), 1);
-		else if (ft_strncmp(args[0], "env", 4) == 0)
-			return (data->exit_status = built_in_env(data), 1);
-		else if (ft_strncmp(args[0], "exit", 5) == 0)
-		{
-			if (!is_pipe)
-				printf("exit\n");
-			return (data->exit_status = built_in_exit(args, data), 1);//exit need argument
-		}
-		else if (ft_strncmp(args[0], "export", 7) == 0)
-			return (data->exit_status = built_in_export(args, data), 1);
-		else if (ft_strncmp(args[0], "pwd", 4) == 0)
-			return (data->exit_status = built_in_pwd(), 1);
-		else if (ft_strncmp(args[0], "unset", 6) == 0)
-			return (data->exit_status = built_in_unset(args, data), 1);
-		exit(data->exit_status);
+		if (!is_pipe)
+			printf("exit\n");
+		return (data->exit_status = built_in_exit(args, data), 1);//exit need argument
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return WEXITSTATUS(status);
+	else if (ft_strncmp(args[0], "export", 7) == 0)
+		return (data->exit_status = built_in_export(args, data), 1);
+	else if (ft_strncmp(args[0], "pwd", 4) == 0)
+		return (data->exit_status = built_in_pwd(), 1);
+	else if (ft_strncmp(args[0], "unset", 6) == 0)
+		return (data->exit_status = built_in_unset(args, data), 1);
+	// 	exit(data->exit_status);
+	// }
+	// waitpid(pid, &status, 0);
+	// if (WIFEXITED(status))
+	// 	return WEXITSTATUS(status);
 	return (0);
 }
 
