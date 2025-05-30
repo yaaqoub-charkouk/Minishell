@@ -57,7 +57,7 @@ int	main(int ac, char **av, char **envp)
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.done_with_heredoc = 0;
-		line = readline(SKY_BLUE"minishell-1.9$ "RESET_COLOR);
+		line = readline(SKY_BLUE"minishell-2.0$ "RESET_COLOR);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");

@@ -55,6 +55,7 @@ char    **expand(char *cmd, t_data *data)
 	int		j = 0;
 	int		in_dquotes;
 	int		in_squotes;
+	int		is_expanded = 0;
 
 	if (!cmd)
 		return (NULL);
@@ -66,9 +67,11 @@ char    **expand(char *cmd, t_data *data)
 
 	k = 0;
 	args = ft_split_pipex(cmd, ' ');// modify it later;
+	printf("cmd is %s %s\n", args[0], args[1]);
 	while (args[k])
 	{
 		// printf("args %d %s\n", k, args[k]);
+		is_expanded = 0;
 		i = 0;
 		while (args[k][i])
 		{
@@ -111,10 +114,15 @@ char    **expand(char *cmd, t_data *data)
 				if (!in_dquotes)
 				{
 					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					is_expanded = 1;
 					// break ;
 				}
+				while(args[j])
+				{
+					printf("%d %s\n", j, args[j]);
+					j++;
+				}
 				printf("k = %d\n", k);
-				// printf("---------------------------------------\n");
 				i++;
 				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
 				{
@@ -127,29 +135,36 @@ char    **expand(char *cmd, t_data *data)
 				}
 				continue ;
 			}
-			new_str = malloc(2);
+			new_str = malloc(2); // accumulate the current char to arg
 			new_str[0] = args[k][i];
 			new_str[1] = '\0';
-			string = ft_strjoin(string, new_str);
-			printf("string %s\n", string);
+
+			string = ft_strjoin(string, new_str); // accumulate the current char to arg
+			// printf("string %s\n", string);
 			free(new_str);
 			new_str = NULL;
 			i++;
 		}
-		free(args[k]);
+		// free(args[k]);
+		if (is_expanded)
+			string = ft_strdup("");
+		else
+		{
+			args[k] = string;
+			string = NULL;
+			string = malloc(1);
+			string[0] = '\0';
+			k++;
+		}
 
-		args[k] = string;
-		string = NULL;
-		string = malloc(1);
-		string[0] = '\0';
-
-		k++;
 	}
-	while(args[j])
-	{
-		printf("%d %s\n", j, args[j]);
-		j++;
-	}
+	// j = 0;
+	// while(args[j])
+	// {
+	// 	printf("%d %s\n", j, args[j]);
+	// 	j++;
+	// }
 	
+	printf("cmd is %s %s\n", args[0], args[1]);
 	return (args);
 }
