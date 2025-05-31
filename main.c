@@ -89,7 +89,7 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
-
+// echo "$(ls)" hahahahahahahahahahaha
 // $PWD ----> is a directory
 // ls > "" && ls he has to not execute ls because empty file name :
 // expand heredoc

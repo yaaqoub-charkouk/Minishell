@@ -1,7 +1,5 @@
 #include "parsing.h"
 
-
-
 char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
 {
 	int		i;
@@ -50,6 +48,7 @@ char    **expand(char *cmd, t_data *data)
 	char	**args;
 	char	*string;
 	char	*new_str;
+	char	*temp;
 	int		i;
 	int		k;
 	int		j = 0;
@@ -110,21 +109,9 @@ char    **expand(char *cmd, t_data *data)
 					new_str = ft_strdup("");
 				if (in_dquotes)
 					string = ft_strjoin(string, new_str);
-				printf("k = %d\n", k);
-				if (!in_dquotes)
-				{
-					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
-					is_expanded = 1;
-					// break ;
-				}
-				while(args[j])
-				{
-					printf("%d %s\n", j, args[j]);
-					j++;
-				}
-				printf("k = %d\n", k);
+				printf("new str %s\n", new_str);
 				i++;
-				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
+				while (args[k][i] && ft_isalnum(args[k][i])) // skip the variable name
 				{
 					if (ft_isdigit(args[k][i]))
 					{
@@ -133,8 +120,22 @@ char    **expand(char *cmd, t_data *data)
 					}
 					i++;
 				}
+				temp = &args[k][i];
+					printf("temp %s\n", temp);
+
+				j = 0;
+				if (!in_dquotes)
+				{
+					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					i = 0;
+					is_expanded = 1;
+					args[k] = ft_strjoin(args[k], temp);
+				}
+				printf("k = %d\n", k);
+				
 				continue ;
 			}
+			
 			new_str = malloc(2); // accumulate the current char to arg
 			new_str[0] = args[k][i];
 			new_str[1] = '\0';
