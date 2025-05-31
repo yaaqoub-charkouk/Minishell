@@ -30,7 +30,7 @@ static int	word_len(const char *str, char sep)
 	return (len);
 }
 
-static int	count_words(const char *s, char sep)
+int	count_words(const char *s, char sep)
 {
 	int	count;
 	int	in_d;
