@@ -8,6 +8,8 @@
 
 #define SKY_BLUE "\033[38;5;39m"
 #define RESET_COLOR "\033[0m"
+#define GREEN "\033[0;32m"
+#define RED "\033[0;31m"
 
 void	function(t_list **lst)
 {
@@ -42,6 +44,7 @@ int	main(int ac, char **av, char **envp)
 	t_env	*env;
 	t_data	data;
 	char	*line;
+	char *prompt;
 	(void)ac;
 	(void)av;
 	env = NULL;
@@ -57,7 +60,11 @@ int	main(int ac, char **av, char **envp)
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.done_with_heredoc = 0;
-		line = readline(SKY_BLUE"minishell-2.0$ "RESET_COLOR);
+		if (data.exit_status == 0)
+			prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+		else
+			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+		line = readline(prompt);
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
