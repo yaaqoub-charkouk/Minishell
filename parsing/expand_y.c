@@ -2,6 +2,49 @@
 
 
 
+char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
+{
+	int		i;
+	int		j;
+	int		var_count;
+	int		o_index;
+	char	**new_args;
+	char	**variable;
+
+	var_count = count_words(var, ' ');
+	printf("var_count %d\n", var_count);
+	new_args = malloc(sizeof(char *) * (init_size + var_count + 1));
+	variable = ft_split_pipex(var, ' ');
+	i = 0;
+	while (i < *k)
+	{
+		new_args[i] = ft_strdup(args[i]);
+		i++;
+	}
+	*string = ft_strjoin(*string, variable[0]);
+	new_args[*k] = *string;
+
+	i++;
+	j = 1;
+	while (j < var_count)
+	{
+		new_args[i] = ft_strdup(variable[j]);
+		i++;
+		j++;
+	}
+
+	o_index = *k + 1;
+	while (args[o_index])
+	{
+		new_args[i] = ft_strdup(args[o_index]);
+		i++;
+		o_index++;
+	}
+	new_args[i] = NULL;
+	*k = *k + var_count - 1;
+	return (new_args);
+}
+
 char    **expand(char *cmd, t_data *data)
 {
 	char	**args;
@@ -9,8 +52,10 @@ char    **expand(char *cmd, t_data *data)
 	char	*new_str;
 	int		i;
 	int		k;
+	int		j = 0;
 	int		in_dquotes;
 	int		in_squotes;
+	int		is_expanded = 0;
 
 	if (!cmd)
 		return (NULL);
@@ -22,17 +67,14 @@ char    **expand(char *cmd, t_data *data)
 
 	k = 0;
 	args = ft_split_pipex(cmd, ' ');// modify it later;
+	printf("cmd is %s %s\n", args[0], args[1]);
 	while (args[k])
 	{
 		// printf("args %d %s\n", k, args[k]);
+		is_expanded = 0;
 		i = 0;
-		// free(string);
-		
 		while (args[k][i])
 		{
-			
-
-			// printf("args %d %d %c\n", k, i, args[k][i]);
 			if (args[k][i] == '\"' && !in_squotes)
 			{
 				in_dquotes = !in_dquotes;
@@ -60,14 +102,29 @@ char    **expand(char *cmd, t_data *data)
 				i += 2;
 				continue ;
 			}
+
 			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes)
 			{
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
 				if (!new_str)
 					new_str = ft_strdup("");
-				string = ft_strjoin(string, new_str);
+				if (in_dquotes)
+					string = ft_strjoin(string, new_str);
+				printf("k = %d\n", k);
+				if (!in_dquotes)
+				{
+					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					is_expanded = 1;
+					// break ;
+				}
+				while(args[j])
+				{
+					printf("%d %s\n", j, args[j]);
+					j++;
+				}
+				printf("k = %d\n", k);
 				i++;
-				while (args[k][i] && ft_isalnum(args[k][i]))
+				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
 				{
 					if (ft_isdigit(args[k][i]))
 					{
@@ -78,30 +135,36 @@ char    **expand(char *cmd, t_data *data)
 				}
 				continue ;
 			}
-			new_str = malloc(2);
+			new_str = malloc(2); // accumulate the current char to arg
 			new_str[0] = args[k][i];
 			new_str[1] = '\0';
-			string = ft_strjoin(string, new_str);
+
+			string = ft_strjoin(string, new_str); // accumulate the current char to arg
+			// printf("string %s\n", string);
 			free(new_str);
 			new_str = NULL;
 			i++;
 		}
-		free(args[k]);
+		// free(args[k]);
+		if (is_expanded)
+			string = ft_strdup("");
+		else
+		{
+			args[k] = string;
+			string = NULL;
+			string = malloc(1);
+			string[0] = '\0';
+			k++;
+		}
 
-		args[k] = string;
-		// free(string);
-		string = NULL;
-		string = malloc(1);
-		string[0] = '\0';
-
-		k++;
 	}
-	 i = 0;
-	// while (args[i])
+	// j = 0;
+	// while(args[j])
 	// {
-	// 	printf("args: [%d] %s\n", i, args[i]);
-	// 	i++;
+	// 	printf("%d %s\n", j, args[j]);
+	// 	j++;
 	// }
 	
+	printf("cmd is %s %s\n", args[0], args[1]);
 	return (args);
 }

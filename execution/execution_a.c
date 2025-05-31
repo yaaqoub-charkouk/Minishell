@@ -1,7 +1,5 @@
 #include "execution.h"
 
-
-
 int	check_built_in(char **args, t_data *data, int is_pipe)
 {
 	// int	pid;

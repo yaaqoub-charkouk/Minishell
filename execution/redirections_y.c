@@ -140,7 +140,7 @@ void	open_fd(t_tree	*node, t_redir *redir)
 }
 
 
-void    traverse_branch(t_tree *node, t_redir *redir)
+void	traverse_branch(t_tree *node, t_redir *redir)
 {
 	if (node->left)
 		open_fd(node->left, redir);
@@ -188,7 +188,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 int	pre_execution(t_tree *node, t_data *data)
 {
 	t_type_node	type;
-	int	open_error;
+	int			open_error;
 
 	open_error = 0;
 	if (!node)
