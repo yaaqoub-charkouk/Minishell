@@ -71,7 +71,7 @@ int	main(int ac, char **av, char **envp)
 			data.exit_status = 0;
 			break;
 		}
-
+		
 		add_history(line);
 		tokens = tokenize(line);
 		int syntax;
@@ -96,7 +96,8 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
-
+// minishell-2.0$ /ls
+// echo "$(ls)" bash: command substitution
 // $PWD ----> is a directory
 // ls > "" && ls he has to not execute ls because empty file name :
 // expand heredoc
