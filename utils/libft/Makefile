@@ -21,23 +21,23 @@ OBJBONUS = $(BONUS:.c=.o)
 all: $(NAME) bonus
 
 $(NAME): $(OBJ)
-	ar rcs $(NAME) $?
+	@ar rcs $(NAME) $?
 
 %.o: %.c ../../includes/libft.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 bonus: .additional
 	
 .additional: $(OBJBONUS)
-	ar rcs $(NAME) $?
+	@ar rcs $(NAME) $?
 	touch .additional
 
 clean:
-	rm -f $(OBJ) $(OBJBONUS)
-	rm -f .additional
+	@rm -f $(OBJ) $(OBJBONUS)
+	@rm -f .additional
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
 

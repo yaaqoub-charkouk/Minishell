@@ -1,8 +1,6 @@
 #include "parsing.h"
 
-
-
-char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
+char	**add_variable(char **args, char **string, char *var_value, int *k, int init_size)
 {
 	int		i;
 	int		j;
@@ -11,18 +9,24 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	char	**new_args;
 	char	**variable;
 
-	var_count = count_words(var, ' ');
-	printf("var_count %d\n", var_count);
+	var_count = count_words(var_value, ' ');
 	new_args = malloc(sizeof(char *) * (init_size + var_count + 1));
-	variable = ft_split_pipex(var, ' ');
+	variable = ft_split_pipex(var_value, ' ');
+	if (!variable)
+		printf("variable is NULL");
 	i = 0;
 	while (i < *k)
 	{
 		new_args[i] = ft_strdup(args[i]);
 		i++;
 	}
-	*string = ft_strjoin(*string, variable[0]);
-	new_args[*k] = *string;
+	if (var_count == 0)
+		new_args[*k] = *string;
+	else
+	{
+		*string = ft_strjoin(*string, variable[0]);
+		new_args[*k] = *string;
+	}
 
 	i++;
 	j = 1;
@@ -42,6 +46,12 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	}
 	new_args[i] = NULL;
 	*k = *k + var_count - 1;
+	j = 0;
+	while (new_args[j])
+	{
+		printf("new args %d : %s \n", j, new_args[j]);
+		j++;
+	}
 	return (new_args);
 }
 
@@ -50,6 +60,7 @@ char    **expand(char *cmd, t_data *data)
 	char	**args;
 	char	*string;
 	char	*new_str;
+	char	*temp;
 	int		i;
 	int		k;
 	int		j = 0;
@@ -70,7 +81,6 @@ char    **expand(char *cmd, t_data *data)
 	printf("cmd is %s %s\n", args[0], args[1]);
 	while (args[k])
 	{
-		// printf("args %d %s\n", k, args[k]);
 		is_expanded = 0;
 		i = 0;
 		while (args[k][i])
@@ -105,26 +115,14 @@ char    **expand(char *cmd, t_data *data)
 
 			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes)
 			{
+				printf("------------- %c -------------\n", args[k][i]);
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
 				if (!new_str)
 					new_str = ft_strdup("");
 				if (in_dquotes)
 					string = ft_strjoin(string, new_str);
-				printf("k = %d\n", k);
-				if (!in_dquotes)
-				{
-					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
-					is_expanded = 1;
-					// break ;
-				}
-				while(args[j])
-				{
-					printf("%d %s\n", j, args[j]);
-					j++;
-				}
-				printf("k = %d\n", k);
 				i++;
-				while (args[k][i] && ft_isalnum(args[k][i]))// skip the variable name
+				while (args[k][i] && ft_isalnum(args[k][i])) // skip the variable name
 				{
 					if (ft_isdigit(args[k][i]))
 					{
@@ -133,19 +131,31 @@ char    **expand(char *cmd, t_data *data)
 					}
 					i++;
 				}
-				continue ;
+				if (new_str[0] == '\0')
+					continue ;
+				temp = &args[k][i];
+				j = 0;
+				if (!in_dquotes && new_str[0] != '\0')
+				{
+					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					i = 0;
+					is_expanded = 1;
+					if (temp[0] != '\0')
+						args[k] = ft_strjoin(args[k], temp); // args[k] is the last var arg	
+					string = ft_strdup("");
+				}
+				
 			}
+			
 			new_str = malloc(2); // accumulate the current char to arg
-			new_str[0] = args[k][i];
+			new_str[0] = args[k][i]; // heap buffer overflow 
 			new_str[1] = '\0';
 
 			string = ft_strjoin(string, new_str); // accumulate the current char to arg
-			// printf("string %s\n", string);
 			free(new_str);
 			new_str = NULL;
 			i++;
 		}
-		// free(args[k]);
 		if (is_expanded)
 			string = ft_strdup("");
 		else
@@ -156,7 +166,7 @@ char    **expand(char *cmd, t_data *data)
 			string[0] = '\0';
 			k++;
 		}
-		if (args[k] && ft_strchr(args[k], '*'))//needs more tests
+    if (args[k] && ft_strchr(args[k], '*'))//needs more tests
 		{
 			char	**wild_args;
 
@@ -175,15 +185,17 @@ char    **expand(char *cmd, t_data *data)
 			k++;
 			// free_split(wild_args);
 		}
-
 	}
-	// j = 0;
-	// while(args[j])
-	// {
-	// 	printf("%d %s\n", j, args[j]);
-	// 	j++;
-	// }
+	j = 0;
+	while(args[j])
+	{
+		printf("%d %s\n", j, args[j]);
+		j++;
+	}
 	
 	printf("cmd is %s %s\n", args[0], args[1]);
 	return (args);
 }
+//export a="'ls'"
+//echo $'PWD' ----> PWD (correct output)
+

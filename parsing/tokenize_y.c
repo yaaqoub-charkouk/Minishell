@@ -58,7 +58,7 @@ t_list	*tokenize(char	*line)
 	while (line[i])
 	{
 		type = get_type(&line[i]);
-		if (line[i] == 34) // " '
+		if (line[i] == 34 && !in_squotes) // " '
 			in_dquotes = !in_dquotes;
 		if (line[i] == 39 && !in_dquotes)
 			in_squotes = !in_squotes;
