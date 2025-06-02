@@ -1,5 +1,39 @@
 #include "../minishell.h"
 
+int	ft_wild_size(t_wild *lst)
+{
+	int	c;
+
+	c = 0;
+	while (lst)
+	{
+		lst = lst->next;
+		c++;
+	}
+	return (c);
+}
+
+char	**wild_struct_to_char(t_wild  *wild)
+{
+	int		size;
+	int		i;
+	char	**wild_char;
+
+	i = 0;
+	size = ft_wild_size(wild);
+	wild_char = malloc((size + 1) * sizeof(char *));
+  	if(!wild_char)
+    	return (NULL);
+	while (i < size)
+	{
+		wild_char[i] = ft_strdup(wild->file);
+		wild = wild->next;
+		i++;
+	}
+	wild_char[i] = NULL;
+	return (wild_char);
+}
+
 t_wild	*ft_new_wild(void *content)
 {
 	t_wild	*node;
@@ -11,95 +45,65 @@ t_wild	*ft_new_wild(void *content)
 	node->next = NULL;
 	return (node);
 }
-int	ft_rev_strncmp(const char *s1, const char *s2, size_t n)
+void	ft_add_back_wild(t_wild **lst, t_wild *new)
 {
-	unsigned char	*str1;
-	unsigned char	*str2;
-	size_t			i;
+	t_wild	*last;
 
-	if (n == 0)
+	if (!lst || !new)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	last = *lst;
+	while (last->next)
+		last = last->next;
+	last->next = new;
+}
+
+static int	matches_pattern(char *pattern, const char *filename)
+{
+	if(!*pattern && !*filename)//if both are finished it means they match
+		return (1);
+	if (!*pattern && *filename)//if pattern sala wlakin filename baki no match
 		return (0);
-	i = 0;
-	str1 = (unsigned char *)s1;
-	str2 = (unsigned char *)s2;
-	while (i < n - 1 && (str1[i] != '\0'))
+	if(*pattern == '*')
 	{
-		if (str1[i] != str2[i])
-			return (str1[i] - str2[i]);
-		i++;
+		if (matches_pattern(pattern + 1, filename))//skip the * to check the rest of the pattern
+			return (1);
+		if (*filename && matches_pattern(pattern, filename + 1))//check if the rest of the filename matches the pattern
+			return (1);
+		return (0);
 	}
-	return (str1[i] - str2[i]);
-}
-static int	matches_pattern(char *pattern, const char *filename, t_wild *wild)
-{
-	char	*pos;
-	int		len;
-	int		flag;
-
-	flag = 0;
-	pos = ft_strchr(pattern, '*');
-	if (pos)
-	{
-		len = ft_strlen(pattern);
-		if (pattern[0] == '*')
-		{
-			flag = 1;
-			pattern++;
-			len -= 1;
-		}
-		else if (pattern[len - 1] == '*')
-		{
-			flag = 3;
-			pattern[len - 1] = '\0';
-			len -= 1;
-		}
-		else
-			flag = 2;
-	}
-	if (flag == 1 && ft_strncmp(pattern, filename, len) == 0)
-		ft_new_wild(filename);
-	if (flag == 3)
-	{
-
-	}		
-
+	else if (*pattern == *filename)
+		return (matches_pattern(pattern + 1, filename + 1));
+	return (0);
 }
 
-int	expand_wildcard(char *pattern)
+char	**expand_wildcard(char *pattern)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	char			*str;
 	t_wild			*wild;
 
+	wild = NULL;
 	dir = opendir(".");
 	if (!dir)
-	{
-		perror("minishell: opendir");
-		return (EXIT_FAILURE);
-	}
-	str = NULL;
+		return (perror("minishell: opendir"), NULL);
 	entry = readdir(dir);
 	while (entry)
 	{
-		if (entry->d_name[0] == '.')
+		if (entry->d_name[0] == '.' && pattern[0] != '.')
 		{
 			entry = readdir(dir);
 			continue;
 		}
-		
-		if (matches_pattern(pattern, entry->d_name, wild))
-		{
-
-		}
+		if (matches_pattern(pattern, entry->d_name))
+			ft_add_back_wild(&wild, ft_new_wild(entry->d_name));
 		
 		entry = readdir(dir);
 	}
-	close(dir);
-}
-
-int main(void)
-{
-	expand_wildcard("*");
-	return (0);
+	closedir(dir);
+	return (wild_struct_to_char(wild));
 }

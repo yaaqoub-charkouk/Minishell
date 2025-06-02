@@ -12,4 +12,5 @@ typedef struct s_wild
 	struct s_wild	*next;
 }	t_wild;
 
+char	**expand_wildcard(char *pattern);
 #endif

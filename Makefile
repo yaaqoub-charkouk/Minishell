@@ -7,8 +7,9 @@ PARSING = $(addprefix parsing/, build_queue_y.c parsing_1_a.c tokenize_utils_y.c
 BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unset.c env_utils.c)
 EXECUTION = $(addprefix execution/, execution_a.c utils_a.c redirections_y.c execute_cmd_a.c pipe_a.c)
 SIGNALS = $(addprefix signals/, signal_1_y.c)
+WILDCARDS = $(addprefix wildcards/, wildcards.c)
 
-SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS)
+SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS) $(WILDCARDS)
 
 READLINE = 
 HEADERS = minishell.h

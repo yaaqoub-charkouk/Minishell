@@ -69,6 +69,7 @@ int	main(int ac, char **av, char **envp)
 		{
 			printf("line is NULL from readline\n");
 			data.exit_status = 0;
+			printf("exit\n");
 			break;
 		}
 
