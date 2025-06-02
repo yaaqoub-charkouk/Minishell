@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-char	**add_variable(char **args, char **string, char *var, int *k, int init_size)
+char	**add_variable(char **args, char **string, char *var_value, int *k, int init_size)
 {
 	int		i;
 	int		j;
@@ -9,17 +9,24 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	char	**new_args;
 	char	**variable;
 
-	var_count = count_words(var, ' ');
+	var_count = count_words(var_value, ' ');
 	new_args = malloc(sizeof(char *) * (init_size + var_count + 1));
-	variable = ft_split_pipex(var, ' ');
+	variable = ft_split_pipex(var_value, ' ');
+	if (!variable)
+		printf("variable is NULL");
 	i = 0;
 	while (i < *k)
 	{
 		new_args[i] = ft_strdup(args[i]);
 		i++;
 	}
-	*string = ft_strjoin(*string, variable[0]);
-	new_args[*k] = *string;
+	if (var_count == 0)
+		new_args[*k] = *string;
+	else
+	{
+		*string = ft_strjoin(*string, variable[0]);
+		new_args[*k] = *string;
+	}
 
 	i++;
 	j = 1;
@@ -39,6 +46,12 @@ char	**add_variable(char **args, char **string, char *var, int *k, int init_size
 	}
 	new_args[i] = NULL;
 	*k = *k + var_count - 1;
+	j = 0;
+	while (new_args[j])
+	{
+		printf("new args %d : %s \n", j, new_args[j]);
+		j++;
+	}
 	return (new_args);
 }
 
@@ -72,7 +85,6 @@ char    **expand(char *cmd, t_data *data)
 		i = 0;
 		while (args[k][i])
 		{
-			printf("args[%d][%d] : %c\n", k, i, args[k][i]);
 			if (args[k][i] == '\"' && !in_squotes)
 			{
 				in_dquotes = !in_dquotes;
@@ -109,8 +121,6 @@ char    **expand(char *cmd, t_data *data)
 					new_str = ft_strdup("");
 				if (in_dquotes)
 					string = ft_strjoin(string, new_str);
-				
-				printf("var value %s\n", new_str);
 				i++;
 				while (args[k][i] && ft_isalnum(args[k][i])) // skip the variable name
 				{
@@ -121,28 +131,24 @@ char    **expand(char *cmd, t_data *data)
 					}
 					i++;
 				}
-				
+				if (new_str[0] == '\0')
+					continue ;
 				temp = &args[k][i];
-				printf("to accumulate %s\n", temp);
-
 				j = 0;
-				if (!in_dquotes)
+				if (!in_dquotes && new_str[0] != '\0')
 				{
 					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
 					i = 0;
 					is_expanded = 1;
-					printf("string is %s\n", string);
-					args[k] = ft_strjoin(args[k], temp);
+					if (temp[0] != '\0')
+						args[k] = ft_strjoin(args[k], temp); // args[k] is the last var arg	
 					string = ft_strdup("");
-					printf("args[%d] : %s\n", k, args[k]);
 				}
-				printf("k = %d\n", k);
 				
-				continue ;
 			}
 			
 			new_str = malloc(2); // accumulate the current char to arg
-			new_str[0] = args[k][i];
+			new_str[0] = args[k][i]; // heap buffer overflow 
 			new_str[1] = '\0';
 
 			string = ft_strjoin(string, new_str); // accumulate the current char to arg
