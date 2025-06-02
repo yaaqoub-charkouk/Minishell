@@ -166,7 +166,25 @@ char    **expand(char *cmd, t_data *data)
 			string[0] = '\0';
 			k++;
 		}
+    if (args[k] && ft_strchr(args[k], '*'))//needs more tests
+		{
+			char	**wild_args;
 
+			wild_args = expand_wildcard(args[k]);
+			if (!wild_args)
+				return (NULL);
+			free(args[k]);
+			args[k] = NULL;
+			i = 0;
+			while (wild_args[i])
+			{
+				args = add_variable(args, &string, wild_args[i], &k, count_words(cmd, ' '));
+				//we need to add space after each argument
+				i++;
+			}
+			k++;
+			// free_split(wild_args);
+		}
 	}
 	j = 0;
 	while(args[j])
@@ -180,3 +198,4 @@ char    **expand(char *cmd, t_data *data)
 }
 //export a="'ls'"
 //echo $'PWD' ----> PWD (correct output)
+
