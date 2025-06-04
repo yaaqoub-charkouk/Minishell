@@ -56,19 +56,27 @@ int	main(int ac, char **av, char **envp)
 	data.exit_status = 0;
 	while (1)
 	{
-		data.env = env_struct_to_char(env);
-		data.envl = &env;
-		data.read_fd = STDIN_FILENO;
-		data.done_with_heredoc = 0;
+		if (!isatty(STDIN_FILENO))
+		{
+			readline("");
+		}
+		else
+		{
 		if (data.exit_status == 0)
 			prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
 		else
 			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
 		line = readline(prompt);
+		}
+		data.env = env_struct_to_char(env);
+		data.envl = &env;
+		data.read_fd = STDIN_FILENO;
+		data.done_with_heredoc = 0;
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
 			data.exit_status = 0;
+			printf("exit\n");
 			break;
 		}
 		
@@ -91,6 +99,10 @@ int	main(int ac, char **av, char **envp)
 		pre_execution(tree, &data);
 		print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
+		if (!isatty(STDIN_FILENO))
+		{
+			break ;
+		}
 		// (void)tree;
 	}
 	rl_clear_history();

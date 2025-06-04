@@ -78,6 +78,4 @@ int		is_redirection(t_type_node type);
 int	count_words(const char *s, char sep);
 char	**expand_wildcard(char *pattern);
 
-
-
 #endif

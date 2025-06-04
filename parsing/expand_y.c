@@ -1,17 +1,17 @@
 #include "parsing.h"
 
-char	**add_variable(char **args, char **string, char *var_value, int *k, int init_size)
+char	**add_variable(char **args, char **string, char **variable, int *k, int init_size)
 {
 	int		i;
 	int		j;
 	int		var_count;
 	int		o_index;
 	char	**new_args;
-	char	**variable;
 
-	var_count = count_words(var_value, ' ');
+	var_count = 0;
+	while (variable[var_count++]);
+	var_count--;
 	new_args = malloc(sizeof(char *) * (init_size + var_count + 1));
-	variable = ft_split_pipex(var_value, ' ');
 	if (!variable)
 		printf("variable is NULL");
 	i = 0;
@@ -136,7 +136,7 @@ char    **expand(char *cmd, t_data *data)
 				j = 0;
 				if (!in_dquotes && new_str[0] != '\0')
 				{
-					args = add_variable(args, &string, new_str, &k, count_words(cmd, ' '));// k =0;
+					args = add_variable(args, &string, ft_split_pipex(new_str, ' '), &k, count_words(cmd, ' '));// k =0;
 					i = 0;
 					is_expanded = 1;
 					if (temp[0] != '\0')
@@ -174,15 +174,21 @@ char    **expand(char *cmd, t_data *data)
 				return (NULL);
 			free(args[k]);
 			args[k] = NULL;
-			i = 0;
-			while (wild_args[i])
-			{
-				args = add_variable(args, &string, wild_args[i], &k, count_words(cmd, ' '));
+			// i = 0;
+			// while (wild_args[i])
+			// {
+				args = add_variable(args, &string, wild_args, &k, count_words(cmd, ' '));
+				string = ft_strdup("");
+				j = 0;
+				while(args[j])
+				{
+					printf("%d %s\n", j, args[j]);
+					j++;
+				}
 				//we need to add space after each argument
-				i++;
-			}
-			k++;
-			// free_split(wild_args);
+				// i++;
+			// }
+			// k++;
 		}
 	}
 	// j = 0;

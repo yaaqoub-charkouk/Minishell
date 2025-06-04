@@ -114,6 +114,7 @@ void	open_heredoc(char	*limiter, t_redir *redir)
 			free(line);
 		}
 		free(line);
+		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, NULL, 0);
 	if (redir->entry_node->red.in_fd != -1)
