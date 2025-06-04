@@ -31,21 +31,7 @@ typedef struct	s_tree
 
 
 
-/*==== stack to use for shunting yard algorithm ==== */
 
-typedef struct	s_op // LIFO stack
-{
-	char			*content;
-	t_type_node		type;
-	struct	s_op	*next;
-}	t_op;
-
-typedef struct	s_queue // FIFO stack 
-{
-	char			*content;
-	t_type_node		type;
-	struct	s_queue *next;
-}	t_queue;
 
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
@@ -56,7 +42,6 @@ t_list	*build_sy_queue(t_list	*token);
 t_type_node	get_type(char *content);
 t_list		*tokenize(char	*line);
 
-t_op		*new_operator_node(t_list	*token);
 
 
 
@@ -69,7 +54,7 @@ void		print_tree(t_tree *node, int level);
 
 char		**ft_split_pipex(char const *s, char c);
 char		**free_string(char **string, int i);
-char		**expand(char *cmd, t_data *data);
+char		**expand(char *cmd, t_data *data, int *should_expand);
 
 void	print_list(t_list	*list);
 
