@@ -12,7 +12,8 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 			new_pwd = ft_strjoin("PWD=", path);
 			if (!new_pwd)
 				return ;
-			// free(env->content);			env->content = new_pwd;
+			free(env->content);
+			env->content = new_pwd;
 		}
 		else
 		{
@@ -27,7 +28,7 @@ void	update_pwd(t_env *env, char *path, char *oldpwd)
 			old_pwd = ft_strjoin("OLDPWD=", oldpwd);
 			if (!old_pwd)
 				return ;
-			// free(env->content);
+			free(env->content);
 			env->content = old_pwd;
 		}
 		else
@@ -102,5 +103,23 @@ int	built_in_cd(char **args, t_data *data)
 	}
 	newpwd = getcwd(NULL, 0);
 	update_pwd(*data->envl, newpwd, oldpwd);
+	char **args2 = malloc(4 * sizeof(char *));
+	if (!args2)
+		return (free(oldpwd), free(newpwd), 1);
+	args2[0] = "export";
+	args2[1] = ft_strjoin("PWD=", newpwd);
+	args2[2] = ft_strjoin("OLDPWD=", oldpwd);
+	args2[3] = NULL;
+	// if (!args2[1] || !args2[2])
+	// {
+	// 	free(args2[1]);
+	// 	free(args2[2]);
+	// 	free(args2);
+	// 	return (free(oldpwd), free(newpwd), 1);
+	// }
+	built_in_export(args2, data);
+	// free(args2[1]);
+	// free(args2[2]);
+	// free(args2);
 	return (free(oldpwd), free(newpwd), 0);
 }
