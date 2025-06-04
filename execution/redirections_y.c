@@ -44,8 +44,6 @@ void	open_outfile(char	*filename, t_redir *redir)
 	int	fd;
 
 
-	printf("outfile : %s\n", filename);
-	// printf("outfile : %c\n", filename[1]);
 	flag = O_CREAT | O_WRONLY;
 	if (*(redir->type) == REDIRECTION_OUT)
 		flag |= O_TRUNC;
@@ -60,7 +58,6 @@ void	open_outfile(char	*filename, t_redir *redir)
 		redir->entry_node->red.erno = redir->open_error;
 		return ;
 	}
-	printf("flag : %d\n", flag);
 	close(fd);
 	redir->entry_node->red.outfile = filename;
 	redir->entry_node->red.flag = flag;
@@ -70,7 +67,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 {
 	int	fd;
 
-	printf("infile : %s\n", filename);
 	fd = open(filename, O_RDONLY, 0777);
 	if (fd < 0)	
 	{
@@ -78,8 +74,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 		redir->entry_node->red.file_name = filename;
 		redir->open_error = errno;
 		redir->entry_node->red.erno = redir->open_error;
-		// printf (" ---- -----eerrno %d", errno);
-		// printf (" ---- -----redir->open_error %d", redir->open_error);
 		return ;
 	}
 	if (redir->entry_node->red.in_fd != -1)
@@ -174,8 +168,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 		// redir.entry_node->red.erno = redir.open_error;
 		// printf ("------asdasd%dredir.open_error%d",redir.entry_node->red.erno , redir.open_error);
 		// printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
-		printf("cmd to execute ");
-		print_list(redir.args_list);
+		
 	}
 	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it
 	{
@@ -204,7 +197,6 @@ int	pre_execution(t_tree *node, t_data *data)
 	}
 	if (node->right)
 	{
-		printf("entry node : %s \n", node->cmd);
 		if (node->type == PIPE || node->type == OR || node->type == AND)
 		{
 			pre_execution(node->right, data);

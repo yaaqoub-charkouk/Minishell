@@ -1,4 +1,8 @@
 #include "minishell.h"
+#define SKY_BLUE "\033[38;5;39m"
+#define RESET_COLOR "\033[0m"
+#define GREEN "\033[0;32m"
+#define RED "\033[0;31m"
  int 	g_sig;
 
 // void	ll()
@@ -6,10 +10,6 @@
 // 	system("leaks minishell");
 // }
 
-#define SKY_BLUE "\033[38;5;39m"
-#define RESET_COLOR "\033[0m"
-#define GREEN "\033[0;32m"
-#define RED "\033[0;31m"
 
 void	function(t_list **lst)
 {
@@ -36,7 +36,49 @@ void	function(t_list **lst)
 		temp = temp->next;
 	}
 }
+void	free_tokens(t_list *lst)
+{
+	t_list	*temp;
 
+	if (!lst)
+		return ;
+	while (lst)
+	{
+		temp = lst->next;
+		free(lst->content);
+		lst->content = NULL;
+		free(lst);
+		lst = NULL;
+		lst = temp;
+	}
+}
+
+void	free_env(char **env, t_env *envl)
+{
+	int	i;
+	t_env	*temp;
+
+	if (!env || !envl)
+		return ;
+	temp = envl;
+	while (envl)
+	{
+		temp = envl->next;
+		free(envl->content);
+		envl->content = NULL;
+		free(envl);
+		envl = temp;
+	}
+	i = 0;
+	while (env[i])
+	{
+		free(env[i]);
+		env[i] = NULL;
+		i++;
+	}
+	free(env);
+	env = NULL;
+}
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
@@ -105,11 +147,14 @@ int	main(int ac, char **av, char **envp)
 		}
 		// (void)tree;
 	}
+	free_env(data.env, *data.envl);
 	rl_clear_history();
 	return (data.exit_status);
 }
-// minishell-2.0$ /ls
+// minishell-1.9$ "" -> command not found
+
 // echo "$(ls)" bash: command substitution
+// minishell-2.0$ /ls
 // $PWD ----> is a directory
 // ls > "" && ls he has to not execute ls because empty file name :
 // expand heredoc
@@ -117,16 +162,15 @@ int	main(int ac, char **av, char **envp)
 // minishell-1.9$ cat << $PWD
 // entry node : << 
 // limiter /Users/ycharkou/cursus/minishell
-
 // >/Users/ycharkou/cursus/minishell
 // -------
+
 // !! shouldn,t exit 
-// export a="ls -la" $a -> execute ls -la
-// minishell-1.9$ "" -> command not found
+// export a="ls -la" $a -> execute ls -la : done
 // echo -nnnnnnnn hello
 // some commands does not write / reopen on it's associated outfile
-// < out cat > out // what happens
 
+// < out cat > out // what happens ???
 
 // ls > a | < b ls > c
 // ls > out | < out ls > out7 && < out cat << here | grep HOME > out

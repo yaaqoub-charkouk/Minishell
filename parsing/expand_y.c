@@ -46,12 +46,12 @@ char	**add_variable(char **args, char **string, char **variable, int *k, int ini
 	}
 	new_args[i] = NULL;
 	*k = *k + var_count - 1;
-	j = 0;
-	while (new_args[j])
-	{
-		printf("new args %d : %s \n", j, new_args[j]);
-		j++;
-	}
+	// j = 0;
+	// while (new_args[j])
+	// {
+	// 	printf("new args %d : %s \n", j, new_args[j]);
+	// 	j++;
+	// }
 	return (new_args);
 }
 
@@ -78,7 +78,6 @@ char    **expand(char *cmd, t_data *data)
 
 	k = 0;
 	args = ft_split_pipex(cmd, ' ');// modify it later;
-	printf("cmd is %s %s\n", args[0], args[1]);
 	while (args[k])
 	{
 		is_expanded = 0;
@@ -192,14 +191,13 @@ char    **expand(char *cmd, t_data *data)
 			// k++;
 		}
 	}
-	j = 0;
+	// j = 0;
 	// while(args[j])
 	// {
 	// 	printf("%d %s\n", j, args[j]);
 	// 	j++;
 	// }
 	
-	printf("cmd is %s %s\n", args[0], args[1]);
 	return (args);
 }
 //export a="'ls'"
