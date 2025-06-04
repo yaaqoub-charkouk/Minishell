@@ -108,8 +108,10 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
-// minishell-2.0$ /ls
+// minishell-1.9$ "" -> command not found
+
 // echo "$(ls)" bash: command substitution
+// minishell-2.0$ /ls
 // $PWD ----> is a directory
 // ls > "" && ls he has to not execute ls because empty file name :
 // expand heredoc
@@ -117,16 +119,15 @@ int	main(int ac, char **av, char **envp)
 // minishell-1.9$ cat << $PWD
 // entry node : << 
 // limiter /Users/ycharkou/cursus/minishell
-
 // >/Users/ycharkou/cursus/minishell
 // -------
+
 // !! shouldn,t exit 
-// export a="ls -la" $a -> execute ls -la
-// minishell-1.9$ "" -> command not found
+// export a="ls -la" $a -> execute ls -la : done
 // echo -nnnnnnnn hello
 // some commands does not write / reopen on it's associated outfile
-// < out cat > out // what happens
 
+// < out cat > out // what happens ???
 
 // ls > a | < b ls > c
 // ls > out | < out ls > out7 && < out cat << here | grep HOME > out
