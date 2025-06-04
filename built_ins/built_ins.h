@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/05/27 14:35:11 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/04 21:02:55 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ typedef struct s_data
 	t_env	**envl;
 	char	**env;
 	int		read_fd;
-	int		done_with_heredoc;
 	int		exit_status;
+	int		is_heredoc; // 
 }	t_data;
 
 int	is_unvalid_name(char *value);

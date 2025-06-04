@@ -50,10 +50,11 @@ void	exec_cmd(t_tree *node, char **env)
 {
 	char	**path;
 
-	if (ft_strchr(node->args[0], '/') && access(node->args[0], X_OK) == 0)
+	if (ft_strchr(node->args[0], '/') || access(node->args[0], X_OK) == 0)
 	{
 		execve(node->args[0], node->args, env);
 		perror("execve");
+		exit(1);
 	}
 	path = get_path(env);
 	exec_cmd_from_path(path, node->args[0], node->args, env);
@@ -78,6 +79,7 @@ void    identify_read_write(t_tree *node)
 		dup2(fd, STDOUT_FILENO);
 		close (fd);
 	}
+	printf("read fd ------> %d\n", node->red.in_fd);
 	if (node->red.in_fd != -1) // change the read fd
 	{
 		dup2(node->red.in_fd, STDIN_FILENO);
@@ -105,6 +107,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		else	
 			return (1);
 	}
+	
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)
@@ -143,11 +146,11 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 				exec_cmd(node, data->env);
 		}
 		waitpid(pid, &status, 0);
-		if (node->red.in_fd != -1) // closing the read fd in parent
-		{
-			close(node->red.in_fd);
-			node->red.in_fd = -1;
-		}
+		// if (node->red.in_fd != -1) // closing the read fd in parent
+		// {
+		// 	close(node->red.in_fd);
+		// 	node->red.in_fd = -1;
+		// }
 		if (WIFEXITED(status))
 			return WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
