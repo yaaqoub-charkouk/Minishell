@@ -81,13 +81,19 @@ void	open_infile(char *filename,	t_redir	*redir)
 	redir->entry_node->red.in_fd = fd;
 }
 
-void	open_heredoc(char	*limiter, t_redir *redir)
+void	open_heredoc(char	*limiter, t_redir *redir) // 
 {
 	int		fd[2];
 	int		pid;
 	char	*line;
 	size_t		limiter_len;
 
+	if (pipe(fd) == -1)
+	{
+		perror("pipe"); 
+		
+		return ;
+	}
 	pid = fork();
 	if (pid < 0)
 		perror("heredoc");
@@ -95,12 +101,6 @@ void	open_heredoc(char	*limiter, t_redir *redir)
 	{
 		printf("limiter %s\n\n\n", limiter);
 		limiter_len = ft_strlen(limiter);
-		if (pipe(fd) == -1)
-		{
-			perror("pipe"); 
-			
-			return ;
-		}
 		while (1)
 		{
 			line = readline(">");
@@ -109,6 +109,7 @@ void	open_heredoc(char	*limiter, t_redir *redir)
 			if (!ft_strncmp(line, limiter, limiter_len) 
 				&& (ft_strlen(line)) == limiter_len)
 				break ;
+			// here should expand , after check should expand 
 			write(fd[1], line, ft_strlen(line));
 			write(fd[1], "\n", 1);
 			free(line);

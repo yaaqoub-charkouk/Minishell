@@ -55,7 +55,7 @@ char	**add_variable(char **args, char **string, char **variable, int *k, int ini
 	return (new_args);
 }
 
-char    **expand(char *cmd, t_data *data)
+char    **expand(char *cmd, t_data *data, int *should_expand)
 {
 	char	**args;
 	char	*string;
@@ -112,8 +112,9 @@ char    **expand(char *cmd, t_data *data)
 				continue ;
 			}
 
-			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes)
+			if (args[k][i] == '$' && ft_isalnum(args[k][i + 1]) && !in_squotes && !data->is_heredoc)
 			{
+				
 				printf("------------- %c -------------\n", args[k][i]);
 				new_str = get_env_content(*data->envl, &args[k][i + 1]);
 				if (!new_str)
@@ -142,19 +143,28 @@ char    **expand(char *cmd, t_data *data)
 					if (temp[0] != '\0')
 						args[k] = ft_strjoin(args[k], temp); // args[k] is the last var arg	
 					string = ft_strdup("");
-				}
-				
+				}	
 			}
-			
 			new_str = malloc(2); // accumulate the current char to arg
 			new_str[0] = args[k][i]; // heap buffer overflow 
 			new_str[1] = '\0';
-
 			string = ft_strjoin(string, new_str); // accumulate the current char to arg
 			free(new_str);
 			new_str = NULL;
 			i++;
 		}
+
+		printf("is heredoc ------ > %d %d\n", k, data->is_heredoc);
+		if (k == 0 && data->is_heredoc > 0)
+		{
+			printf("-------%s single quotes\n", ft_strchr(args[k], '\''));
+			if (ft_strchr(args[k], '\'') || ft_strchr(args[k], '\"'))
+				*should_expand = 0;
+				
+			data->is_heredoc--;
+		}
+		printf("is heredoc ------ > %d %d\n", k, data->is_heredoc);
+
 		if (is_expanded)
 			string = ft_strdup("");
 		else
@@ -190,6 +200,7 @@ char    **expand(char *cmd, t_data *data)
 			// }
 			// k++;
 		}
+
 	}
 	// j = 0;
 	// while(args[j])
@@ -202,4 +213,3 @@ char    **expand(char *cmd, t_data *data)
 }
 //export a="'ls'"
 //echo $'PWD' ----> PWD (correct output)
-

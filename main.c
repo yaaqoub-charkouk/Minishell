@@ -113,7 +113,7 @@ int	main(int ac, char **av, char **envp)
 		data.env = env_struct_to_char(env);
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
-		data.done_with_heredoc = 0;
+		data.is_heredoc = 0;
 		if (!line)
 		{
 			printf("line is NULL from readline\n");
@@ -130,6 +130,8 @@ int	main(int ac, char **av, char **envp)
 		{
 			printf("skipping\n");    // need to free tokens
 			data.exit_status = 258;
+			if(syntax == 1337)
+				data.exit_status = 0;
 			continue ;
 		}
 		function(&tokens);
@@ -137,9 +139,9 @@ int	main(int ac, char **av, char **envp)
 		// here_doc(tree, &data); // prepare all heredoc first
 		
 		// print_tokens(tokens);
-
+		
 		pre_execution(tree, &data);
-		print_tree(tree, 0);
+		// print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
 		if (!isatty(STDIN_FILENO))
 		{

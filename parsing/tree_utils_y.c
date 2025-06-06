@@ -19,9 +19,9 @@ void print_tree(t_tree *node, int level)
 
     for (int i = 0; i < level; i++)
         printf("   ");  // Indentation
-	if (node->args)
+	// if (node->args)
    		printf("%s\n", node->cmd);  // Print current node
-	else
-		printf("%s\n", NULL);
+	// else
+		// printf("%s\n", NULL);
     print_tree(node->left, level + 1);  // Print left subtree
 }
