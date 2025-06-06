@@ -1,12 +1,37 @@
 #include "built_ins.h"
 
+void	remove_env_var(t_data *data, char *arg)
+{
+	t_env	*curr;
+	t_env	*prev;
+	int		len;
+
+	prev = NULL;
+	curr = *data->envl;
+	while (curr)
+	{
+		len = ft_strlen(arg);
+		if (ft_strncmp(curr->content, arg, len) == 0)
+
+		{
+			if (prev == NULL)
+				*data->envl = curr->next;
+			else
+				prev->next = curr->next;
+			free(curr->content);
+			free(curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+}
+
 int	built_in_unset(char **args, t_data *data)
 {
 	int		len;
 	int		i;
 	int		return_value;
-	t_env	*prev;
-	t_env	*curr;
 
 	i = 1;
 	return_value = 0;
@@ -22,25 +47,8 @@ int	built_in_unset(char **args, t_data *data)
 			return_value = 1;
 			continue ;
 		}
-		prev = NULL;
-		curr = *data->envl;
-		while (curr)
-		{
-			len = ft_strlen(args[i]);
-			if (ft_strncmp(curr->content, args[i], len) == 0)
-
-			{
-				if (prev == NULL)
-					*data->envl = curr->next;
-				else
-					prev->next = curr->next;
-				free(curr->content);
-				free(curr);
-				return (return_value);
-			}
-			prev = curr;
-			curr = curr->next;
-		}
+		else
+			remove_env_var(data, args[i]);
 		i++;
 	}
 	return (return_value);

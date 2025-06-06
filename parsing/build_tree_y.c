@@ -20,11 +20,11 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	(void)data;
 	if (!token)
 		return (NULL);
-	tree_node->red.flag = 1; // pass a pointer to expand and check if we need to expand inside heredoc ;
 	if (token->type == HEREDOC)
 		data->is_heredoc++; // like semaphore;
 
 	tree_node = malloc(sizeof(t_tree));
+	tree_node->red.flag = 1; // pass a pointer to expand and check if we need to expand inside heredoc ;
 	// tree_node->args = ft_split(token->content, ' '); // expand here
 	if (token->type == CMD)
 		tree_node->args = expand(token->content, data, &tree_node->red.flag);   // wait every time you expand limiter;
