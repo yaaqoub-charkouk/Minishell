@@ -89,7 +89,7 @@ t_list	*build_sy_queue(t_list	*token)
 				add_op_to_queue(&queue, &stack_op); // done
 			push_to_op_stack(&stack_op, token); // done
 		}
-		printf("token->content : %s\n", token->content);
+		// printf("token->content : %s\n", token->content);
 		
 		token = token->next;
 	}

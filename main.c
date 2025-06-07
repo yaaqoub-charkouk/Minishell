@@ -98,9 +98,9 @@ int	main(int ac, char **av, char **envp)
 
 		// no need for tokens , queue, op stack ... 
 
-		// pre_execution(tree, &data);
+		pre_execution(tree, &data);
 		// print_tree(tree, 0);
-		// data.exit_status = execution(tree, &data, 0);
+		data.exit_status = execution(tree, &data, 0);
 		if (!isatty(STDIN_FILENO))
 		{
 			break ;
