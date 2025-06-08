@@ -1,55 +1,12 @@
 #include "built_ins.h"
 
-void	update_pwd(t_env *env, char *path, char *oldpwd)
-{
-	char	*new_pwd;
-	char	*old_pwd;
-
-	while (env)
-	{
-		if (ft_strncmp(env->content, "PWD=", 4) == 0)
-		{
-			new_pwd = ft_strjoin("PWD=", path);
-			if (!new_pwd)
-				return ;
-			free(env->content);
-			env->content = new_pwd;
-		}
-		else
-		{
-			// if (new_pwd)
-			// {
-			// 	char *join2 = ft_strjoin("PWD=", new_pwd);
-			// 	built_in_export(&join2, &env);
-			// }
-		}
-		if (ft_strncmp(env->content, "OLDPWD=", 7) == 0)
-		{
-			old_pwd = ft_strjoin("OLDPWD=", oldpwd);
-			if (!old_pwd)
-				return ;
-			free(env->content);
-			env->content = old_pwd;
-		}
-		else
-		{
-			// if (old_pwd)
-			// {
-			// 	char *join = ft_strjoin("OLDPWD=", old_pwd);
-			// 	built_in_export(&join, &env);
-			// }
-		}
-		env = env->next;
-	}
-}
-
 char	*get_env_content(t_env *env, char *value)
 {
 	int	len;
 	
 	len = 0;
-	
-
+	if (!value || !*value)
+		return (NULL);
 	while (value[len] && ft_isalnum(value[len]))
 	{
 		len++;
@@ -63,63 +20,85 @@ char	*get_env_content(t_env *env, char *value)
 	}
 	return (NULL);
 }
-
-int	built_in_cd(char **args, t_data *data)
+void	update_pwd(char *oldpwd, char *newpwd, t_data *data)
+{
+	char **args;
+	
+	args = malloc(4 * sizeof(char *));
+	if (!args)
+	{
+		free(oldpwd);
+		free(newpwd);
+		return ;
+	}
+	args[0] = "export";
+	args[1] = ft_strjoin("PWD=", newpwd);
+	args[2] = ft_strjoin("OLDPWD=", oldpwd);
+	args[3] = NULL;
+	if (!args[1] || !args[2])
+	{
+		free(args[1]);
+		free(args[2]);
+		free(args);
+		free(oldpwd);
+		free(newpwd);
+		return ;
+	}
+	built_in_export(args, data);
+	free(args[1]);
+	free(args[2]);
+	free(args);
+}
+char	*get_cd_path(char **args,  t_data *data, int *print_olpwd)
 {
 	char	*path;
-	char	*oldpwd;
-	char	*prev_oldpwd;
-	char	*newpwd;
 
-	oldpwd = getcwd(NULL, 0);
-	if (!oldpwd)
-		return (perror("minishell: getcwd"), 1);
 	if (!args[1] || !*args[1] || args[1][0] == '~')
 	{
 		path = get_env_content(*data->envl, "HOME");
 		if (!path)
 		{
 			write(2, "cd: HOME not set\n", 17);
-			return (free(oldpwd), 1);
+			return (NULL);
 		}
 	}
 	else if (args[1] && args[1][0] == '-')
 	{
-		prev_oldpwd = get_env_content(*data->envl, "OLDPWD");
-		if (!prev_oldpwd)
+		path = get_env_content(*data->envl, "OLDPWD");
+		if (!path)
 		{
 			write(2, "cd: OLDPWD not set\n", 19);
-			return (free(oldpwd), 1);
+			return (NULL);
 		}
-		printf("%s\n", prev_oldpwd);
-		path = prev_oldpwd;
+		else
+			*print_olpwd = 1;
 	}
 	else
 		path = args[1];
+	return (path);
+}
+int	built_in_cd(char **args, t_data *data)
+{
+	char	*path;
+	char	*oldpwd;
+	char	*newpwd;
+	int		print_oldpwd;
+
+	print_oldpwd = 0;
+	oldpwd = getcwd(NULL, 0);
+	if (!oldpwd)
+		return (perror("minishell: getcwd"), 1);
+	path = get_cd_path(args, data, &print_oldpwd);
+	if (!path)
+		return (free(oldpwd), 1);
 	if (chdir(path) != 0)
 	{
 		perror("minishell: cd");
 		return (free(oldpwd), 1);
 	}
+	if (print_oldpwd)
+		printf("%s\n", path);
 	newpwd = getcwd(NULL, 0);
-	update_pwd(*data->envl, newpwd, oldpwd);
-	char **args2 = malloc(4 * sizeof(char *));
-	if (!args2)
-		return (free(oldpwd), free(newpwd), 1);
-	args2[0] = "export";
-	args2[1] = ft_strjoin("PWD=", newpwd);
-	args2[2] = ft_strjoin("OLDPWD=", oldpwd);
-	args2[3] = NULL;
-	// if (!args2[1] || !args2[2])
-	// {
-	// 	free(args2[1]);
-	// 	free(args2[2]);
-	// 	free(args2);
-	// 	return (free(oldpwd), free(newpwd), 1);
-	// }
-	built_in_export(args2, data);
-	// free(args2[1]);
-	// free(args2[2]);
-	// free(args2);
+	update_pwd(oldpwd, newpwd, data);
 	return (free(oldpwd), free(newpwd), 0);
 }

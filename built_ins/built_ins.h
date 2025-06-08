@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/04 21:02:55 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/06 15:18:55 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ typedef struct s_data
 	int		is_heredoc; // 
 }	t_data;
 
+//export_utils.c
+t_env	*get_env_list(t_env *env, char *value);
+void	ft_put_variable(char *var);
 int	is_unvalid_name(char *value);
 
 void	ft_add_back(t_env **lst, t_env *new);

@@ -1,81 +1,85 @@
 #include "built_ins.h"
 
-t_env	*get_env_list(t_env *env, char *value)
+void	handle_plus(char *plus, char *temp, t_data *data, t_env *curr)
 {
-	int	len;
+	char *joined;
+	char *joined2;
 
-	len = 0;
-	while (value[len] && value[len] != '=' && value[len] != '+')
-		len++;
-	while (env)
+	*plus = '\0';
+	if (curr)
 	{
-		if (ft_strncmp(env->content, value, len) == 0)
-			return (env);
-		env = env->next;
+		if (ft_strchr(curr->content, '='))
+			joined2 = ft_strjoin(curr->content, plus + 2);
+		else
+		{
+			joined = ft_strjoin(temp, "=");
+			joined2 = ft_strjoin(joined, plus + 2);
+			// free(joined);
+		}
+		free(curr->content);
+		curr->content = joined2;
 	}
-	return (NULL);
+	else
+	{
+		joined = ft_strjoin(temp, "=");
+		joined2 = ft_strjoin(joined, plus + 2);
+		ft_add_back(data->envl, ft_new(joined2));
+		// free(joined);
+		// free(joined2);
+	}
+}
+void	export_process_arg(char *arg, t_data *data)
+{
+    t_env	*curr;
+    char	*plus;
+    char	*equal;
+    char	*temp;
+
+    temp = ft_strdup(arg);
+    curr = get_env_list(*data->envl, arg);
+    plus = ft_strnstr(temp, "+=", ft_strlen(temp));
+    equal = ft_strchr(temp, '=');
+    if (plus)
+        handle_plus(plus, temp, data, curr);
+    else if (equal)
+	{
+		if (curr)
+		{
+			// free old content
+			free(curr->content);
+			curr->content = ft_strdup(arg);
+		}
+		else
+			ft_add_back(data->envl, ft_new(arg));
+	}
+    else if (!curr)
+        ft_add_back(data->envl, ft_new(arg));
+    // free(temp);
 }
 
-int	is_unvalid_name(char *value)
+void	print_export(t_data *data)
 {
-	int	i;
+	t_env	*curr;
 
-	i = 0;
-	if (!value || (!ft_isalpha(value[i]) && value[i] != '_'))
-		return (1);
-	while (value[i] && value[i] != '=' && value[i] != '+')
+	curr = *data->envl;
+	while (curr)
 	{
-		if (!ft_isalnum(value[i]) && value[i] != '_')
-			return (1);
-		i++;
+		ft_put_variable(curr->content);
+		curr = curr->next;
 	}
-	return (0);
-}
-
-void	ft_putvariable(char *var)
-{
-	write (1, "declare -x ", 11);
-	while (*var && *var != '=')
-	{
-		write (1, var, 1);
-		var++;
-	}
-	if (*var == '=')
-	{
-		write (1, var, 1);
-		var++;
-		write (1, "\"", 1);
-		write (1, var, ft_strlen(var));
-		write (1, "\"", 1);
-	}
-	write (1, "\n", 1);
 }
 
 int	built_in_export(char **args, t_data *data)
 {
-	t_env	*curr;
 	int		i;
 	int		return_value;
-	char	*plus;
-	char	*equal;
-	char	*name;
-	char	*value;
-	char	*temp;
-	char	*joined;
-	char	*joined2;
-	char	*last_joined;
-	char	*prev_value;
 
 	i = 1;
 	return_value = 0;
-	curr = *data->envl;
 	if (!args[1])
 	{
-		while (curr)
-		{
-			ft_putvariable(curr->content);
-			curr = curr->next;
-		}
+		print_export(data);
+		return (0);
 	}
 	while (args[i])
 	{
@@ -85,73 +89,11 @@ int	built_in_export(char **args, t_data *data)
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
 			i++;
-			//change the return value to 1;
 			return_value = 1;
 			continue ;
 		}
-		temp = ft_strdup(args[i]);
-		curr = get_env_list(*data->envl, args[i]);
-		plus = ft_strnstr(temp, "+=", ft_strlen(temp));
-		equal = ft_strchr(temp, '=');
-		if (plus)
-		{
-			*plus = '\0';
-			name = temp;
-			value = plus + 2;
-			if (curr)
-			{
-				prev_value = ft_strchr(curr->content, '=');
-				if (prev_value)
-				{
-					joined = ft_strjoin(prev_value + 1, value);
-					joined2 = ft_strjoin(temp, "=");
-					last_joined = ft_strjoin(joined2, joined);
-					// free old content
-					free(curr->content);
-					curr->content = last_joined;
-					//free the temp variables
-					// free(joined);
-					// free(joined2);
-					// free(value);
-				}
-				else
-				{
-					joined = ft_strjoin(temp, "=");
-					joined2 = ft_strjoin(joined, value);
-					// free old content
-					free(curr->content);
-					curr->content = joined2;
-					// free the temp variables
-					// free(joined);
-					// free(joined2);
-				}
-			}
-			else
-			{
-				joined = ft_strjoin(temp, "=");
-				joined2 = ft_strjoin(joined, value);
-				ft_add_back(data->envl, ft_new(joined2));
-				// free the temp variables
-				// free(joined);
-				// free(joined2);
-			}
-		}
-		else if (equal)
-		{
-			if (curr)
-			{
-				// free old content
-				free(curr->content);
-				curr->content = ft_strdup(args[i]);
-			}
-			else
-				ft_add_back(data->envl, ft_new(args[i]));
-		}
-		else if (!curr)
-			ft_add_back(data->envl, ft_new(args[i]));
+		export_process_arg(args[i], data);
 		i++;
-		// free the temp variable after using it
-		// free(temp);
 	}
 	return (return_value);
 }
