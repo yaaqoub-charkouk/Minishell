@@ -92,12 +92,12 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 	while (var[v]) // add the variable args ;
 		new_args[(*k)++] = ft_strdup(var[v++]);
 	v = *k;
-	(*k)--;
+	// (*k)--;
 	while ((*args)[j])
 		new_args[v++] = ft_strdup((*args)[j++]);
 	new_args[v] = NULL;
-	*pile = ft_strdup(new_args[*k]);
-
+	*pile = ft_strdup(new_args[(*k) - 1]);
+	// (*k)--;
 	// free (var) , free(old args);
 	*args = new_args;
 }
@@ -125,7 +125,7 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 		if (arg[i] == '$' && ft_isalnum(arg[i + 1]) && !in_squotes) // we have variable to expand ;
 		{
 			var_value = get_var_value(*data->envl, arg + i + 1, &i); // get the var value , and skip the var name ;
-			if (in_dquotes)
+			if (in_dquotes || !ft_strchr(var_value, ' '))
 				pile = ft_strjoin(pile, var_value);
 			else
 			{
@@ -153,9 +153,7 @@ char	**ft_expand(char *cmd, t_data *data, int  *should_expand)
 		return (NULL);
 	while (args[k])
 	{
-		printf("before exp str k is %d\n", k);
 		expand_string(data, &args, &k); // the function shold be void ; updating the args and k ;
-		printf("after exp str k is %d\n", k);
 		if(!args[k])
 			break ;
 		k++;
