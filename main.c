@@ -81,12 +81,13 @@ void	free_env(char **env, t_env *envl)
 }
 int	main(int ac, char **av, char **envp)
 {
-	t_list	*tokens;
-	t_tree	*tree;
+	t_list	*tokens; // to free
+	t_tree	*tree; 
 	t_env	*env;
 	t_data	data;
 	char	*line;
-	char *prompt;
+	char	*prompt;
+
 	(void)ac;
 	(void)av;
 	env = NULL;
@@ -125,10 +126,10 @@ int	main(int ac, char **av, char **envp)
 		add_history(line);
 		tokens = tokenize(line);
 		int syntax;
-		syntax = is_syntax_error(line, tokens);
+		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
 		if (syntax)
 		{
-			printf("skipping\n");    // need to free tokens
+			printf("skipping\n");  // need to free tokens
 			data.exit_status = 258;
 			if(syntax == 1337)
 				data.exit_status = 0;
@@ -136,10 +137,9 @@ int	main(int ac, char **av, char **envp)
 		}
 		function(&tokens);
 		tree = build_tree(tokens, &data); // free queue , op stack , tokens
-		// here_doc(tree, &data); // prepare all heredoc first
-		
-		// print_tokens(tokens);
-		
+
+		// no need for tokens , queue, op stack ... 
+
 		pre_execution(tree, &data);
 		// print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
@@ -147,7 +147,7 @@ int	main(int ac, char **av, char **envp)
 		{
 			break ;
 		}
-		// (void)tree;
+
 	}
 	free_env(data.env, *data.envl);
 	rl_clear_history();

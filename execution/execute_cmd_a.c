@@ -79,14 +79,13 @@ void    identify_read_write(t_tree *node)
 		dup2(fd, STDOUT_FILENO);
 		close (fd);
 	}
-	printf("read fd ------> %d\n", node->red.in_fd);
 	if (node->red.in_fd != -1) // change the read fd
 	{
 		dup2(node->red.in_fd, STDIN_FILENO);
 		close(node->red.in_fd);
 	}
 }
-#include <string.h>
+
 int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 {
 	int		pid;

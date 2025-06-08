@@ -7,6 +7,7 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <dirent.h>
+# include <sys/wait.h>
 
 typedef struct s_redir
 {

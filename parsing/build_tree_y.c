@@ -61,22 +61,24 @@ t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
 
 t_tree	*build_tree(t_list	*tokens, t_data *data)
 {
+	t_tree	*root;
 	t_list	*reversed_queue;
-	t_list	*temp;
-	t_list *queue;
-	t_tree *root;
+	t_list	*queue;
+	t_list	*to_free;
 	
-	queue = build_sy_queue(tokens);
+	// print_list(tokens);
+	queue = build_sy_queue(tokens); // don't allocate , just reorder tokens 
+	// print_list(queue);
 	reversed_queue = NULL;
 	root = NULL;
 	while (queue)
 	{
-		push(queue, &reversed_queue);
+		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
-	temp = reversed_queue; // to free it later;
-	print_list(temp);
+	to_free = reversed_queue; // to free it later;
 	root = build_tree_from_rqueue(&reversed_queue, data);
+
 	// print_tree(root, 0);
 	return (root);
 }

@@ -154,7 +154,7 @@ char    **expand(char *cmd, t_data *data, int *should_expand)
 			i++;
 		}
 
-		printf("is heredoc ------ > %d %d\n", k, data->is_heredoc);
+		// printf("is heredoc ------ > %d %d\n", k, data->is_heredoc);
 		if (k == 0 && data->is_heredoc > 0)
 		{
 			printf("-------%s single quotes\n", ft_strchr(args[k], '\''));
@@ -163,7 +163,6 @@ char    **expand(char *cmd, t_data *data, int *should_expand)
 				
 			data->is_heredoc--;
 		}
-		printf("is heredoc ------ > %d %d\n", k, data->is_heredoc);
 
 		if (is_expanded)
 			string = ft_strdup("");
@@ -195,19 +194,12 @@ char    **expand(char *cmd, t_data *data, int *should_expand)
 					printf("%d %s\n", j, args[j]);
 					j++;
 				}
-				//we need to add space after each argument
 				// i++;
 			// }
 			// k++;
 		}
 
 	}
-	// j = 0;
-	// while(args[j])
-	// {
-	// 	printf("%d %s\n", j, args[j]);
-	// 	j++;
-	// }
 	
 	return (args);
 }

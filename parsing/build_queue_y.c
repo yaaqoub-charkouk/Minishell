@@ -39,6 +39,8 @@ int	push_to_op_stack(t_list **op_stack, t_list	*token) // push the operator to o
 	new_node->type = token->type;
 	new_node->next = *op_stack;
 	*op_stack = new_node;
+	// token->next = *op_stack;
+	// *op_stack = token;
 	return (1);
 }
 
@@ -69,7 +71,7 @@ int	precedence(t_type_node type) // the precedent make the position of the opera
 t_list	*build_sy_queue(t_list	*token)
 {
 	t_list	*queue;
-	t_list	*stack_op;
+	t_list	*stack_op; // no need to free ;
 
 	queue = NULL;
 	stack_op = NULL;
@@ -87,6 +89,8 @@ t_list	*build_sy_queue(t_list	*token)
 				add_op_to_queue(&queue, &stack_op); // done
 			push_to_op_stack(&stack_op, token); // done
 		}
+		// printf("token->content : %s\n", token->content);
+		
 		token = token->next;
 	}
 	while (stack_op)

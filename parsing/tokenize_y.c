@@ -38,9 +38,9 @@ t_list	*tokenize(char	*line)
 	int			op_len;
 	int			in_dquotes;
 	int			in_squotes;
-	char		*word;
-	char		*operator;
-	char		*temp;
+	char		*word; // i free it after trim 
+	char		*operator; // the content for tokens and queue
+	char		*trimmed; // same as operator
 	t_list		*head;
 	t_list		*new_node;
 	t_list		*list;
@@ -65,14 +65,14 @@ t_list	*tokenize(char	*line)
 		
 		if (type != CMD && !(in_squotes + in_dquotes)) // if we are in quotes , don't split;
 		{
-			if (i > start)
+			if (i > start) // add the hole command as string as a token to the linked list ;
 			{
-				// add the hole command as string as a token to the linked list ;
-				word = ft_substr(line, start, i - start); // i allocate memory here !!!!!!!!!
-				temp = ft_strtrim(word, " ", "	"); // i allocate memory here !!!!!!!!!!
-				if (ft_strlen(temp))
+				word = ft_substr(line, start, i - start); // free it after trim
+				trimmed = ft_strtrim(word, " ", "	");// no need to realloc for it , free it at expand
+				free(word);
+				if (ft_strlen(trimmed))
 				{
-					new_node = ft_lstnew(temp); // i allocate memory here !!!!!!!!!!!!!
+					new_node = ft_lstnew(trimmed);
 					new_node->type = CMD;
 					if (!head)
 					{
@@ -112,20 +112,19 @@ t_list	*tokenize(char	*line)
 	if (i > start)
 	{
 		word = ft_substr(line, start, i - start);
-		temp = ft_strtrim(word, " ", "	");
-		if (ft_strlen(temp))
+		trimmed = ft_strtrim(word, " ", "	");
+		free(word);
+		if (ft_strlen(trimmed))
 		{
-			new_node = ft_lstnew(temp);
+			new_node = ft_lstnew(trimmed);
 			new_node->type = CMD;
 			if (!head)
 				head = new_node;
 			else
-			{
 				list->next = new_node;
-				// list->next->next = NULL; // terminate the linked list ;
-			}
 		}
 	}
+
 	return (head);
 }
 
