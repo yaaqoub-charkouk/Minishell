@@ -1,5 +1,15 @@
 #include "parsing.h"
 
+void	print_args(char **args)
+{
+	int i = 0;
+	while (args[i])
+	{
+		printf("new_args[%d] : %s\n", i, args[i]);
+		i++;
+	}
+}
+
 char	*accumulate_char(char *str, char c)
 {
 	char	*new_str;
@@ -41,13 +51,14 @@ char	*get_var_value(t_env *env, char *value, int *i)
 	
 	len = 0;
 	
-
-	while (value[len] && ft_isalnum(value[len]))
+	if (value[0] == '0')
+		return ((*i)++, ft_strdup("minishell"));
+	while (value[len] && (ft_isalnum(value[len]) || value[len] == '_'))
 	{
 		len++;
 	}
-	if (i && len)
-		*i += len - 1;
+	// if (i && len)
+		*i += len;
 	while (env)
 	{
 		if (ft_strncmp(env->content, value, len) == 0 
@@ -70,45 +81,93 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 {
 	int		j;
 	int		v;
+	int		l;
 	int		size;
+	int		var_count;
 	char	**var;
 	char	**new_args;
 
-	var = ft_split_pipex(value, ' '); // free it at the end of this function ;
+	printf("insert variable k is %d\n", *k);
+	var = ft_split_pipex(value, ' ');
 	if (!var)
 		return ;
-	size = ft_argslen(*args) + ft_argslen(var);
-	new_args = malloc(size * sizeof(char *));
+	
+	var_count = ft_argslen(var);
+	size = ft_argslen(*args) + var_count;
+	new_args = malloc((size + 1) * sizeof(char *));
 	if (!new_args)
 		return ;
+	
 	j = 0;
 	v = 0;
-	while (j < *k) // copy previous args; (*args)[j] && 
+	
+	while (j < *k)
 	{
 		new_args[j] = ft_strdup((*args)[j]);
 		j++;
-	}// j == *k;
-	new_args[(*k)++] = ft_strjoin(*pile, var[v++]);
-	while (var[v]) // add the variable args ;
-		new_args[(*k)++] = ft_strdup(var[v++]);
-	v = *k;
-	// (*k)--;
-	while ((*args)[j])
-		new_args[v++] = ft_strdup((*args)[j++]);
-	new_args[v] = NULL;
-	*pile = ft_strdup(new_args[(*k) - 1]);
-	// (*k)--;
-	// free (var) , free(old args);
+	}
+	
+	new_args[j] = ft_strjoin(*pile, var[v]);
+	j++;
+	v++;
+	
+	while (var[v])
+	{
+		new_args[j] = ft_strdup(var[v]);
+		j++;
+		v++;
+	}
+	
+	l = *k + 1;
+	while ((*args)[l])
+	{
+		new_args[j] = ft_strdup((*args)[l]);
+		j++;
+		l++;
+	}
+	new_args[j] = NULL;
+	
+	*pile = ft_strdup(new_args[*k + var_count - 1]);
+	
+	*k = *k + var_count - 1;
+	
+	printf("update k to %d\n", *k);
+	printf("pile at k=%d : %s\n", *k, *pile);
+	
+	// free old args and var
 	*args = new_args;
 }
+void	expand_variable(t_data *data, char ***args, char *arg, char **pile, int *k, int *i,int in_dquotes, int in_squotes)
+{
+	char	*var_value;
 
+	var_value = get_var_value(*data->envl, arg + *i + 1, i); // get the var value , and skip the var name ;
+	if (arg[*i + 1] == '$')
+		var_value = ft_strdup("1337");
+	if (arg[*i + 1] == '?')
+	{
+		if (g_sig)
+		{
+			data->exit_status = g_sig;
+			g_sig = 0;
+		}
+		var_value = ft_itoa(data->exit_status);
+	}
+	if (arg[*i + 1] == '?' || arg[*i + 1] == '$')
+		(*i)++;
+	if (in_dquotes || !ft_strchr(var_value, ' '))
+		*pile = ft_strjoin(*pile, var_value);
+	else
+	{
+		insert_variable(args, pile, var_value, k);
+	}
+}
 char	*expand_string(t_data *data, char ***args, int	*k)
 {
 	int		in_dquotes;
 	int		in_squotes;
 	int		i;
 	char	*pile;
-	char	*var_value;
 	char	*arg;
 
 	in_dquotes = 0;
@@ -122,16 +181,9 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 		if (in_quotes(arg[i], &in_dquotes, &in_squotes, &i))
 			continue ; // if in quotes s*kip it ;
 		/*----------------------------------------------------------------------------------------------------*/
-		if (arg[i] == '$' && ft_isalnum(arg[i + 1]) && !in_squotes) // we have variable to expand ;
+		if (arg[i] == '$' && (ft_isalnum(arg[i + 1]) || arg[i + 1] == '_' || arg[i + 1] == '?' || arg[i + 1] == '$' || arg[i + 1] == '0') && !in_squotes) // we have variable to expand ;
 		{
-			var_value = get_var_value(*data->envl, arg + i + 1, &i); // get the var value , and skip the var name ;
-			if (in_dquotes || !ft_strchr(var_value, ' '))
-				pile = ft_strjoin(pile, var_value);
-			else
-			{
-				insert_variable(args, &pile, var_value, k);
-				// free(var_value); var_value = NULL;
-			}
+			expand_variable(data, args, arg, &pile, k, &i, in_dquotes, in_squotes);
 		}
 		else
 			pile = accumulate_char(pile, arg[i]); // accumulate the char to pile;
