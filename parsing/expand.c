@@ -108,6 +108,8 @@ void	insert_variable(char ***args, char **pile, char *value, int *k, int word_bo
 		return ;
 	size = 0;
 	var_count = ft_argslen(var);
+	if (var_count > 1)
+		printf("ambiguous redirect\n");
 	size = ft_argslen(*args) + var_count;
 	if (end_with_space(value) && word_boundary)
 		size++;
@@ -189,6 +191,7 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 	char		*pile;
 	int			i;
 
+	
 	expand.in_dquotes = 0;
 	expand.in_squotes = 0;
 	expand.k = k;
@@ -210,17 +213,17 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 	}
 	(*args)[*k] = pile; // k is the last known arg ;
 	
-	return (pile); // if you want to expand string by string ;
+	return ((*args)[0]); // if you want to expand string by string ;
 }
 
-char	**ft_expand(char *cmd, t_data *data, int  *should_expand)
+char	**ft_expand(char **cmd_args, t_data *data, int  *should_expand)
 {
 	char	**args;
 	int		k;
 
-	*should_expand = 0;
+	(void)should_expand;
 	k = 0;
-	args = ft_split_pipex(cmd, ' ');
+	args = cmd_args;
 	if (!args)
 		return (NULL);
 	while (args[k])

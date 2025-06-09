@@ -1,0 +1,12 @@
+Makefile
+Ra
+built_ins
+execution
+includes
+main.c
+minishell
+minishell.h
+parsing
+signals
+utils
+wildcards

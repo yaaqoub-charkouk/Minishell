@@ -40,11 +40,11 @@ typedef struct s_expand
 } t_expand;
 
 
-char	**ft_expand(char *cmd, t_data *data, int  *should_expand);
+char	**ft_expand(char **cmd, t_data *data, int  *should_expand);
 
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
-
+char	*expand_string(t_data *data, char ***args, int	*k);
 
 
 /**** tokenization ***/

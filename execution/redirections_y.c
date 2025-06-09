@@ -124,30 +124,35 @@ void	open_heredoc(char	*limiter, t_redir *redir) //
 	close(fd[1]);
 }
 
-void	open_fd(t_tree	*node, t_redir *redir)
+void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 {
+	int	k;
+
+	k = 0;
 	add_cmd_options(&redir->args_list, node->args, 1);
+
+	if (*(redir->type) == HEREDOC)
+		open_heredoc(node->args[0], redir);
+	expand_string(data, &node->args, &k);
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);
 	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)
 		open_infile(node->args[0], redir);
-	else if (*(redir->type) == HEREDOC)
-		open_heredoc(node->args[0], redir);
 }
 
 
-void	traverse_branch(t_tree *node, t_redir *redir)
+void	traverse_branch(t_data *data, t_tree *node, t_redir *redir)
 {
 	if (node->left)
-		open_fd(node->left, redir);
+		open_fd(data, node->left, redir);
 	else 
-		open_fd(node, redir);
+		open_fd(data, node, redir);
 	*(redir->type) = node->type;
 	if (node->right)
-		traverse_branch(node->right, redir);
+		traverse_branch(data, node->right, redir);
 }
 
-int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
+int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 {
 	t_redir redir;
 
@@ -160,7 +165,7 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
-	traverse_branch(node, &redir);
+	traverse_branch(data, node, &redir);
 	if (redir.entry_node->type == REDIRECTION_IN || redir.entry_node->type == REDIRECTION_OUT 
 			|| redir.entry_node->type == APPEND || redir.entry_node->type == HEREDOC)
 	{
@@ -169,7 +174,6 @@ int	bridge(t_tree *node, t_tree *entry_node, t_type_node *type)
 		// redir.entry_node->red.erno = redir.open_error;
 		// printf ("------asdasd%dredir.open_error%d",redir.entry_node->red.erno , redir.open_error);
 		// printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
-		
 	}
 	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it
 	{
@@ -205,7 +209,7 @@ int	pre_execution(t_tree *node, t_data *data)
 		if (node->right && (node->type == REDIRECTION_IN || node->type == REDIRECTION_OUT 
 			|| node->type == APPEND || node->type == HEREDOC))
 		{
-			open_error = bridge(node->right, node, &type); // traverse a branch
+			open_error = bridge(data, node->right, node, &type); // traverse a branch
 		}
 	}
 	return (open_error);
