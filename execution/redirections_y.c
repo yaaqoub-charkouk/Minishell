@@ -94,6 +94,8 @@ void	open_heredoc(char	*limiter, t_redir *redir) //
 		
 		return ;
 	}
+	if (ft_strchr(limiter, '\'') || ft_strchr(limiter, '\"'))
+		redir->node->red.flag = 0;
 	pid = fork();
 	if (pid < 0)
 		perror("heredoc");
@@ -104,6 +106,8 @@ void	open_heredoc(char	*limiter, t_redir *redir) //
 		while (1)
 		{
 			line = readline(">");
+			if (redir->node->red.flag)
+				printf("we should expand at heredoc\n");
 			if (!line)
 				exit (0);
 			if (!ft_strncmp(line, limiter, limiter_len) 
