@@ -81,7 +81,6 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 {
 	int		j;
 	int		v;
-	int		l;
 	int		size;
 	int		var_count;
 	char	**var;
@@ -91,7 +90,6 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 	var = ft_split_pipex(value, ' ');
 	if (!var)
 		return ;
-	
 	var_count = ft_argslen(var);
 	size = ft_argslen(*args) + var_count;
 	new_args = malloc((size + 1) * sizeof(char *));
@@ -118,12 +116,12 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 		v++;
 	}
 	
-	l = *k + 1;
-	while ((*args)[l])
+	v = *k + 1;
+	while ((*args)[v])
 	{
-		new_args[j] = ft_strdup((*args)[l]);
+		new_args[j] = ft_strdup((*args)[v]);
 		j++;
-		l++;
+		v++;
 	}
 	new_args[j] = NULL;
 	
@@ -137,14 +135,13 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 	// free old args and var
 	*args = new_args;
 }
-void	expand_variable(t_data *data, char ***args, char *arg, char **pile, int *k, int *i,int in_dquotes, int in_squotes)
+void	expand_variable(t_data *data, t_expand *expand, int *i)
 {
 	char	*var_value;
 
-	var_value = get_var_value(*data->envl, arg + *i + 1, i); // get the var value , and skip the var name ;
-	if (arg[*i + 1] == '$')
+	if (expand->arg[*i + 1] == '$')
 		var_value = ft_strdup("1337");
-	if (arg[*i + 1] == '?')
+	else if (expand->arg[*i + 1] == '?')
 	{
 		if (g_sig)
 		{
@@ -153,40 +150,38 @@ void	expand_variable(t_data *data, char ***args, char *arg, char **pile, int *k,
 		}
 		var_value = ft_itoa(data->exit_status);
 	}
-	if (arg[*i + 1] == '?' || arg[*i + 1] == '$')
+	if (expand->arg[*i + 1] == '?' || expand->arg[*i + 1] == '$')
 		(*i)++;
-	if (in_dquotes || !ft_strchr(var_value, ' '))
-		*pile = ft_strjoin(*pile, var_value);
 	else
-	{
-		insert_variable(args, pile, var_value, k);
-	}
+		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i); // get the var value , and skip the var name ;
+	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
+		*expand->pile = ft_strjoin(*expand->pile, var_value);
+	else
+		insert_variable(expand->args, expand->pile, var_value, expand->k);
 }
 char	*expand_string(t_data *data, char ***args, int	*k)
 {
-	int		in_dquotes;
-	int		in_squotes;
-	int		i;
-	char	*pile;
-	char	*arg;
+	t_expand	expand;
+	char		*pile;
+	int			i;
 
-	in_dquotes = 0;
-	in_squotes = 0;
-	i = 0;
+	expand.in_dquotes = 0;
+	expand.in_squotes = 0;
+	expand.k = k;
+	expand.arg = ft_strdup((*args)[*k]);
+	expand.args = args;
 	pile = ft_strdup(""); // init the pile to pile on it;
-	arg = ft_strdup((*args)[*k]);
+	expand.pile = &pile;
+	i = 0;
 
-	while (arg[i])
+	while (expand.arg[i])
 	{
-		if (in_quotes(arg[i], &in_dquotes, &in_squotes, &i))
+		if (in_quotes(expand.arg[i], &expand.in_dquotes, &expand.in_squotes, &i))
 			continue ; // if in quotes s*kip it ;
-		/*----------------------------------------------------------------------------------------------------*/
-		if (arg[i] == '$' && (ft_isalnum(arg[i + 1]) || arg[i + 1] == '_' || arg[i + 1] == '?' || arg[i + 1] == '$' || arg[i + 1] == '0') && !in_squotes) // we have variable to expand ;
-		{
-			expand_variable(data, args, arg, &pile, k, &i, in_dquotes, in_squotes);
-		}
+		if (expand.arg[i] == '$' && (ft_isalnum(expand.arg[i + 1]) || expand.arg[i + 1] == '_' || expand.arg[i + 1] == '?' || expand.arg[i + 1] == '$' || expand.arg[i + 1] == '0') && !expand.in_squotes) // we have variable to expand ;
+			expand_variable(data, &expand, &i);
 		else
-			pile = accumulate_char(pile, arg[i]); // accumulate the char to pile;
+			pile = accumulate_char(pile, expand.arg[i]); // accumulate the char to pile;
 		i++;
 	}
 	(*args)[*k] = pile; // k is the last known arg ;
@@ -199,6 +194,7 @@ char	**ft_expand(char *cmd, t_data *data, int  *should_expand)
 	char	**args;
 	int		k;
 
+	*should_expand = 0;
 	k = 0;
 	args = ft_split_pipex(cmd, ' ');
 	if (!args)

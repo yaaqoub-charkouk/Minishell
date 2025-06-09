@@ -29,9 +29,18 @@ typedef struct	s_tree
 	struct s_tree	*left;
 }	t_tree;
 
+typedef struct s_expand
+{
+	char	***args;
+	char	*arg;
+	char	**pile;
+	int		*k;
+	int		in_dquotes;
+	int		in_squotes;
+} t_expand;
 
 
-
+char	**ft_expand(char *cmd, t_data *data, int  *should_expand);
 
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
