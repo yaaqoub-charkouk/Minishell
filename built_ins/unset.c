@@ -33,6 +33,7 @@ int	built_in_unset(char **args, t_data *data)
 	int		i;
 	int		return_value;
 
+	len = 0;// just for flags 'by IY_TECHNOLOGY';
 	i = 1;
 	return_value = 0;
 	while (args[i])
