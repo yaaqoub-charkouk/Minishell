@@ -29,7 +29,7 @@ void	ft_add_back(t_env **lst, t_env *new)
 	last->next = new;
 }
 
-void	copy_env(char **envp, t_env **env)// char ** -> t_env **.
+void	copy_env(char **envp, t_env **env)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ void	copy_env(char **envp, t_env **env)// char ** -> t_env **.
 
 int	built_in_env(t_data *data)
 {
-	t_env *current;
+	t_env	*current;
 
 	current = *data->envl;
 	while (current)

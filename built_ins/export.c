@@ -2,8 +2,8 @@
 
 void	handle_plus(char *plus, char *temp, t_data *data, t_env *curr)
 {
-	char *joined;
-	char *joined2;
+	char	*joined;
+	char	*joined2;
 
 	*plus = '\0';
 	if (curr)
@@ -28,20 +28,21 @@ void	handle_plus(char *plus, char *temp, t_data *data, t_env *curr)
 		// free(joined2);
 	}
 }
+
 void	export_process_arg(char *arg, t_data *data)
 {
-    t_env	*curr;
-    char	*plus;
-    char	*equal;
-    char	*temp;
+	t_env	*curr;
+	char	*plus;
+	char	*equal;
+	char	*temp;
 
-    temp = ft_strdup(arg);
-    curr = get_env_list(*data->envl, arg);
-    plus = ft_strnstr(temp, "+=", ft_strlen(temp));
-    equal = ft_strchr(temp, '=');
-    if (plus)
-        handle_plus(plus, temp, data, curr);
-    else if (equal)
+	temp = ft_strdup(arg);
+	curr = get_env_list(*data->envl, arg);
+	plus = ft_strnstr(temp, "+=", ft_strlen(temp));
+	equal = ft_strchr(temp, '=');
+	if (plus)
+		handle_plus(plus, temp, data, curr);
+	else if (equal)
 	{
 		if (curr)
 		{
@@ -52,9 +53,9 @@ void	export_process_arg(char *arg, t_data *data)
 		else
 			ft_add_back(data->envl, ft_new(arg));
 	}
-    else if (!curr)
-        ft_add_back(data->envl, ft_new(arg));
-    // free(temp);
+	else if (!curr)
+		ft_add_back(data->envl, ft_new(arg));
+	// free(temp);
 }
 
 void	print_export(t_data *data)

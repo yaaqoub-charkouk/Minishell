@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/06 15:18:55 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/09 15:40:22 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ typedef struct s_data
 	char	**env;
 	int		read_fd;
 	int		exit_status;
-	int		is_heredoc; // 
+	int		is_heredoc;
 }	t_data;
 
 //export_utils.c
 t_env	*get_env_list(t_env *env, char *value);
 void	ft_put_variable(char *var);
-int	is_unvalid_name(char *value);
+int		is_unvalid_name(char *value);
 
 void	ft_add_back(t_env **lst, t_env *new);
 t_env	*ft_new(void *content);
@@ -46,6 +46,6 @@ int		built_in_exit(char **args, t_data *data);
 int		built_in_pwd(void);
 int		built_in_export(char **args, t_data *data);
 int		built_in_unset(char **args, t_data *data);
-char	**env_struct_to_char(t_env  *env);
+char	**env_struct_to_char(t_env *env);
 
 #endif
