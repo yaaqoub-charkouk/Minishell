@@ -8,6 +8,7 @@
 # include <errno.h>
 # include <dirent.h>
 # include <sys/wait.h>
+# include "../get_next_line/get_next_line.h"
 
 typedef struct s_redir
 {

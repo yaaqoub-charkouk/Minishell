@@ -106,7 +106,6 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		else	
 			return (1);
 	}
-	
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)

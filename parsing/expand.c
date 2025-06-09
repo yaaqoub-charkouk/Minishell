@@ -45,7 +45,7 @@ int	in_quotes(char c, int *in_dquotes, int *in_squotes, int *i)
 	return (0);
 }
 
-char	*get_var_value(t_env *env, char *value, int *i)
+char	*get_var_value(t_env *env, char *value, int *i, int *word_boundary)
 {
 	int	len;
 	
@@ -57,6 +57,8 @@ char	*get_var_value(t_env *env, char *value, int *i)
 	{
 		len++;
 	}
+	if (value[len])
+		*word_boundary = 1;
 	// if (i && len)
 		*i += len;
 	while (env)
@@ -77,7 +79,22 @@ int	ft_argslen(char **arg)
 		i++;
 	return (i);
 }
-void	insert_variable(char ***args, char **pile, char *value, int *k)
+
+int	end_with_space(char *value)
+{
+	int	i;
+
+	i = 0;
+	while (value[i])
+	{
+		if (value[i] == ' ' && value[i + 1] == '\0')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+void	insert_variable(char ***args, char **pile, char *value, int *k, int word_boundary)
 {
 	int		j;
 	int		v;
@@ -86,13 +103,16 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 	char	**var;
 	char	**new_args;
 
-	printf("insert variable k is %d\n", *k);
 	var = ft_split_pipex(value, ' ');
 	if (!var)
 		return ;
+	size = 0;
 	var_count = ft_argslen(var);
 	size = ft_argslen(*args) + var_count;
-	new_args = malloc((size + 1) * sizeof(char *));
+	if (end_with_space(value) && word_boundary)
+		size++;
+	printf("args size %d\n", size);
+	new_args = calloc((size + 1) , sizeof(char *));
 	if (!new_args)
 		return ;
 	
@@ -123,14 +143,17 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 		j++;
 		v++;
 	}
-	new_args[j] = NULL;
+	// new_args[j] = NULL;
 	
 	*pile = ft_strdup(new_args[*k + var_count - 1]);
-	
 	*k = *k + var_count - 1;
-	
-	printf("update k to %d\n", *k);
-	printf("pile at k=%d : %s\n", *k, *pile);
+
+	if (end_with_space(value) && word_boundary)
+	{
+		*pile = ft_strdup("");
+		(*k)++;
+	}
+	printf("pile %s at k %d\n", *pile, *k);
 	
 	// free old args and var
 	*args = new_args;
@@ -138,7 +161,8 @@ void	insert_variable(char ***args, char **pile, char *value, int *k)
 void	expand_variable(t_data *data, t_expand *expand, int *i)
 {
 	char	*var_value;
-
+	int		word_boundary = 0;
+	
 	if (expand->arg[*i + 1] == '$')
 		var_value = ft_strdup("1337");
 	else if (expand->arg[*i + 1] == '?')
@@ -153,11 +177,11 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	if (expand->arg[*i + 1] == '?' || expand->arg[*i + 1] == '$')
 		(*i)++;
 	else
-		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i); // get the var value , and skip the var name ;
+		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i, &word_boundary); // get the var value , and skip the var name ;
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
 		*expand->pile = ft_strjoin(*expand->pile, var_value);
 	else
-		insert_variable(expand->args, expand->pile, var_value, expand->k);
+		insert_variable(expand->args, expand->pile, var_value, expand->k, word_boundary);
 }
 char	*expand_string(t_data *data, char ***args, int	*k)
 {
