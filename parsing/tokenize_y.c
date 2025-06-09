@@ -31,6 +31,29 @@ int	get_operator_len(t_type_node type)
 	return (1);
 }
 
+void	add_token(t_list **head, t_list **last, char *token, t_type_node type)
+{
+	t_list	*new_node;
+
+	new_node = ft_lstnew(token);
+	if (!new_node)
+		return ;
+	new_node->type = type;
+	if (ft_strlen(token))
+	{
+		if (!*head)
+		{
+			*head = new_node;
+			*last = new_node;
+		}
+		else
+		{
+			(*last)->next = new_node;
+			*last = (*last)->next;
+		}
+	}
+}
+
 t_list	*tokenize(char	*line)
 {
 	int			i;
@@ -43,12 +66,12 @@ t_list	*tokenize(char	*line)
 	char		*trimmed; // same as operator
 	t_list		*head;
 	t_list		*new_node;
-	t_list		*list;
+	t_list		*last;
 	t_type_node	type;
 
 
 	head = NULL;
-	list = NULL;
+	last = NULL;
 	new_node = NULL;
 	start = 0;
 	i = 0;
@@ -65,43 +88,20 @@ t_list	*tokenize(char	*line)
 		
 		if (type != CMD && !(in_squotes + in_dquotes)) // if we are in quotes , don't split;
 		{
-			if (i > start) // add the hole command as string as a token to the linked list ;
+			if (i > start) // add the hole command as string as a token to the linked last ;
 			{
 				word = ft_substr(line, start, i - start); // free it after trim
 				trimmed = ft_strtrim(word, " ", "	");// no need to realloc for it , free it at expand
 				free(word);
-				if (ft_strlen(trimmed))
-				{
-					new_node = ft_lstnew(trimmed);
-					new_node->type = CMD;
-					if (!head)
-					{
-						head = new_node;
-						list = new_node;
-					}
-					else
-					{
-						list->next = new_node;
-						list = list->next;
-					}
-				}
-				// old place of adding the operator
+
+				add_token(&head, &last, trimmed, CMD);
+
 			}
-			// ad the operator it self as token to the linked list ;
 			op_len = get_operator_len(type);
-			operator = ft_substr(line, i, op_len);
-			new_node = ft_lstnew(operator);
-			new_node->type = type;
-			if (!head)
-			{
-				head = new_node;
-				list = new_node;
-			}
-			else
-			{
-				list->next = new_node;
-				list = list->next;
-			}
+			operator = ft_substr(line, i, op_len); // content
+
+			add_token(&head, &last, operator, type);
+
 			i += op_len;
 			start = i;	
 		}
@@ -114,15 +114,9 @@ t_list	*tokenize(char	*line)
 		word = ft_substr(line, start, i - start);
 		trimmed = ft_strtrim(word, " ", "	");
 		free(word);
-		if (ft_strlen(trimmed))
-		{
-			new_node = ft_lstnew(trimmed);
-			new_node->type = CMD;
-			if (!head)
-				head = new_node;
-			else
-				list->next = new_node;
-		}
+
+		add_token(&head, &last, trimmed, CMD);
+		
 	}
 
 	return (head);
