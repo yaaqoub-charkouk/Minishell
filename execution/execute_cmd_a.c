@@ -99,14 +99,17 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		ft_putstr_fd("minishell :" ,2);
 		ft_putstr_fd(node->red.file_name,2);
 		write(2, ": " , 2);
-		ft_putstr_fd(strerror(node->red.erno), 2);
+		if (node->red.erno != -1337)
+			ft_putstr_fd(strerror(node->red.erno), 2);
+		else
+			ft_putstr_fd("ambiguous redirect", 2);
 		write(2, "\n" , 1);
 		if (is_pipe)
 			exit(1);
 		else	
 			return (1);
-	}
-	node->args = ft_expand(node->args, data, NULL);
+	}// expand
+	node->args = ft_expand(NULL, node->args, data, &status);
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)

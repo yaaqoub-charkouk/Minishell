@@ -40,11 +40,10 @@ typedef struct s_expand
 } t_expand;
 
 
-char	**ft_expand(char **cmd, t_data *data, int  *should_expand);
+char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
 
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
-char	*expand_string(t_data *data, char ***args, int	*k);
 
 
 /**** tokenization ***/
@@ -69,7 +68,8 @@ void	print_list(t_list	*list);
 
 int		is_operator(t_type_node type); // from execution
 int		is_redirection(t_type_node type);
-int	count_words(const char *s, char sep);
+int		count_words(const char *s, char sep);
 char	**expand_wildcard(char *pattern);
+char	*expand_string(t_data *data, char ***args, int	*k, int *heredoc);
 
 #endif

@@ -94,26 +94,21 @@ int	end_with_space(char *value)
 	return (0);
 }
 
-void	insert_variable(char ***args, char **pile, char *value, int *k, int word_boundary)
+void	insert_variable(char ***args, char **pile, char **var, int space_flag , int *k, int word_boundary, int *is_ambiguous)
 {
 	int		j;
 	int		v;
 	int		size;
 	int		var_count;
-	char	**var;
 	char	**new_args;
 
-	var = ft_split_pipex(value, ' ');
-	if (!var)
-		return ;
 	size = 0;
 	var_count = ft_argslen(var);
 	if (var_count > 1)
-		printf("ambiguous redirect\n");
+		*is_ambiguous = 1;
 	size = ft_argslen(*args) + var_count;
-	if (end_with_space(value) && word_boundary)
+	if (space_flag && word_boundary)
 		size++;
-	printf("args size %d\n", size);
 	new_args = calloc((size + 1) , sizeof(char *));
 	if (!new_args)
 		return ;
@@ -150,17 +145,16 @@ void	insert_variable(char ***args, char **pile, char *value, int *k, int word_bo
 	*pile = ft_strdup(new_args[*k + var_count - 1]);
 	*k = *k + var_count - 1;
 
-	if (end_with_space(value) && word_boundary)
+	if (space_flag && word_boundary)
 	{
 		*pile = ft_strdup("");
 		(*k)++;
 	}
-	printf("pile %s at k %d\n", *pile, *k);
 	
 	// free old args and var
 	*args = new_args;
 }
-void	expand_variable(t_data *data, t_expand *expand, int *i)
+void	expand_variable(t_data *data, t_expand *expand, int *i, int *is_ambiguous)
 {
 	char	*var_value;
 	int		word_boundary = 0;
@@ -183,9 +177,9 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
 		*expand->pile = ft_strjoin(*expand->pile, var_value);
 	else
-		insert_variable(expand->args, expand->pile, var_value, expand->k, word_boundary);
+		insert_variable(expand->args, expand->pile, ft_split_pipex(var_value, ' '), end_with_space(var_value), expand->k, word_boundary, is_ambiguous);
 }
-char	*expand_string(t_data *data, char ***args, int	*k)
+char	*expand_string(t_data *data, char ***args, int	*k, int *heredoc)
 {
 	t_expand	expand;
 	char		*pile;
@@ -205,8 +199,8 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 	{
 		if (in_quotes(expand.arg[i], &expand.in_dquotes, &expand.in_squotes, &i))
 			continue ; // if in quotes s*kip it ;
-		if (expand.arg[i] == '$' && (ft_isalnum(expand.arg[i + 1]) || expand.arg[i + 1] == '_' || expand.arg[i + 1] == '?' || expand.arg[i + 1] == '$' || expand.arg[i + 1] == '0') && !expand.in_squotes) // we have variable to expand ;
-			expand_variable(data, &expand, &i);
+		if (heredoc && expand.arg[i] == '$' && (ft_isalnum(expand.arg[i + 1]) || expand.arg[i + 1] == '_' || expand.arg[i + 1] == '?' || expand.arg[i + 1] == '$' || expand.arg[i + 1] == '0') && !expand.in_squotes) // we have variable to expand ;
+			expand_variable(data, &expand, &i, heredoc);
 		else
 			pile = accumulate_char(pile, expand.arg[i]); // accumulate the char to pile;
 		i++;
@@ -215,23 +209,51 @@ char	*expand_string(t_data *data, char ***args, int	*k)
 	
 	return ((*args)[0]); // if you want to expand string by string ;
 }
+ void	expand_glob(char ***args, int *is_ambiguous)
+ {
+	int	k = 0;
+	char	**wilds;
+	char	*pile;
 
-char	**ft_expand(char **cmd_args, t_data *data, int  *should_expand)
+	pile = ft_strdup("");
+	while ((*args)[k])
+	{
+		if (ft_strchr((*args)[k], '*'))
+		{
+			wilds = expand_wildcard((*args)[k]);
+			// print_args(wilds);
+			if (wilds[0] == NULL)
+			{
+				k++;
+				continue ;
+			}
+			insert_variable(args, &pile, wilds, 0, &k, 0, is_ambiguous);
+			
+		}
+		pile = ft_strdup("");
+		k++;
+	}
+ }
+char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 {
 	char	**args;
 	int		k;
 
-	(void)should_expand;
+	if (!cmd_args)
+		args = ft_split_pipex(cmd, ' ');
+	else
+		args = cmd_args;
 	k = 0;
-	args = cmd_args;
 	if (!args)
 		return (NULL);
 	while (args[k])
 	{
-		expand_string(data, &args, &k); // the function shold be void ; updating the args and k ;
+		expand_string(data, &args, &k, is_ambiguous); // the function shold be void ; updating the args and k ;
 		if(!args[k])
 			break ;
 		k++;
 	}
+	if (cmd_args)
+		expand_glob(&args, is_ambiguous);
 	return (args);
 }

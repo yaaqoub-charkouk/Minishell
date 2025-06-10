@@ -117,7 +117,7 @@ int	main(int ac, char **av, char **envp)
 		data.is_heredoc = 0;
 		if (!line)
 		{
-			printf("line is NULL from readline\n");
+			// printf("line is NULL from readline\n");
 			data.exit_status = 0;
 			printf("exit\n");
 			break;
@@ -129,7 +129,7 @@ int	main(int ac, char **av, char **envp)
 		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
 		if (syntax)
 		{
-			printf("skipping\n");  // need to free tokens
+			// printf("skipping\n");  // need to free tokens
 			data.exit_status = 258;
 			if(syntax == 1337)
 				data.exit_status = 0;
