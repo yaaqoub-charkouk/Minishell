@@ -11,7 +11,7 @@ EXECUTION = $(addprefix execution/, execution_a.c utils_a.c redirections_y.c exe
 SIGNALS = $(addprefix signals/, signal_1_y.c)
 WILDCARDS = $(addprefix wildcards/, wildcards.c)
 
-SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS) $(WILDCARDS)
+SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS) $(WILDCARDS) 
 
 READLINE = 
 HEADERS = minishell.h
