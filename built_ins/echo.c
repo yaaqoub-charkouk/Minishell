@@ -10,7 +10,7 @@ int	check_option(char *line)
 		i++;
 		while (line[i])
 		{
-			if(line[i] != 'n')
+			if (line[i] != 'n')
 				return (0);
 			i++;
 		}

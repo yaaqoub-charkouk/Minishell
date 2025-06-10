@@ -140,7 +140,7 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	char	*var_value;
 
 	if (expand->arg[*i + 1] == '$')
-		var_value = ft_strdup("1337");
+		var_value = ft_itoa(getpid());
 	else if (expand->arg[*i + 1] == '?')
 	{
 		if (g_sig)
