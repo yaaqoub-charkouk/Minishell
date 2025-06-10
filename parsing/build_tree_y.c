@@ -27,7 +27,7 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	tree_node->red.flag = 1; // pass a pointer to expand and check if we need to expand inside heredoc ;
 	// tree_node->args = ft_split(token->content, ' '); // expand here
 	if (token->type == CMD)
-		tree_node->args = ft_expand(token->content, data, &tree_node->red.flag);   // wait every time you expand limiter;
+		tree_node->args = ft_split_pipex(token->content, ' ');   // wait every time you expand limiter;
 	else
 		tree_node->args = NULL;
 	tree_node->cmd = token->content; // a copy from the first allocated token ;
