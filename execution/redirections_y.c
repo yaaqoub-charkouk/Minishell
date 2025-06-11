@@ -181,8 +181,6 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 	}
 	else
 		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
-
-	// expand_string(data, &node->args, &k, &is_ambiguous);
 	if (is_ambiguous)
 	{
 		redir->entry_node->red.erno = -1337;
@@ -218,7 +216,6 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 	redir.entry_node = entry_node;
 	redir.type = type;
 	redir.open_error = 0;
-
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
 	traverse_branch(data, node, &redir);

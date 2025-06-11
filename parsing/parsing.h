@@ -10,24 +10,33 @@
 extern int g_sig;
 typedef struct s_redir t_redir;
 
-typedef struct s_redirection
+typedef struct s_io_config
 {
 	char	*outfile;
 	int		in_fd;
 	int		flag;
 	int		erno;
 	char	*file_name;
-} t_redirection;
+} t_io_config;
 
 typedef struct	s_tree
 {
 	char			*cmd;
 	char			**args;
 	t_type_node		type;
-	t_redirection	red;
+	t_io_config		red;
 	struct s_tree	*right;
 	struct s_tree	*left;
 }	t_tree;
+
+typedef struct	s_tokenize
+{
+	int			i;
+	int			start;
+	t_list		**head;
+	t_list		**last;
+	t_type_node	type;
+}	t_tokenize;
 
 typedef struct s_expand
 {

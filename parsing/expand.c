@@ -51,6 +51,8 @@ char	*get_var_value(t_env *env, char *value, int *i, int *word_boundary)
 	
 	len = 0;
 	
+	if (ft_isdigit(value[0]))
+		return ((*i)++, ft_strdup(""));
 	if (value[0] == '0')
 		return ((*i)++, ft_strdup("minishell"));
 	while (value[len] && (ft_isalnum(value[len]) || value[len] == '_'))

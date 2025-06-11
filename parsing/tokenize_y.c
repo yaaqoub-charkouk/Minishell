@@ -53,77 +53,64 @@ void	add_token(t_list **head, t_list **last, char *token, t_type_node type)
 		}
 	}
 }
+int	init_variables(t_tokenize *token, t_list **head, t_list **last, int *in_dquotes)
+{
+	*head = NULL;
+	*last = NULL;
+	token->head = head;
+	token->last = last;
+	token->start = 0;
+	token->i = 0;
+	*in_dquotes = 0;
+	return (0);
+}
+
+void	extract_token(char *line, t_tokenize *token, int is_last)
+{
+	char	*word;
+	char	*content;
+
+	if (token->i > token->start)
+	{
+		word = ft_substr(line, token->start, token->i - token->start);
+		content = ft_strtrim(word, " ", "	");
+		free(word);
+		add_token(token->head, token->last, content, CMD);
+	}
+	if (!is_last)
+	{
+		content = ft_substr(line, token->i, get_operator_len(token->type));
+		add_token(token->head, token->last, content, token->type);
+		token->i += get_operator_len(token->type);
+		token->start = token->i;
+	}
+}
 
 t_list	*tokenize(char	*line)
 {
-	int			i;
-	int			start;
-	int			op_len;
+	t_tokenize	token;
+	t_list		*head;
+	t_list		*last;
 	int			in_dquotes;
 	int			in_squotes;
-	char		*word; // i free it after trim 
-	char		*operator; // the content for tokens and queue
-	char		*trimmed; // same as operator
-	t_list		*head;
-	t_list		*new_node;
-	t_list		*last;
-	t_type_node	type;
 
-
-	head = NULL;
-	last = NULL;
-	new_node = NULL;
-	start = 0;
-	i = 0;
-	in_dquotes = 0;
-	in_squotes = 0;
-
-	while (line[i])
+	in_squotes = init_variables(&token, &head, &last, &in_dquotes);
+	while (line[token.i])
 	{
-		type = get_type(&line[i]);
-		if (line[i] == 34 && !in_squotes) // " '
+		token.type = get_type(&line[token.i]);
+		if (line[token.i] == 34 && !in_squotes)
 			in_dquotes = !in_dquotes;
-		if (line[i] == 39 && !in_dquotes)
+		if (line[token.i] == 39 && !in_dquotes)
 			in_squotes = !in_squotes;
-		
-		if (type != CMD && !(in_squotes + in_dquotes)) // if we are in quotes , don't split;
-		{
-			if (i > start) // add the hole command as string as a token to the linked last ;
-			{
-				word = ft_substr(line, start, i - start); // free it after trim
-				trimmed = ft_strtrim(word, " ", "	");// no need to realloc for it , free it at expand
-				free(word);
-
-				add_token(&head, &last, trimmed, CMD);
-
-			}
-			op_len = get_operator_len(type);
-			operator = ft_substr(line, i, op_len); // content
-
-			add_token(&head, &last, operator, type);
-
-			i += op_len;
-			start = i;	
-		}
+		if (token.type != CMD && !(in_squotes + in_dquotes))
+			extract_token(line, &token, 0);
 		else
-			i++;
+			token.i++;
 	}
-	// add the final command as a token or if there is only the command without operators;
-	if (i > start)
-	{
-		word = ft_substr(line, start, i - start);
-		trimmed = ft_strtrim(word, " ", "	");
-		free(word);
-
-		add_token(&head, &last, trimmed, CMD);
-		
-	}
-
+	if (token.i > token.start)
+		extract_token(line, &token, 1);
 	return (head);
 }
-
-
-
 
 void print_tokens(t_list *tokens)
 {
