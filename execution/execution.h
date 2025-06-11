@@ -18,7 +18,7 @@ typedef struct s_redir
 	int			open_error;
 }	t_redir;
 
-char	**get_path(char **env);
+char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
 int		check_built_in(char **args, t_data *data, int is_pipe);
 void	exec_cmd(t_tree *node, char **env);

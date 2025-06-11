@@ -13,12 +13,6 @@ void	display_new_prompt(int signal, siginfo_t *info, void *context)
 	g_sig = 1;
 }
 
-void	do_nothing(int signal, siginfo_t *info, void *context)
-{
-	(void)info;
-	(void)context;
-	(void)signal;
-}
 
 void	setup_signals(void )
 {

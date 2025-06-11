@@ -52,7 +52,6 @@ void	open_outfile(char	*filename, t_redir *redir)
 	fd = open(filename, flag, 0777);
 	if (fd < 0)
 	{
-		// perror("open_file");
 		redir->open_error = errno;
 		redir->entry_node->red.file_name = filename;
 		redir->entry_node->red.erno = redir->open_error;
@@ -70,7 +69,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 	fd = open(filename, O_RDONLY, 0777);
 	if (fd < 0)	
 	{
-		// perror("open_infile");
 		redir->entry_node->red.file_name = filename;
 		redir->open_error = errno;
 		redir->entry_node->red.erno = redir->open_error;
