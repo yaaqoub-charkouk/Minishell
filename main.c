@@ -55,30 +55,35 @@ void	free_tokens(t_list *lst)
 
 void	free_env(char **env, t_env *envl)
 {
-	int	i;
 	t_env	*temp;
+	int		i;
 
-	if (!env || !envl)
-		return ;
-	temp = envl;
-	while (envl)
+	if (envl)
 	{
-		temp = envl->next;
-		free(envl->content);
-		envl->content = NULL;
-		free(envl);
-		envl = temp;
+		temp = envl;
+		while (envl)
+		{
+			temp = envl->next;
+			free(envl->content);
+			envl->content = NULL;
+			free(envl);
+			envl = temp;
+		}
 	}
-	i = 0;
-	while (env[i])
+	if (env)
 	{
-		free(env[i]);
-		env[i] = NULL;
-		i++;
+		i = 0;
+		while (env[i])
+		{
+			free(env[i]);
+			env[i] = NULL;
+			i++;
+		}
+		free(env);
+		env = NULL;
 	}
-	free(env);
-	env = NULL;
 }
+
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens; // to free
@@ -97,6 +102,7 @@ int	main(int ac, char **av, char **envp)
 	rl_catch_signals = 0;
 	setup_signals();
 	data.exit_status = 0;
+	data.env = env_struct_to_char(env);
 	while (1)
 	{
 		if (!isatty(STDIN_FILENO))
@@ -111,7 +117,11 @@ int	main(int ac, char **av, char **envp)
 			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
 		line = readline(prompt);
 		}
-		data.env = env_struct_to_char(env);
+		if (data.env)
+		{
+			free_env(data.env, NULL);
+			data.env = env_struct_to_char(env);
+		}
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.is_heredoc = 0;
