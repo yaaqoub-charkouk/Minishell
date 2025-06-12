@@ -48,7 +48,7 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 void	exec_cmd(t_tree *node, char **env)
 {
 	char	**path;
-	
+
 	if (ft_strchr(node->args[0], '/'))
 	{
 		execve(node->args[0], node->args, env);

@@ -186,6 +186,7 @@ int	main(int ac, char **av, char **envp)
 	}
 	free_env(data.env, NULL);
 	rl_clear_history();
+	// while (1);
 	return (data.exit_status);
 }
 // bash-3.2$ ls (ls) <------ SYNTAX ERROR

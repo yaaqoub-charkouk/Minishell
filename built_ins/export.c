@@ -49,11 +49,11 @@ void	export_process_arg(char *arg, t_data *data)
 			curr->content = ft_strdup(arg);
 		}
 		else
-			ft_lstadd_back(data->envl, ft_lstnew(arg));
+			ft_lstadd_back(data->envl, ft_lstnew(ft_strdup(arg)));
 	}
 	else if (!curr)
-		ft_lstadd_back(data->envl, ft_lstnew(arg));
-	// free(temp);
+		ft_lstadd_back(data->envl, ft_lstnew(ft_strdup(arg)));
+	free(temp);
 }
 
 void	print_export(t_data *data)
