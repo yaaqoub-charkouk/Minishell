@@ -52,7 +52,6 @@ void	open_outfile(char	*filename, t_redir *redir)
 	fd = open(filename, flag, 0777);
 	if (fd < 0)
 	{
-		// perror("open_file");
 		redir->open_error = errno;
 		redir->entry_node->red.file_name = filename;
 		redir->entry_node->red.erno = redir->open_error;
@@ -70,7 +69,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 	fd = open(filename, O_RDONLY, 0777);
 	if (fd < 0)	
 	{
-		// perror("open_infile");
 		redir->entry_node->red.file_name = filename;
 		redir->open_error = errno;
 		redir->entry_node->red.erno = redir->open_error;
@@ -81,13 +79,33 @@ void	open_infile(char *filename,	t_redir	*redir)
 	redir->entry_node->red.in_fd = fd;
 }
 
-void	open_heredoc(char	*limiter, t_redir *redir) // 
+void	write_args_fd(char **args, int fd)
+{
+	int	i;
+
+	i = 0;
+	while (args[i])
+	{
+		ft_putstr_fd(args[i], fd);
+		if (args[i + 1])
+			ft_putstr_fd(" ", fd);
+		i++;
+	}
+	write(fd, "\n", 1);
+}
+
+void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) // 
 {
 	int		fd[2];
 	int		pid;
 	char	*line;
-	size_t		limiter_len;
+	char	*limiter;
+	char	**expanded_line;
+	size_t	limiter_len;
+	int		status;
 
+	expanded_line = NULL;
+	limiter = node->args[0];
 	if (pipe(fd) == -1)
 	{
 		perror("pipe"); 
@@ -101,27 +119,45 @@ void	open_heredoc(char	*limiter, t_redir *redir) //
 		perror("heredoc");
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		printf("limiter %s\n\n\n", limiter);
 		limiter_len = ft_strlen(limiter);
 		while (1)
 		{
 			line = readline(">");
 			if (redir->node->red.flag)
+			{
+				int	temp = 0;
+				expanded_line = ft_expand(line, NULL, data,	&temp);
 				printf("we should expand at heredoc\n");
+			}
+			else
+				printf("we should not expand at heredoc\n");
 			if (!line)
 				exit (0);
 			if (!ft_strncmp(line, limiter, limiter_len) 
 				&& (ft_strlen(line)) == limiter_len)
 				break ;
-			// here should expand , after check should expand 
-			write(fd[1], line, ft_strlen(line));
-			write(fd[1], "\n", 1);
-			free(line);
+			// here should expand , afer check should expand 
+			if (expanded_line)
+			{
+				free(line);
+				write_args_fd(expanded_line, fd[1]);
+				// ft_split_free(expanded_line); // free the epxanded line
+			}
+			else
+			{
+				write(fd[1], line, ft_strlen(line));
+				write(fd[1], "\n", 1);
+				free(line);
+			}
 		}
 		free(line);
 		exit(EXIT_SUCCESS);
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
+		reset_terminal_mode();
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd[0];
@@ -131,13 +167,29 @@ void	open_heredoc(char	*limiter, t_redir *redir) //
 void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 {
 	int	k;
+	int	is_ambiguous;
+	char *file_name;
 
+	file_name = ft_strdup(node->args[0]);
+	is_ambiguous = 0;
 	k = 0;
 	add_cmd_options(&redir->args_list, node->args, 1);
-
+	if (ft_strchr(node->args[0], '\"') || ft_strchr(node->args[0], '\''))
+		node->red.flag = 0;	
 	if (*(redir->type) == HEREDOC)
-		open_heredoc(node->args[0], redir);
-	expand_string(data, &node->args, &k);
+	{
+		expand_string(data, &node->args, &k, NULL);
+		open_heredoc(data, node, redir);
+	}
+	else
+		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
+	if (is_ambiguous)
+	{
+		redir->entry_node->red.erno = -1337;
+		redir->entry_node->red.file_name = file_name;
+		return ;
+	}
+	free(file_name);
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);
 	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)
@@ -166,7 +218,6 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 	redir.entry_node = entry_node;
 	redir.type = type;
 	redir.open_error = 0;
-
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
 	traverse_branch(data, node, &redir);
@@ -175,9 +226,6 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 	{
 		redir.entry_node->args = list_to_char(redir.args_list);
 		redir.entry_node->type = CMD;
-		// redir.entry_node->red.erno = redir.open_error;
-		// printf ("------asdasd%dredir.open_error%d",redir.entry_node->red.erno , redir.open_error);
-		// printf("\nentry node %s has been modified to : \n", redir.entry_node->cmd);
 	}
 	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it
 	{
