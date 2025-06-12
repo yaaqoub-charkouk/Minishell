@@ -178,7 +178,7 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 		node->red.flag = 0;	
 	if (*(redir->type) == HEREDOC)
 	{
-		expand_string(data, &node->args, &k, NULL);
+		ft_expand(NULL, node->args, data, NULL);
 		open_heredoc(data, node, redir);
 	}
 	else
