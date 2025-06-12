@@ -41,23 +41,6 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	return (tree_node);
 }
 
-t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
-{
-	t_tree	*node;
-
-	if (!current || !*current)
-		return (NULL);
-
-	node = new_tree_node(*current, data);
-	*current = (*current)->next;
-
-	if (node->type != CMD)
-	{
-		node->right = build_tree_from_rqueue(current, data); // build the right first , so that the left will be the right->next ,wich will be updated when calling the function 
-		node->left = build_tree_from_rqueue(current, data);
-	}
-	return (node);
-}
 void	free_list(t_list *list)
 {
 	t_list *temp;
@@ -69,6 +52,22 @@ void	free_list(t_list *list)
 		free(temp);
 	}
 }
+t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
+{
+	t_tree	*node;
+
+	if (!current || !*current)
+		return (NULL);
+
+	node = new_tree_node(*current, data);
+	*current = (*current)->next;
+	if (node->type != CMD)
+	{
+		node->right = build_tree_from_rqueue(current, data); // build the right first , so that the left will be the right->next ,wich will be updated when calling the function 
+		node->left = build_tree_from_rqueue(current, data);
+	}
+	return (node);
+}
 
 t_tree	*build_tree(t_list	*tokens, t_data *data)
 {
@@ -78,7 +77,7 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	t_list	*to_free;
 	
 
-	queue = build_sy_queue(tokens); // don't allocate , just reorder tokens 
+	queue = build_sy_queue(tokens); // tokens end here;
 	to_free = queue;
 	reversed_queue = NULL;
 	root = NULL;
@@ -87,8 +86,11 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
+	free_list(tokens);
+	tokens = NULL;
 	free_list(to_free);
-	to_free = reversed_queue; // to free it later;
+	to_free = NULL;
+	to_free = reversed_queue;
 	root = build_tree_from_rqueue(&reversed_queue, data);
 	free_list(to_free);
 	to_free = NULL;

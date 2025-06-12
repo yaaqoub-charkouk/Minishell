@@ -83,7 +83,6 @@ void	free_env(char **env, t_env *envl)
 		env = NULL;
 	}
 }
-
 void	free_tree(t_tree *tree)
 {
 	int	i;
@@ -103,7 +102,6 @@ void	free_tree(t_tree *tree)
 	tree = NULL;
 	return ;
 }
-
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens; // to free
@@ -154,24 +152,29 @@ int	main(int ac, char **av, char **envp)
 		}
 		
 		add_history(line);
-		tokens = tokenize(line);
+		tokens = tokenize(line); // allocate memory
 		int syntax;
 		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
+		
+		free(line);
+		line = NULL;
+		
 		if (syntax)
 		{
-			// printf("skipping\n");  // need to free tokens
+			// free tokens;
 			data.exit_status = 258;
 			if(syntax == 1337)
 				data.exit_status = 0;
 			continue ;
 		}
 		function(&tokens);
-		tree = build_tree(tokens, &data); // free queue , op stack , tokens
+		print_list(tokens);
+		tree = build_tree(tokens, &data);
 
-		// no need for tokens , queue, op stack ... 
+		// parsing end here
 
 		pre_execution(tree, &data);
-		// print_tree(tree, 0);
+		print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
 		free_tree(tree);
 		if (!isatty(STDIN_FILENO))
@@ -184,6 +187,10 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
+// bash-3.2$ ls (ls) <------ SYNTAX ERROR
+// bash: syntax error near unexpected token `ls'
+
+
 // minishell-1.9$ "" -> command not found
 
 // echo "$(ls)" bash: command substitution
