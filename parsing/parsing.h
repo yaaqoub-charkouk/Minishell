@@ -21,7 +21,6 @@ typedef struct s_io_config
 
 typedef struct	s_tree
 {
-	char			*cmd;
 	char			**args;
 	t_type_node		type;
 	t_io_config		red;

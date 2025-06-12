@@ -53,22 +53,11 @@ void	free_tokens(t_list *lst)
 	}
 }
 
-void	free_env(char **env, t_list *envl)
+void	free_env(char **env, t_list **envl)
 {
-	t_list	*temp;
 	int		i;
 
-	if (envl)
-	{
-		while (envl)
-		{
-			temp = envl;
-			envl = envl->next;
-			free(temp->content);
-			free(temp);
-			temp->content = NULL;
-		}
-	}
+	ft_lstclear(envl, free);
 	if (env)
 	{
 		i = 0;
@@ -81,25 +70,27 @@ void	free_env(char **env, t_list *envl)
 		env = NULL;
 	}
 }
-void	free_tree(t_tree *tree)
-{
-	int	i;
 
-	i = 0;
-	if (!tree || !tree->args)
-		return ;
-	while (tree->args[i])
-	{
-		free(tree->args[i]);
-		tree->args[i] = NULL;
-		i++;
-	}
-    free(tree->args);
-	free_tree(tree->left);
-	free_tree(tree->right);
-	free(tree);
-	tree = NULL;
-	return ;
+void    free_tree(t_tree *tree)
+{
+    if (!tree)
+        return;
+
+    // Recursively free the left and right children first
+    free_tree(tree->left);
+    free_tree(tree->right);
+
+    // Free the content of the current node
+
+    if (tree->args)
+        free_matrix(tree->args);
+    // if (tree->red.outfile)
+    //     free(tree->red.outfile);
+    // if (tree->red.file_name)
+    //     free(tree->red.file_name);
+
+    // Finally, free the node itself
+    free(tree);
 }
 int	main(int ac, char **av, char **envp)
 {
@@ -120,26 +111,24 @@ int	main(int ac, char **av, char **envp)
 	setup_signals();
 	data.exit_status = 0;
 	data.env = env_struct_to_char(env);
+    data.envl = &env;
 	while (1)
 	{
 		if (!isatty(STDIN_FILENO))
-		{
 			readline("");
-		}
 		else
 		{
-		if (data.exit_status == 0)
-			prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-		else
-			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-		line = readline(prompt);
+            if (data.exit_status == 0)
+                prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+            else
+                prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+            line = readline(prompt);
 		}
 		if (data.env)
 		{
 			free_env(data.env, NULL);
 			data.env = env_struct_to_char(env);
 		}
-		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.is_heredoc = 0;
 		if (!line)
@@ -178,13 +167,15 @@ int	main(int ac, char **av, char **envp)
 		print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
 		free_tree(tree);
+        tree = NULL;
+        reset_terminal_mode();
 		if (!isatty(STDIN_FILENO))
 		{
 			break ;
 		}
 
 	}
-	free_env(data.env, NULL);
+	free_env(data.env, data.envl);
 	rl_clear_history();
 	// while (1);
 	return (data.exit_status);
