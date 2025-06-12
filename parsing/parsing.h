@@ -53,7 +53,7 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
 
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
-
+char	*expand_string(t_data *data, char ***args, int	*k);
 
 /**** tokenization ***/
 t_type_node	get_type(char *content);

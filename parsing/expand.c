@@ -162,7 +162,7 @@ void	expand_variable(t_data *data, t_expand *expand, int *i, int *is_ambiguous)
 	int		word_boundary = 0;
 	
 	if (expand->arg[*i + 1] == '$')
-		var_value = ft_strdup("1337");
+		var_value = ft_itoa(getpid());
 	else if (expand->arg[*i + 1] == '?')
 	{
 		if (g_sig)
