@@ -175,7 +175,7 @@ int	main(int ac, char **av, char **envp)
 		// parsing end here
 
 		pre_execution(tree, &data);
-		// print_tree(tree, 0);
+		print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
 		free_tree(tree);
 		if (!isatty(STDIN_FILENO))

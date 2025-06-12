@@ -146,7 +146,6 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 		v++;
 	}
-
 	free(*expand->pile);
 	*expand->pile = ft_strdup(new_args[*expand->k + var_count - 1]);
 
