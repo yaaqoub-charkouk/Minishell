@@ -4,8 +4,8 @@
 # include "../includes/libft.h"
 # include <stdio.h>
 # include "../built_ins/built_ins.h"
-# include "readline/history.h"
-# include "readline/readline.h"
+# include <readline/history.h>
+# include <readline/readline.h>
 // linked list , basic , before the binary tree
 extern int g_sig;
 typedef struct s_redir t_redir;
