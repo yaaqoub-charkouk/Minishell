@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/11 21:40:45 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/12 09:43:11 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_data
 	char	**env;
 	int		read_fd;
 	int		exit_status;
-	int		is_heredoc; // 
+	int		is_heredoc;
 }	t_data;
 
 //export_utils.c
@@ -46,6 +46,6 @@ int		built_in_exit(char **args, t_data *data);
 int		built_in_pwd(void);
 int		built_in_export(char **args, t_data *data);
 int		built_in_unset(char **args, t_data *data);
-char	**env_struct_to_char(t_env  *env);
+char	**env_struct_to_char(t_env *env);
 
 #endif

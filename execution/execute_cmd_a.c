@@ -115,6 +115,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	int		pid;
 	int		status;
 	DIR		*dir;
+	char	**to_free;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
@@ -133,7 +134,12 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		else	
 			return (1);
 	}// expand
+	to_free = node->args;
 	node->args = ft_expand(NULL, node->args, data, &status);
+	// free_matrix(to_free);
+	to_free = NULL;
+	
+	// check if args are NULL SEGFAULT
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)
