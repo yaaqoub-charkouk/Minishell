@@ -1,6 +1,6 @@
 #include "built_ins.h"
 
-char	*get_env_content(t_env *env, char *value)
+char	*get_env_content(t_list *env, char *value)
 {
 	int	len;
 
@@ -29,8 +29,8 @@ void	update_pwd(char *oldpwd, char *newpwd, t_data *data)
 	if (!args)
 		return ;
 	args[0] = "export";
-	args[1] = ft_strjoin("PWD=", newpwd);
-	args[2] = ft_strjoin("OLDPWD=", oldpwd);
+	args[1] = ft_strjoin("PWD=", newpwd, 0);
+	args[2] = ft_strjoin("OLDPWD=", oldpwd, 0);
 	args[3] = NULL;
 	if (!args[1] || !args[2])
 	{

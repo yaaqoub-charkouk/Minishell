@@ -1,6 +1,6 @@
 #include "built_ins.h"
 
-void	handle_plus(char *plus, char *temp, t_data *data, t_env *curr)
+void	handle_plus(char *plus, char *temp, t_data *data, t_list *curr)
 {
 	char	*joined;
 	char	*joined2;
@@ -9,35 +9,33 @@ void	handle_plus(char *plus, char *temp, t_data *data, t_env *curr)
 	if (curr)
 	{
 		if (ft_strchr(curr->content, '='))
-			joined2 = ft_strjoin(curr->content, plus + 2);
+			joined2 = ft_strjoin(curr->content, plus + 2, 0);
 		else
 		{
-			joined = ft_strjoin(temp, "=");
-			joined2 = ft_strjoin(joined, plus + 2);
-			// free(joined);
+			joined = ft_strjoin(temp, "=", 0);
+			joined2 = ft_strjoin(joined, plus + 2, 1);
 		}
 		free(curr->content);
 		curr->content = joined2;
 	}
 	else
 	{
-		joined = ft_strjoin(temp, "=");
-		joined2 = ft_strjoin(joined, plus + 2);
-		ft_add_back(data->envl, ft_new(joined2));
-		// free(joined);
-		// free(joined2);
+		joined = ft_strjoin(temp, "=", 0);
+		joined2 = ft_strjoin(joined, plus + 2, 1);
+		ft_lstadd_back(data->envl, ft_lstnew(joined2));
+		free(joined2);
 	}
 }
 
 void	export_process_arg(char *arg, t_data *data)
 {
-	t_env	*curr;
+	t_list	*curr;
 	char	*plus;
 	char	*equal;
 	char	*temp;
 
 	temp = ft_strdup(arg);
-	curr = get_env_list(*data->envl, arg);
+	curr = get_env_value(*data->envl, arg);
 	plus = ft_strnstr(temp, "+=", ft_strlen(temp));
 	equal = ft_strchr(temp, '=');
 	if (plus)
@@ -51,16 +49,16 @@ void	export_process_arg(char *arg, t_data *data)
 			curr->content = ft_strdup(arg);
 		}
 		else
-			ft_add_back(data->envl, ft_new(arg));
+			ft_lstadd_back(data->envl, ft_lstnew(arg));
 	}
 	else if (!curr)
-		ft_add_back(data->envl, ft_new(arg));
+		ft_lstadd_back(data->envl, ft_lstnew(arg));
 	// free(temp);
 }
 
 void	print_export(t_data *data)
 {
-	t_env	*curr;
+	t_list	*curr;
 
 	curr = *data->envl;
 	while (curr)

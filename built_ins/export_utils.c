@@ -1,6 +1,6 @@
 #include "built_ins.h"
 
-t_env	*get_env_list(t_env *env, char *value)
+t_list	*get_env_value(t_list *env, char *value)
 {
 	int	len;
 

@@ -53,21 +53,20 @@ void	free_tokens(t_list *lst)
 	}
 }
 
-void	free_env(char **env, t_env *envl)
+void	free_env(char **env, t_list *envl)
 {
-	t_env	*temp;
+	t_list	*temp;
 	int		i;
 
 	if (envl)
 	{
-		temp = envl;
 		while (envl)
 		{
-			temp = envl->next;
-			free(envl->content);
-			envl->content = NULL;
-			free(envl);
-			envl = temp;
+			temp = envl;
+			envl = envl->next;
+			free(temp->content);
+			free(temp);
+			temp->content = NULL;
 		}
 	}
 	if (env)
@@ -76,8 +75,7 @@ void	free_env(char **env, t_env *envl)
 		while (env[i])
 		{
 			free(env[i]);
-			env[i] = NULL;
-			i++;
+			env[i++] = NULL;
 		}
 		free(env);
 		env = NULL;
@@ -106,7 +104,7 @@ int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens; // to free
 	t_tree	*tree; 
-	t_env	*env;
+	t_list	*env;
 	t_data	data;
 	char	*line;
 	char	*prompt;

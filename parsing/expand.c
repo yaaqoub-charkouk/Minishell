@@ -45,7 +45,7 @@ int	in_quotes(char c, int *in_dquotes, int *in_squotes, int *i)
 	return (0);
 }
 
-char	*get_var_value(t_env *env, char *value, int *i, int *word_boundary)
+char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary)
 {
 	int	len;
 	
@@ -125,7 +125,7 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 	}
 	
-	new_args[j] = ft_strjoin(*expand->pile, var[v]);
+	new_args[j] = ft_strjoin(*expand->pile, var[v], 1);
 	j++;
 	v++;
 	
@@ -182,7 +182,7 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	else
 		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i, &word_boundary); // get the var value , and skip the var name ;
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
-		*expand->pile = ft_strjoin(*expand->pile, var_value);
+		*expand->pile = ft_strjoin(*expand->pile, var_value, 1);
 	else
 		insert_variable(expand, ft_split_pipex(var_value, ' '), end_with_space(var_value), word_boundary);
 }
@@ -233,6 +233,7 @@ char	*expand_string(t_data *data, t_expand *expand)
 				k++;
 				continue ;
 			}
+			expand->k = &k;
 			insert_variable(expand, wilds, 0, 0);
 			
 		}

@@ -31,9 +31,8 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 	i = 0;
 	while (path[i])
 	{
-		tmp = ft_strjoin(path[i], "/");
-		tmp2 = ft_strjoin(tmp, cmd);
-		free(tmp);
+		tmp = ft_strjoin(path[i], "/", 0);
+		tmp2 = ft_strjoin(tmp, cmd, 1);
 		if (access(tmp2, X_OK) == 0)
 		{
 			execve(tmp2, args, env);

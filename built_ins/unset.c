@@ -2,8 +2,8 @@
 
 void	remove_env_var(t_data *data, char *arg)
 {
-	t_env	*curr;
-	t_env	*prev;
+	t_list	*curr;
+	t_list	*prev;
 	int		len;
 
 	prev = NULL;
