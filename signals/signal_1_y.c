@@ -1,5 +1,17 @@
 #include "signals.h"
 
+void	reset_terminal_mode(void)
+{
+	struct termios	term;
+
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag |= (ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	write(STDERR_FILENO, "\r\033[K", 4);
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
 void	display_new_prompt(int signal, siginfo_t *info, void *context)
 {
@@ -11,13 +23,6 @@ void	display_new_prompt(int signal, siginfo_t *info, void *context)
 	rl_replace_line("", 0);
 	rl_redisplay();
 	g_sig = 1;
-}
-
-void	do_nothing(int signal, siginfo_t *info, void *context)
-{
-	(void)info;
-	(void)context;
-	(void)signal;
 }
 
 void	setup_signals(void )
@@ -37,10 +42,9 @@ void	setup_signals(void )
 	/*============================================*/
 	// setup exit signal set // neeed to be removed 
 
-	// exit.sa_sigaction = do_nothing;
 	exit.sa_handler = SIG_IGN;
-	exit.sa_flags = SA_SIGINFO | SA_RESTART;
-	sigemptyset(&exit.sa_mask);
+	// exit.sa_flags = SA_SIGINFO | SA_RESTART;
+	// sigemptyset(&exit.sa_mask);
 	sigaddset(&exit.sa_mask, SIGQUIT);
 	
 	// signal(SIGQUIT, SIG_IGN);

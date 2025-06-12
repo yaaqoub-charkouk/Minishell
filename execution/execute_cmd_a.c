@@ -1,6 +1,6 @@
 #include "execution.h"
 
-char	**get_path(char **env)
+char	**get_path(char **env, int *erno)
 {
 	int		i;
 	char	**path;
@@ -10,8 +10,8 @@ char	**get_path(char **env)
 		i++;
 	if (!env[i])
 	{
-		perror("PATH");
-		exit(EXIT_FAILURE);
+		*erno = ENOENT;
+		return (NULL);
 	}
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
@@ -49,16 +49,40 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 void	exec_cmd(t_tree *node, char **env)
 {
 	char	**path;
+	
+	if (ft_strchr(node->args[0], '/'))
+	{
+		execve(node->args[0], node->args, env);
+		perror("execve");
+		if (errno == ENOENT)
+			exit(127);
+		else if (errno == EACCES || errno == ENOEXEC)
+			exit(126);
+		else
+			exit(1);
+	}
 
-	if (ft_strchr(node->args[0], '/') || access(node->args[0], X_OK) == 0)
+	path = get_path(env, &node->red.erno);
+	if (path)
+	{
+		exec_cmd_from_path(path, node->args[0], node->args, env);
+		free_split(path);
+	}
+
+	if (access(node->args[0], X_OK) == 0) 
 	{
 		execve(node->args[0], node->args, env);
 		perror("execve");
 		exit(1);
 	}
-	path = get_path(env);
-	exec_cmd_from_path(path, node->args[0], node->args, env);
-	free_split(path);
+
+	if (node->red.erno)
+	{
+		ft_putstr_fd(strerror(node->red.erno), 2);
+		write(2, "\n", 1);
+		exit(127);
+	}
+	
 	write(2, "minishell: ", 11);
 	write(2, node->args[0], ft_strlen(node->args[0]));
 	write(2, ": command not found\n", 20);
@@ -99,14 +123,17 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		ft_putstr_fd("minishell :" ,2);
 		ft_putstr_fd(node->red.file_name,2);
 		write(2, ": " , 2);
-		ft_putstr_fd(strerror(node->red.erno), 2);
+		if (node->red.erno != -1337)
+			ft_putstr_fd(strerror(node->red.erno), 2);
+		else
+			ft_putstr_fd("ambiguous redirect", 2);
 		write(2, "\n" , 1);
 		if (is_pipe)
 			exit(1);
 		else	
 			return (1);
-	}
-	node->args = ft_expand(node->args, data, NULL);
+	}// expand
+	node->args = ft_expand(NULL, node->args, data, &status);
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)
