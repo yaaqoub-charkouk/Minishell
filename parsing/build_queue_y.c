@@ -4,11 +4,10 @@ void	add_token_to_queue(t_list **queue, t_list	*token)
 {
 	t_list	*new_node;
 
-	new_node = ft_lstnew(token->content); // create a node a copy of the token with the same content and type ;
+	new_node = ft_lstnew(token->content);
 	if (!new_node)
 		return ;
 	new_node->type = token->type;
-	// add_to_queue(queue, new_node);
 	ft_lstadd_back(queue, new_node);
 }
 
@@ -17,49 +16,43 @@ void	add_op_to_queue(t_list **queue, t_list **stack_op)
 	t_list	*new_node;
 	t_list	*operator;
 
-	new_node = ft_lstnew((*stack_op)->content); // new node from stack_op head
+	new_node = ft_lstnew((*stack_op)->content);
 	if (!new_node)
 		return ;
 	new_node->type = (*stack_op)->type;
-	ft_lstadd_back(queue, new_node); // the head operator was added to queue;
+	ft_lstadd_back(queue, new_node);
 	operator = *stack_op;
-	*stack_op = (*stack_op)->next; // hte head has been changed to the next op ;
+	*stack_op = (*stack_op)->next;
 	free(operator);
 }
 
-int	push_to_op_stack(t_list **op_stack, t_list	*token) // push the operator to op stack
+int	push_to_op_stack(t_list **op_stack, t_list	*token)
 {
-	t_list *new_node;
+	t_list	*new_node;
 
-	// if (!*op_stack)
-	// 		return (0);
 	new_node = ft_lstnew(token->content);
 	if (!new_node)
 		return (0);
 	new_node->type = token->type;
 	new_node->next = *op_stack;
 	*op_stack = new_node;
-	// token->next = *op_stack;
-	// *op_stack = token;
 	return (1);
 }
 
-void	parenthesis_priority(t_list **stack_op, t_list  **queue)
+void	parenthesis_priority(t_list **stack_op, t_list **queue)
 {
-	t_list *temp;
+	t_list	*temp;
 
 	while (*stack_op && (*stack_op)->type != P_OPEN)
-	{
 		add_op_to_queue(queue, stack_op);
-	}
-	temp = *stack_op; // the P_OPEN 
+	temp = *stack_op;
 	*stack_op = (*stack_op)->next;
 	free(temp);
 }
 
-int	precedence(t_type_node type) // the precedent make the position of the operator in the tree 
+int	precedence(t_type_node type)
 {
-	if (type == HEREDOC || type == APPEND || type == REDIRECTION_OUT || type == REDIRECTION_IN)
+	if (is_redirection(type))
 		return (3);
 	else if (type == PIPE)
 		return (2);
@@ -71,30 +64,32 @@ int	precedence(t_type_node type) // the precedent make the position of the opera
 t_list	*build_sy_queue(t_list	*token)
 {
 	t_list	*queue;
-	t_list	*stack_op; // no need to free ;
+	t_list	*stack_op;
+	t_list	**to_free;
 
 	queue = NULL;
 	stack_op = NULL;
+	to_free = &stack_op;
 	while (token)
 	{
 		if (token->type == CMD)
-			add_token_to_queue(&queue, token); // done
+			add_token_to_queue(&queue, token);
 		else if (token->type == P_OPEN)
-			push_to_op_stack(&stack_op, token); // push
+			push_to_op_stack(&stack_op, token); // check return (value);
 		else if (token->type == P_CLOSE)
 			parenthesis_priority(&stack_op, &queue);
 		else
 		{
-			while (stack_op && precedence(token->type) < precedence(stack_op->type))
-				add_op_to_queue(&queue, &stack_op); // done
-			push_to_op_stack(&stack_op, token); // done
+			while (stack_op && precedence(token->type)
+				< precedence(stack_op->type))
+				add_op_to_queue(&queue, &stack_op);
+			push_to_op_stack(&stack_op, token);
 		}
-		// printf("token->content : %s\n", token->content);
-		
 		token = token->next;
 	}
 	while (stack_op)
-		add_op_to_queue(&queue, &stack_op); // done
-	// free resourrces , token
+		add_op_to_queue(&queue, &stack_op);
+	free_list(*to_free);
+	*to_free = NULL;
 	return (queue);
 }

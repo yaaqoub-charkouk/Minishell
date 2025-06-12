@@ -11,7 +11,7 @@
 // }
 
 
-void	function(t_list **lst)
+void	pad_redirections_with_cmd(t_list **lst)
 {
 	t_list	*node;
 	t_list	*temp;
@@ -53,37 +53,59 @@ void	free_tokens(t_list *lst)
 	}
 }
 
-void	free_env(char **env, t_env *envl)
+void	free_env(char **env, t_list *envl)
+{
+	t_list	*temp;
+	int		i;
+
+	if (envl)
+	{
+		while (envl)
+		{
+			temp = envl;
+			envl = envl->next;
+			free(temp->content);
+			free(temp);
+			temp->content = NULL;
+		}
+	}
+	if (env)
+	{
+		i = 0;
+		while (env[i])
+		{
+			free(env[i]);
+			env[i++] = NULL;
+		}
+		free(env);
+		env = NULL;
+	}
+}
+void	free_tree(t_tree *tree)
 {
 	int	i;
-	t_env	*temp;
 
-	if (!env || !envl)
-		return ;
-	temp = envl;
-	while (envl)
-	{
-		temp = envl->next;
-		free(envl->content);
-		envl->content = NULL;
-		free(envl);
-		envl = temp;
-	}
 	i = 0;
-	while (env[i])
+	if (!tree || !tree->args)
+		return ;
+	while (tree->args[i])
 	{
-		free(env[i]);
-		env[i] = NULL;
+		free(tree->args[i]);
+		tree->args[i] = NULL;
 		i++;
 	}
-	free(env);
-	env = NULL;
+    free(tree->args);
+	free_tree(tree->left);
+	free_tree(tree->right);
+	free(tree);
+	tree = NULL;
+	return ;
 }
 int	main(int ac, char **av, char **envp)
 {
-	t_list	*tokens; // to free
+	t_list	*tokens;
 	t_tree	*tree; 
-	t_env	*env;
+	t_list	*env;
 	t_data	data;
 	char	*line;
 	char	*prompt;
@@ -97,6 +119,7 @@ int	main(int ac, char **av, char **envp)
 	rl_catch_signals = 0;
 	setup_signals();
 	data.exit_status = 0;
+	data.env = env_struct_to_char(env);
 	while (1)
 	{
 		if (!isatty(STDIN_FILENO))
@@ -111,7 +134,11 @@ int	main(int ac, char **av, char **envp)
 			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
 		line = readline(prompt);
 		}
-		data.env = env_struct_to_char(env);
+		if (data.env)
+		{
+			free_env(data.env, NULL);
+			data.env = env_struct_to_char(env);
+		}
 		data.envl = &env;
 		data.read_fd = STDIN_FILENO;
 		data.is_heredoc = 0;
@@ -124,35 +151,47 @@ int	main(int ac, char **av, char **envp)
 		}
 		
 		add_history(line);
-		tokens = tokenize(line);
+		tokens = tokenize(line); // allocate memory
 		int syntax;
 		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
+		
+		free(line);
+		line = NULL;
+		
 		if (syntax)
 		{
-			// printf("skipping\n");  // need to free tokens
+			// free tokens;
 			data.exit_status = 258;
 			if(syntax == 1337)
 				data.exit_status = 0;
+			ft_lstclear(&tokens, free);
 			continue ;
 		}
-		function(&tokens);
-		tree = build_tree(tokens, &data); // free queue , op stack , tokens
 
-		// no need for tokens , queue, op stack ... 
+		pad_redirections_with_cmd(&tokens);
+		print_list(tokens);
+		tree = build_tree(tokens, &data);
+
+		// parsing end here
 
 		pre_execution(tree, &data);
 		// print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
+		free_tree(tree);
 		if (!isatty(STDIN_FILENO))
 		{
 			break ;
 		}
 
 	}
-	free_env(data.env, *data.envl);
+	free_env(data.env, NULL);
 	rl_clear_history();
 	return (data.exit_status);
 }
+// bash-3.2$ ls (ls) <------ SYNTAX ERROR
+// bash: syntax error near unexpected token `ls'
+
+
 // minishell-1.9$ "" -> command not found
 
 // echo "$(ls)" bash: command substitution

@@ -1,11 +1,12 @@
 # ifndef PARSING_H
 # define PARSING_H
 
-# include "../includes/libft.h"
+# include "../libft/libft.h"
 # include <stdio.h>
 # include "../built_ins/built_ins.h"
 # include "readline/history.h"
 # include "readline/readline.h"
+#include <signal.h>
 // linked list , basic , before the binary tree
 extern int g_sig;
 typedef struct s_redir t_redir;
@@ -46,6 +47,7 @@ typedef struct s_expand
 	int		*k;
 	int		in_dquotes;
 	int		in_squotes;
+	int		*is_ambiguous;
 } t_expand;
 
 
@@ -54,12 +56,11 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
 
-
 /**** tokenization ***/
 t_type_node	get_type(char *content);
 t_list		*tokenize(char	*line);
-
-
+void	free_list(t_list *list);
+void	free_matrix(char **args);
 
 
 t_tree		*build_tree(t_list *tokens, t_data *data);
@@ -71,7 +72,6 @@ void		print_tree(t_tree *node, int level);
 
 char		**ft_split_pipex(char const *s, char c);
 char		**free_string(char **string, int i);
-char		**expand(char *cmd, t_data *data, int *should_expand);
 
 void	print_list(t_list	*list);
 
@@ -79,6 +79,6 @@ int		is_operator(t_type_node type); // from execution
 int		is_redirection(t_type_node type);
 int		count_words(const char *s, char sep);
 char	**expand_wildcard(char *pattern);
-char	*expand_string(t_data *data, char ***args, int	*k, int *heredoc);
+void	expand_string(t_data *data, t_expand *expand);
 
 #endif

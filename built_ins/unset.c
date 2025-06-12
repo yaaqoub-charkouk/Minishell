@@ -2,8 +2,8 @@
 
 void	remove_env_var(t_data *data, char *arg)
 {
-	t_env	*curr;
-	t_env	*prev;
+	t_list	*curr;
+	t_list	*prev;
 	int		len;
 
 	prev = NULL;
@@ -12,7 +12,6 @@ void	remove_env_var(t_data *data, char *arg)
 	{
 		len = ft_strlen(arg);
 		if (ft_strncmp(curr->content, arg, len) == 0)
-
 		{
 			if (prev == NULL)
 				*data->envl = curr->next;
@@ -29,11 +28,9 @@ void	remove_env_var(t_data *data, char *arg)
 
 int	built_in_unset(char **args, t_data *data)
 {
-	int		len;
 	int		i;
 	int		return_value;
 
-	len = 0;// just for flags 'by IY_TECHNOLOGY';
 	i = 1;
 	return_value = 0;
 	while (args[i])

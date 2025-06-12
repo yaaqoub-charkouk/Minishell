@@ -5,7 +5,7 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 	if (i == 0)
 		*args_list = NULL;
 	if (!args || !*args)
-		return (printf("add cmd options\n"), NULL); // delete printf;
+		return (printf("add cmd options NULL \n"), NULL); // delete printf;
 	while (args[i])
 	{
 		ft_lstadd_back(args_list, ft_lstnew(args[i]));
@@ -21,9 +21,8 @@ char	**list_to_char(t_list  *args_list)
 	char	**args_char;
 
 	if (!args_list)
-		return (printf("list to char\n"), NULL);
+		return (printf("list to char NULL \n"), NULL);
 	i = 0;
-	// print_list(args_list); // segfault , may be args_list was noot ended by null;
 	size = ft_lstsize(args_list);
 	args_char = malloc((size + 1) * sizeof(char *));
 	if(!args_char)
@@ -101,7 +100,8 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	char	*line;
 	char	*limiter;
 	char	**expanded_line;
-	size_t		limiter_len;
+	size_t	limiter_len;
+	int		status;
 
 	expanded_line = NULL;
 	limiter = node->args[0];
@@ -118,6 +118,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		perror("heredoc");
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		printf("limiter %s\n\n\n", limiter);
 		limiter_len = ft_strlen(limiter);
 		while (1)
@@ -153,7 +154,9 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		free(line);
 		exit(EXIT_SUCCESS);
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
+		reset_terminal_mode();
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd[0];
@@ -171,20 +174,25 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 	k = 0;
 	add_cmd_options(&redir->args_list, node->args, 1);
 	if (ft_strchr(node->args[0], '\"') || ft_strchr(node->args[0], '\''))
-		node->red.flag = 0;	
+		node->red.flag = 0;
 	if (*(redir->type) == HEREDOC)
 	{
-		expand_string(data, &node->args, &k, NULL);
+		// ft_expand(NULL, node->args, data, NULL);
 		open_heredoc(data, node, redir);
 	}
-	else
-		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
-	if (is_ambiguous)
+	// else
+	// 	node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
+	for(int i = 0; node->args[i]; i++)
 	{
-		redir->entry_node->red.erno = -1337;
-		redir->entry_node->red.file_name = file_name;
-		return ;
+		printf("cmd is \n");
+		printf("%s\n", node->args[i]);
 	}
+	// if (is_ambiguous)
+	// {
+	// 	redir->entry_node->red.erno = -1337;
+	// 	redir->entry_node->red.file_name = file_name;
+	// 	return ;
+	// }
 	free(file_name);
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);
@@ -209,11 +217,11 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 	t_redir redir;
 
 	redir.args_list = NULL;
-
 	redir.node = node;
 	redir.entry_node = entry_node;
 	redir.type = type;
 	redir.open_error = 0;
+
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
 	traverse_branch(data, node, &redir);

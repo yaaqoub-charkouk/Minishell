@@ -31,9 +31,8 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 	i = 0;
 	while (path[i])
 	{
-		tmp = ft_strjoin(path[i], "/");
-		tmp2 = ft_strjoin(tmp, cmd);
-		free(tmp);
+		tmp = ft_strjoin(path[i], "/", 0);
+		tmp2 = ft_strjoin(tmp, cmd, 1);
 		if (access(tmp2, X_OK) == 0)
 		{
 			execve(tmp2, args, env);
@@ -133,7 +132,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		else	
 			return (1);
 	}// expand
-	node->args = ft_expand(NULL, node->args, data, &status);
+	// node->args = ft_expand(NULL, node->args, data, &status);
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)

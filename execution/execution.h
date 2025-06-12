@@ -2,7 +2,7 @@
 # define EXECUTION_H
 
 # include "../parsing/parsing.h"
-# include <signal.h>
+# include "../signals/signals.h"
 # include "../built_ins/built_ins.h"
 # include <fcntl.h>
 # include <errno.h>

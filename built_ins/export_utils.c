@@ -1,6 +1,6 @@
 #include "built_ins.h"
 
-t_env	*get_env_list(t_env *env, char *value)
+t_list	*get_env_value(t_list *env, char *value)
 {
 	int	len;
 
@@ -9,7 +9,8 @@ t_env	*get_env_list(t_env *env, char *value)
 		len++;
 	while (env)
 	{
-		if (ft_strncmp(env->content, value, len) == 0 && (env->content[len] == '=' || env->content[len] == '\0'))
+		if (ft_strncmp(env->content, value, len) == 0
+			&& (env->content[len] == '=' || env->content[len] == '\0'))
 			return (env);
 		env = env->next;
 	}

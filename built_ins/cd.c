@@ -1,9 +1,9 @@
 #include "built_ins.h"
 
-char	*get_env_content(t_env *env, char *value)
+char	*get_env_content(t_list *env, char *value)
 {
 	int	len;
-	
+
 	len = 0;
 	if (!value || !*value)
 		return (NULL);
@@ -20,28 +20,23 @@ char	*get_env_content(t_env *env, char *value)
 	}
 	return (NULL);
 }
+
 void	update_pwd(char *oldpwd, char *newpwd, t_data *data)
 {
-	char **args;
-	
+	char	**args;
+
 	args = malloc(4 * sizeof(char *));
 	if (!args)
-	{
-		free(oldpwd);
-		free(newpwd);
 		return ;
-	}
 	args[0] = "export";
-	args[1] = ft_strjoin("PWD=", newpwd);
-	args[2] = ft_strjoin("OLDPWD=", oldpwd);
+	args[1] = ft_strjoin("PWD=", newpwd, 0);
+	args[2] = ft_strjoin("OLDPWD=", oldpwd, 0);
 	args[3] = NULL;
 	if (!args[1] || !args[2])
 	{
 		free(args[1]);
 		free(args[2]);
 		free(args);
-		free(oldpwd);
-		free(newpwd);
 		return ;
 	}
 	built_in_export(args, data);
@@ -49,7 +44,8 @@ void	update_pwd(char *oldpwd, char *newpwd, t_data *data)
 	free(args[2]);
 	free(args);
 }
-char	*get_cd_path(char **args,  t_data *data, int *print_olpwd)
+
+char	*get_cd_path(char **args, t_data *data, int *print_olpwd)
 {
 	char	*path;
 
@@ -77,6 +73,7 @@ char	*get_cd_path(char **args,  t_data *data, int *print_olpwd)
 		path = args[1];
 	return (path);
 }
+
 int	built_in_cd(char **args, t_data *data)
 {
 	char	*path;
