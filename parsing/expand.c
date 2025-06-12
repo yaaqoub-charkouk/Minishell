@@ -191,7 +191,7 @@ char	*expand_string(t_data *data, char ***args, int	*k, int *heredoc)
 	expand.in_dquotes = 0;
 	expand.in_squotes = 0;
 	expand.k = k;
-	expand.arg = (*args)[*k];
+	expand.arg = ft_strdup((*args)[*k]);
 	expand.args = args;
 	pile = ft_strdup(""); // init the pile to pile on it;
 	expand.pile = &pile;
@@ -207,8 +207,6 @@ char	*expand_string(t_data *data, char ***args, int	*k, int *heredoc)
 			pile = accumulate_char(pile, expand.arg[i]); // accumulate the char to pile;
 		i++;
 	}
-	free(expand.arg);
-	expand.arg = NULL;
 	(*args)[*k] = pile; // k is the last known arg ;
 	
 	return ((*args)[0]); // if you want to expand string by string ;

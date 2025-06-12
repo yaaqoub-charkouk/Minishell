@@ -30,7 +30,7 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 		tree_node->args = ft_split_pipex(token->content, ' ');   // wait every time you expand limiter;
 	else
 		tree_node->args = NULL;
-	free(token->content);
+	tree_node->cmd = token->content; // a copy from the first allocated token ;
 	tree_node->type = token->type;
 	tree_node->left = NULL;
 	tree_node->right = NULL;
@@ -58,17 +58,6 @@ t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
 	}
 	return (node);
 }
-void	free_list(t_list *list)
-{
-	t_list *temp;
-
-	while (list)
-	{
-		temp = list;
-		list = list->next;
-		free(temp);
-	}
-}
 
 t_tree	*build_tree(t_list	*tokens, t_data *data)
 {
@@ -77,9 +66,9 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	t_list	*queue;
 	t_list	*to_free;
 	
-
+	// print_list(tokens);
 	queue = build_sy_queue(tokens); // don't allocate , just reorder tokens 
-	to_free = queue;
+	// print_list(queue);
 	reversed_queue = NULL;
 	root = NULL;
 	while (queue)
@@ -87,11 +76,9 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
-	free_list(to_free);
 	to_free = reversed_queue; // to free it later;
 	root = build_tree_from_rqueue(&reversed_queue, data);
-	free_list(to_free);
-	to_free = NULL;
+
 	// print_tree(root, 0);
 	return (root);
 }

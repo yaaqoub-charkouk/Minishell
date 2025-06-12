@@ -79,25 +79,6 @@ void	free_env(char **env, t_env *envl)
 	free(env);
 	env = NULL;
 }
-void	free_tree(t_tree *tree)
-{
-	int	i;
-
-	i = 0;
-	if (!tree || !tree->args)
-		return ;
-	while (tree->args[i])
-	{
-		free(tree->args[i]);
-		tree->args[i] = NULL;
-		i++;
-	}
-	free_tree(tree->left);
-	free_tree(tree->right);
-	free(tree);
-	tree = NULL;
-	return ;
-}
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens; // to free
@@ -162,7 +143,6 @@ int	main(int ac, char **av, char **envp)
 		pre_execution(tree, &data);
 		// print_tree(tree, 0);
 		data.exit_status = execution(tree, &data, 0);
-		free_tree(tree);
 		if (!isatty(STDIN_FILENO))
 		{
 			break ;

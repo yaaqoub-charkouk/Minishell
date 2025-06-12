@@ -8,9 +8,7 @@
 #include <unistd.h>
 # include "../minishell.h"
 #include "../parsing/parsing.h"
-#include <sys/termios.h>
 
 void	setup_signals(void );
-void    reset_terminal_mode(void);
 
 #endif

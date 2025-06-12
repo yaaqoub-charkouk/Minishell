@@ -101,8 +101,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	char	*line;
 	char	*limiter;
 	char	**expanded_line;
-	size_t	limiter_len;
-	int		status;
+	size_t		limiter_len;
 
 	expanded_line = NULL;
 	limiter = node->args[0];
@@ -119,7 +118,6 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		perror("heredoc");
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
 		printf("limiter %s\n\n\n", limiter);
 		limiter_len = ft_strlen(limiter);
 		while (1)
@@ -155,9 +153,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		free(line);
 		exit(EXIT_SUCCESS);
 	}
-	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
-		reset_terminal_mode();
+	waitpid(pid, NULL, 0);
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd[0];
