@@ -1,4 +1,5 @@
-#include "execution.h"
+#include "utils.h"
+
 
 void	free_split(char **str)
 {
@@ -16,4 +17,3 @@ void	free_split(char **str)
 	free(str);
 	str = NULL;
 }
-

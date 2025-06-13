@@ -32,19 +32,20 @@ int	handle_redirection_err(t_tree *node, int is_pipe)
 			ft_putstr_fd(strerror(node->red.erno), 2);
 		else
 			ft_putstr_fd("ambiguous redirect", 2);
-		write(2, "\n" , 1);
+		write(2, "\n", 1);
 		if (is_pipe)
 			exit(1);
 		return (1);
 	}
+	return (0);
 }
 
-int execute_fork_command(t_tree *node, t_data *data)
+int	execute_fork_command(t_tree *node, t_data *data)
 {
-    int pid;
-    int status;
+	int	pid;
+	int	status;
 
-   pid = fork();
+	pid = fork();
 	if (pid < 0)
 		return (perror("fork"), 1);
 	if (pid == 0)
@@ -55,13 +56,14 @@ int execute_fork_command(t_tree *node, t_data *data)
 		else
 			exec_cmd(node, data->env);
 	}
-    waitpid(pid, &status, 0);
-    if (WIFEXITED(status))
-        return WEXITSTATUS(status);
-    else if (WIFSIGNALED(status))
-        return 128 + WTERMSIG(status);
-    return (1);
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (1);
 }
+
 int	execute_pipe_cmd(t_tree *node, t_data *data)
 {
 	identify_read_write(node);
@@ -71,16 +73,16 @@ int	execute_pipe_cmd(t_tree *node, t_data *data)
 		exec_cmd(node, data->env);
 	return (0);
 }
+
 int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 {
-	int		pid;
-	int		status;
+	int		temp;
 
 	if (!node || !node->args || !node->args[0])
 		return (0);
 	if (node->red.erno)
 		return (handle_redirection_err(node, is_pipe));
-	node->args = ft_expand(NULL, node->args, data, &status);
+	node->args = ft_expand(NULL, node->args, data, &temp);
 	if (check_built_in(&node->args[0], data, is_pipe))
 	{
 		if (is_pipe)

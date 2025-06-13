@@ -3,26 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   built_ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/12 20:43:22 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/13 17:06:46 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILT_INS_H
 # define BUILT_INS_H
-# include "../libft/libft.h"
-# include <stdio.h>
+# include "../utils/utils.h"
 
-typedef struct s_data
-{
-	t_list	**envl;
-	char	**env;
-	int		read_fd;
-	int		exit_status;
-	int		is_heredoc;
-}	t_data;
+
 
 //export_utils.c
 t_list	*get_env_value(t_list *env, char *value);

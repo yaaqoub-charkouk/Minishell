@@ -59,7 +59,6 @@ void	check_access_err(t_tree *node, char **env)
 		write(2, "\n", 1);
 		exit(127);
 	}
-	
 	write(2, "minishell: ", 11);
 	write(2, node->args[0], ft_strlen(node->args[0]));
 	write(2, ": command not found\n", 20);
