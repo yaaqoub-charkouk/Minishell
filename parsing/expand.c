@@ -59,7 +59,7 @@ char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary)
 	{
 		len++;
 	}
-	if (value[len])
+	if (value[len] && word_boundary)
 		*word_boundary = 1;
 	// if (i && len)
 	*i += len;
@@ -103,7 +103,6 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 	int		size;
 	int		var_count;
 	char	**new_args;
-	char	**to_free;
 
 	size = 0;
 	var_count = ft_argslen(var);
@@ -146,7 +145,7 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 		v++;
 	}
-	free(*expand->pile);
+	// free(*expand->pile);
 	*expand->pile = ft_strdup(new_args[*expand->k + var_count - 1]);
 
 	*expand->k = *expand->k + var_count - 1;
@@ -158,12 +157,12 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		(*expand->k)++;
 	}
 	// free old args and var
-	to_free = *expand->args;
+	// to_free = *expand->args;
 	*expand->args = new_args;
-	free_matrix(to_free);
-	to_free = NULL;
+	// free_matrix(to_free);
+	// to_free = NULL;
 }
-void	expand_variable(t_data *data, t_expand *expand, int *i)
+static void	expand_variable(t_data *data, t_expand *expand, int *i)
 {
 	char	*var_value;
 	int		word_boundary = 0;
@@ -190,6 +189,15 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 		insert_variable(expand, ft_split_pipex(var_value, ' '), end_with_space(var_value), word_boundary);
 	free(var_value);
 }
+
+int	should_expand_variable(t_expand *expand, int i)
+{
+	return (expand->is_ambiguous && expand->arg[i] == '$' 
+		&& (ft_isalnum(expand->arg[i + 1]) || expand->arg[i + 1] == '_' 
+		|| expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' 
+		|| expand->arg[i + 1] == '0') && !expand->in_squotes);
+}
+
 void	expand_string(t_data *data, t_expand *expand)
 {
 	char		*pile;
@@ -206,7 +214,9 @@ void	expand_string(t_data *data, t_expand *expand)
 	{
 		if (in_quotes(expand->arg[i], &expand->in_dquotes, &expand->in_squotes, &i))
 			continue ; // if in quotes s*kip it ;
-		if (expand->is_ambiguous && expand->arg[i] == '$' && (ft_isalnum(expand->arg[i + 1]) || expand->arg[i + 1] == '_' || expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' || expand->arg[i + 1] == '0') && !expand->in_squotes) // we have variable to expand ;
+		if (expand->arg[i] == '*' && ((expand->in_dquotes || expand->in_squotes) || !ft_strcmp(*expand->args[0], "export")))// if a wild card is found change it to an unprintable char
+			expand->arg[i] = '\033';
+		if (should_expand_variable(expand, i)) // we have variable to expand ;
 			expand_variable(data, expand, &i);
 		else
 			pile = accumulate_char(pile, expand->arg[i]); // accumulate the char to pile;
@@ -224,25 +234,27 @@ void	expand_string(t_data *data, t_expand *expand)
 	char	**wilds;
 	char	*pile;
 
-
 	pile = ft_strdup("");
 	// free(expand->pile);
 	// expand->pile = NULL;
 	expand->pile = &pile;
 	while ((*expand->args)[k])
 	{
+		
 		if (ft_strchr((*expand->args)[k], '*'))
 		{
 			wilds = expand_wildcard((*expand->args)[k]);
 			// print_args(wilds);
-			if (wilds[0] == NULL)
+			if (!wilds || wilds[0] == NULL)
 			{
 				k++;
 				continue ;
 			}
 			expand->k = &k;
+			
 			insert_variable(expand, wilds, 0, 0);
 		}
+
 		pile = ft_strdup("");
 		k++;
 	}
@@ -266,6 +278,7 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 {
 	char	**args;
 	int		k;
+	int		i;
 	t_expand	expand;
 
 
@@ -292,5 +305,20 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 	}
 	if (cmd_args)
 		expand_glob(&expand);
+	k = 0;
+	i = 0;
+	while (args[k])
+	{
+		char	*wild = ft_strchr(args[k], '\033');
+		while ( wild)
+		{
+
+			*wild = '*';
+			wild = ft_strchr(args[k], '\033');
+		}
+
+		k++;
+	}
+	
 	return (args);
 }

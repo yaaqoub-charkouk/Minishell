@@ -99,7 +99,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	int		pid;
 	char	*line;
 	char	*limiter;
-	char	**expanded_line;
+	char	*expanded_line;
 	size_t	limiter_len;
 	int		status;
 
@@ -126,8 +126,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 			line = readline(">");
 			if (redir->node->red.flag)
 			{
-				int	temp = 0;
-				expanded_line = ft_expand(line, NULL, data,	&temp);
+				expanded_line = expand_heredoc(line, data);
 				printf("we should expand at heredoc\n");
 			}
 			else
@@ -138,18 +137,10 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 				&& (ft_strlen(line)) == limiter_len)
 				break ;
 			// here should expand , afer check should expand 
-			if (expanded_line)
-			{
-				free(line);
-				write_args_fd(expanded_line, fd[1]);
-				// ft_split_free(expanded_line); // free the epxanded line
-			}
-			else
-			{
-				write(fd[1], line, ft_strlen(line));
-				write(fd[1], "\n", 1);
-				free(line);
-			}
+			
+			write(fd[1], expanded_line, ft_strlen(expanded_line));
+			write(fd[1], "\n", 1);
+			free(line);
 		}
 		free(line);
 		exit(EXIT_SUCCESS);
