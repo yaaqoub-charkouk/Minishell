@@ -146,7 +146,7 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 		v++;
 	}
-	free(*expand->pile);
+	// free(*expand->pile);
 	*expand->pile = ft_strdup(new_args[*expand->k + var_count - 1]);
 
 	*expand->k = *expand->k + var_count - 1;
@@ -206,6 +206,8 @@ void	expand_string(t_data *data, t_expand *expand)
 	{
 		if (in_quotes(expand->arg[i], &expand->in_dquotes, &expand->in_squotes, &i))
 			continue ; // if in quotes s*kip it ;
+		if (expand->arg[i] == '*' && ((expand->in_dquotes || expand->in_squotes) || !ft_strcmp(*expand->args[0], "export")))// if a wild card is found change it to an unprintable char
+			expand->arg[i] = '\033';
 		if (expand->is_ambiguous && expand->arg[i] == '$' && (ft_isalnum(expand->arg[i + 1]) || expand->arg[i + 1] == '_' || expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' || expand->arg[i + 1] == '0') && !expand->in_squotes) // we have variable to expand ;
 			expand_variable(data, expand, &i);
 		else
@@ -224,25 +226,27 @@ void	expand_string(t_data *data, t_expand *expand)
 	char	**wilds;
 	char	*pile;
 
-
 	pile = ft_strdup("");
 	// free(expand->pile);
 	// expand->pile = NULL;
 	expand->pile = &pile;
 	while ((*expand->args)[k])
 	{
-		if (ft_strchr((*expand->args)[k], '*'))
+		
+		if (ft_strchr((*expand->args)[k], '*') || ft_strchr((*expand->args)[k], '\a'))
 		{
 			wilds = expand_wildcard((*expand->args)[k]);
 			// print_args(wilds);
-			if (wilds[0] == NULL)
+			if (!wilds || wilds[0] == NULL)
 			{
 				k++;
 				continue ;
 			}
 			expand->k = &k;
+			
 			insert_variable(expand, wilds, 0, 0);
 		}
+
 		pile = ft_strdup("");
 		k++;
 	}
@@ -266,6 +270,7 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 {
 	char	**args;
 	int		k;
+	int		i;
 	t_expand	expand;
 
 
@@ -292,5 +297,22 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 	}
 	if (cmd_args)
 		expand_glob(&expand);
+	k = 0;
+	i = 0;
+	while (args[k])
+	{
+		// while (args[k][i])
+		// {
+		// 	if (args[k][i] == '\a')
+		// 		args[k][i] = '*';
+		// 	i++;
+		// }
+		char	*wild = ft_strchr(args[k], '\033');
+		if ( wild)
+			*wild = '*';
+
+		k++;
+	}
+	
 	return (args);
 }
