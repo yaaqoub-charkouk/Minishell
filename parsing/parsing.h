@@ -5,9 +5,10 @@
 
 // linked list , basic , before the binary tree
 
-
+char *expand_heredoc(char *line, t_data *data);
 char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
-
+char	*accumulate_char(char *pile, char c);
+char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary);
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
 

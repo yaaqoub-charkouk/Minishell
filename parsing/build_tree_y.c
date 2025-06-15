@@ -31,6 +31,7 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	else
 		tree_node->args = NULL;
 	free(token->content);
+	token->content = NULL;
 	// tree_node->cmd = token->content;
 	tree_node->type = token->type;
 	tree_node->left = NULL;
@@ -79,6 +80,8 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	
 
 	queue = build_sy_queue(tokens); // tokens end here;
+	free_list(tokens);
+	tokens = NULL;
 	to_free = queue;
 	reversed_queue = NULL;
 	root = NULL;
@@ -87,8 +90,6 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
-	free_list(tokens);
-	tokens = NULL;
 	free_list(to_free);
 	to_free = NULL;
 	to_free = reversed_queue;
