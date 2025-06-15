@@ -45,11 +45,13 @@ int	execute_fork_command(t_tree *node, t_data *data)
 	int	pid;
 	int	status;
 
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 		return (perror("fork"), 1);
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		identify_read_write(node);
 		if (check_if_directory(node))
 			exit(126);
@@ -57,6 +59,7 @@ int	execute_fork_command(t_tree *node, t_data *data)
 			exec_cmd(node, data->env);
 	}
 	waitpid(pid, &status, 0);
+	setup_signals();
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
@@ -79,7 +82,11 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	int		temp;
 
 	if (!node || !node->args || !node->args[0])
+	{
+		if (node && node->red.erno)
+			return (handle_redirection_err(node, is_pipe));
 		return (0);
+	}
 	if (node->red.erno)
 		return (handle_redirection_err(node, is_pipe));
 	node->args = ft_expand(NULL, node->args, data, &temp);

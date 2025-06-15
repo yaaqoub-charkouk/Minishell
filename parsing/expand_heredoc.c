@@ -33,16 +33,18 @@ static void	expand_variable(t_data *data, char *line, int *i, char **pile)
 	free(var_value);
 }
 
-char *expand_heredoc(char *line, t_data *data)
+char	*expand_heredoc(char *line, t_data *data, int	should_expand_var)
 {
 	int i;
 	char *pile;
 
+	if (!line)
+		return (NULL);
 	pile = ft_strdup("");
 	i =0;
 	while (line[i])
 	{
-		if (should_expand(line, i))
+		if (should_expand(line, i) && should_expand_var)
 			expand_variable(data, line, &i, &pile);
 		else
 			pile = accumulate_char(pile, line[i]);
