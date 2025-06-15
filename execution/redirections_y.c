@@ -173,11 +173,11 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 	}
 	// else
 	// 	node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
-	for(int i = 0; node->args[i]; i++)
-	{
-		printf("cmd is \n");
-		printf("%s\n", node->args[i]);
-	}
+	// for(int i = 0; node->args[i]; i++)
+	// {
+	// 	printf("cmd is \n");
+	// 	printf("%s\n", node->args[i]);
+	// }
 	// if (is_ambiguous)
 	// {
 	// 	redir->entry_node->red.erno = -1337;

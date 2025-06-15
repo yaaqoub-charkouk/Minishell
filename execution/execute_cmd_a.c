@@ -57,6 +57,7 @@ int	execute_fork_command(t_tree *node, t_data *data)
 			exec_cmd(node, data->env);
 	}
 	waitpid(pid, &status, 0);
+	close_read_fd(node);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
@@ -90,13 +91,8 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 		return (data->exit_status);
 	}
 	if (is_pipe == 1)
-		execute_pipe_cmd(node, data);
+		return (execute_pipe_cmd(node, data));
 	else
 		return (execute_fork_command(node, data));
-		// if (node->red.in_fd != -1) // closing the read fd in parent
-		// {
-		// 	close(node->red.in_fd);
-		// 	node->red.in_fd = -1;
-		// }
 	return (1);
 }

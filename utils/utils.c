@@ -1,6 +1,15 @@
 #include "utils.h"
 
 
+void close_read_fd(t_tree *node)
+{
+	if (node->red.in_fd != -1) // closing the read fd in parent
+	{
+		close(node->red.in_fd);
+		node->red.in_fd = -1;
+	}
+}
+
 void	free_split(char **str)
 {
 	int	i;

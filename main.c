@@ -115,7 +115,13 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		if (!isatty(STDIN_FILENO))
-			readline("");
+		{
+			 rl_instream = stdin;
+			rl_outstream = fopen("/dev/null", "w");
+			line = readline(NULL);
+			if (rl_outstream) fclose(rl_outstream);
+				rl_outstream = stdout;
+		}
 		else
 		{
             if (data.exit_status == 0)
@@ -158,7 +164,7 @@ int	main(int ac, char **av, char **envp)
 		}
 
 		pad_redirections_with_cmd(&tokens);
-		print_list(tokens);
+		// print_list(tokens);
 		tree = build_tree(tokens, &data);
 
 		// parsing end here

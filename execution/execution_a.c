@@ -2,14 +2,6 @@
 
 int	check_built_in(char **args, t_data *data, int is_pipe)
 {
-	// int	pid;
-	// int	status;
-
-	// pid = fork();
-	// if (pid < 0)
-	// 	perror("fork");
-	// if (pid == 0)
-	// {
 	if (ft_strncmp(args[0], "cd", 3) == 0)
 		return (data->exit_status = built_in_cd(args, data), 1);
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
@@ -28,11 +20,6 @@ int	check_built_in(char **args, t_data *data, int is_pipe)
 		return (data->exit_status = built_in_pwd(), 1);
 	else if (ft_strncmp(args[0], "unset", 6) == 0)
 		return (data->exit_status = built_in_unset(args, data), 1);
-	// 	exit(data->exit_status);
-	// }
-	// waitpid(pid, &status, 0);
-	// if (WIFEXITED(status))
-	// 	return WEXITSTATUS(status);
 	return (0);
 }
 
