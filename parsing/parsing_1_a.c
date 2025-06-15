@@ -138,7 +138,7 @@ int	handle_or_operator(char *line, int *i)
 			count_or++;
 		(*i)++;
 	}
-	if (count_or == 3)
+	if (count_or == 3 || count_or == 2)
 		return (print_error("|"), 1);
 	if (count_or > 3)
 		return (print_error("||"), 1);
