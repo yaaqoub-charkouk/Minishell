@@ -175,7 +175,7 @@ int	main(int ac, char **av, char **envp)
 		data.exit_status = execution(tree, &data, 0);
 		free_tree(tree);
         tree = NULL;
-        reset_terminal_mode();
+		reset_terminal_mode();
 		if (!isatty(STDIN_FILENO))
 		{
 			break ;

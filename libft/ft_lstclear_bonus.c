@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 15:28:05 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/12 17:42:30 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/15 17:06:46 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	ft_lstclear(t_list **lst, void (*del)(void*))
 	while (curr)
 	{
 		temp = curr->next;
-		del(curr->content);
+		if (del)
+			del(curr->content);
 		free(curr);
 		curr = temp;
 	}

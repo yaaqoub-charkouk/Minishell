@@ -28,6 +28,8 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 	char	*tmp2;
 	int		i;
 
+	if (cmd && cmd[0] == '\0')
+		return ;
 	i = 0;
 	while (path[i])
 	{

@@ -5,7 +5,7 @@
 
 // linked list , basic , before the binary tree
 
-char *expand_heredoc(char *line, t_data *data);
+char	*expand_heredoc(char *line, t_data *data, int	should_expand_var);
 char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
 char	*accumulate_char(char *pile, char c);
 char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary);
@@ -14,8 +14,7 @@ t_list	*build_sy_queue(t_list	*token);
 
 /**** tokenization ***/
 t_type_node	get_type(char *content);
-t_list		*tokenize(char	*line);
-void	free_list(t_list *list);
+t_list		*tokenize(char	*line);;
 void	free_matrix(char **args);
 
 

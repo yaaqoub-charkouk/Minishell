@@ -20,10 +20,9 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	(void)data;
 	if (!token)
 		return (NULL);
-	if (token->type == HEREDOC)
-		data->is_heredoc++; // like semaphore;
-
 	tree_node = malloc(sizeof(t_tree));
+	if (!tree_node)
+		return (NULL);
 	tree_node->red.flag = 1; // pass a pointer to expand and check if we need to expand inside heredoc ;
 	// tree_node->args = ft_split(token->content, ' '); // expand here
 	if (token->type == CMD)
@@ -32,8 +31,8 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 		tree_node->args = NULL;
 	free(token->content);
 	token->content = NULL;
-	// tree_node->cmd = token->content;
 	tree_node->type = token->type;
+	free(token);
 	tree_node->left = NULL;
 	tree_node->right = NULL;
 	tree_node->red.in_fd = -1;
@@ -43,26 +42,16 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	return (tree_node);
 }
 
-void	free_list(t_list *list)
-{
-	t_list *temp;
-
-	while (list)
-	{
-		temp = list;
-		list = list->next;
-		free(temp);
-	}
-}
 t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
 {
 	t_tree	*node;
+	t_list	*temp;
 
 	if (!current || !*current)
 		return (NULL);
-
+	temp = (*current)->next;
 	node = new_tree_node(*current, data);
-	*current = (*current)->next;
+	*current = temp;
 	if (node->type != CMD)
 	{
 		node->right = build_tree_from_rqueue(current, data); // build the right first , so that the left will be the right->next ,wich will be updated when calling the function 
@@ -76,13 +65,12 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	t_tree	*root;
 	t_list	*reversed_queue;
 	t_list	*queue;
-	t_list	*to_free;
+	t_list	**to_free;
 	
 
 	queue = build_sy_queue(tokens); // tokens end here;
-	free_list(tokens);
-	tokens = NULL;
-	to_free = queue;
+	ft_lstclear(&tokens, NULL);
+	to_free = &queue;
 	reversed_queue = NULL;
 	root = NULL;
 	while (queue)
@@ -90,12 +78,9 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
-	free_list(to_free);
-	to_free = NULL;
-	to_free = reversed_queue;
+	ft_lstclear(to_free, NULL);
 	root = build_tree_from_rqueue(&reversed_queue, data);
-	free_list(to_free);
+	ft_lstclear(&reversed_queue, NULL);
 	to_free = NULL;
-	// print_tree(root, 0);
 	return (root);
 }

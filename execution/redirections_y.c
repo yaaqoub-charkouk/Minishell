@@ -108,11 +108,11 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	if (pipe(fd) == -1)
 	{
 		perror("pipe"); 
-		
 		return ;
 	}
 	if (ft_strchr(limiter, '\'') || ft_strchr(limiter, '\"'))
 		redir->node->red.flag = 0;
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 		perror("heredoc");
@@ -124,13 +124,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		while (1)
 		{
 			line = readline(">");
-			if (redir->node->red.flag)
-			{
-				expanded_line = expand_heredoc(line, data);
-				printf("we should expand at heredoc\n");
-			}
-			else
-				printf("we should not expand at heredoc\n");
+			expanded_line = expand_heredoc(line, data, redir->node->red.flag);
 			if (!line)
 				exit (0);
 			if (!ft_strncmp(line, limiter, limiter_len) 
@@ -147,7 +141,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
-		reset_terminal_mode();
+		setup_signals();
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd[0];
@@ -168,22 +162,17 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 		node->red.flag = 0;
 	if (*(redir->type) == HEREDOC)
 	{
-		// ft_expand(NULL, node->args, data, NULL);
+		ft_expand(NULL, node->args, data, NULL);
 		open_heredoc(data, node, redir);
 	}
-	// else
-	// 	node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
-	// for(int i = 0; node->args[i]; i++)
-	// {
-	// 	printf("cmd is \n");
-	// 	printf("%s\n", node->args[i]);
-	// }
-	// if (is_ambiguous)
-	// {
-	// 	redir->entry_node->red.erno = -1337;
-	// 	redir->entry_node->red.file_name = file_name;
-	// 	return ;
-	// }
+	else
+		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
+	if (is_ambiguous)
+	{
+		redir->entry_node->red.erno = -1337;
+		redir->entry_node->red.file_name = file_name;
+		return ;
+	}
 	free(file_name);
 	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);

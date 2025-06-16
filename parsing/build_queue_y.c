@@ -89,7 +89,6 @@ t_list	*build_sy_queue(t_list	*token)
 	}
 	while (stack_op)
 		add_op_to_queue(&queue, &stack_op);
-	free_list(*to_free);
-	*to_free = NULL;
+	ft_lstclear(to_free, NULL);
 	return (queue);
 }
