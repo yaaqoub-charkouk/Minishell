@@ -82,7 +82,7 @@ int	built_in_export(char **args, t_data *data)
 	}
 	while (args[i])
 	{
-		if (is_unvalid_name(args[i]))
+		if (is_unvalid_name(args[i], 0))
 		{
 			ft_putstr_fd("export: `", 2);
 			ft_putstr_fd(args[i], 2);

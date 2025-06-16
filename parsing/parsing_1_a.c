@@ -138,7 +138,7 @@ int	handle_or_operator(char *line, int *i)
 			count_or++;
 		(*i)++;
 	}
-	if (count_or == 3 || count_or == 2)
+	if (count_or == 3)
 		return (print_error("|"), 1);
 	if (count_or > 3)
 		return (print_error("||"), 1);
@@ -151,6 +151,35 @@ int	handle_or_operator(char *line, int *i)
 	}
 	if (operator_error(count_and, 1))
 		return (1);
+	return (0);
+}
+
+int	handle_pipe_syntax(t_list *list)
+{
+	t_list	*current;
+	t_list	*prev;
+
+	current = list;
+	prev = NULL;
+	while (current)
+	{
+		if (current->type == PIPE)
+		{
+			if (prev->type == PIPE || prev->type == AND || prev->type == OR)
+			{
+				print_error("|");
+				return (1);
+			}
+			if (current->next->type == PIPE || current->next->type == AND 
+				|| current->next->type == OR)
+			{
+				print_error(current->next->content);
+				return (1);
+			}
+		}
+		prev = current;
+		current = current->next;
+	}
 	return (0);
 }
 
@@ -295,7 +324,7 @@ int	is_syntax_error(char *line, t_list *list)
 	// checking quotes && brackets
 	if (handle_brackets(line) 
 		|| has_unclosed_quotes(line) || has_special_char(line)
-		|| brackets_syntax(list))
+		|| brackets_syntax(list) || handle_pipe_syntax(list))
 		return (1);
 	return (0);
 }

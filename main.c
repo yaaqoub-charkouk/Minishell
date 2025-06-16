@@ -100,6 +100,7 @@ int	main(int ac, char **av, char **envp)
 	t_data	data;
 	char	*line;
 	char	*prompt;
+	int syntax;
 
 	(void)ac;
 	(void)av;
@@ -112,6 +113,7 @@ int	main(int ac, char **av, char **envp)
 	data.exit_status = 0;
 	data.env = env_struct_to_char(env);
     data.envl = &env;
+	syntax = 0;
 	while (1)
 	{
 		if (!isatty(STDIN_FILENO))
@@ -147,7 +149,6 @@ int	main(int ac, char **av, char **envp)
 		
 		add_history(line);
 		tokens = tokenize(line); // allocate memory
-		int syntax;
 		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
 		
 		free(line);

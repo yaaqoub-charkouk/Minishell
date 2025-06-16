@@ -35,7 +35,7 @@ int	built_in_unset(char **args, t_data *data)
 	return_value = 0;
 	while (args[i])
 	{
-		if (is_unvalid_name(args[i]))
+		if (is_unvalid_name(args[i], 1))
 		{
 			ft_putstr_fd("unset: `", 2);
 			ft_putstr_fd(args[i], 2);

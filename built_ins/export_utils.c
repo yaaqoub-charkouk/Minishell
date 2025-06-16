@@ -17,14 +17,20 @@ t_list	*get_env_value(t_list *env, char *value)
 	return (NULL);
 }
 
-int	is_unvalid_name(char *value)
+int	is_unvalid_name(char *value, int is_unset)
 {
 	int	i;
 
 	i = 0;
 	if (!value || (!ft_isalpha(value[i]) && value[i] != '_'))
 		return (1);
-	while (value[i] && value[i] != '=' && value[i] != '+')
+	while (!is_unset && value[i] && value[i] != '=' && value[i] != '+')
+	{
+		if (!ft_isalnum(value[i]) && value[i] != '_')
+			return (1);
+		i++;
+	}
+	while (is_unset && value[i])
 	{
 		if (!ft_isalnum(value[i]) && value[i] != '_')
 			return (1);

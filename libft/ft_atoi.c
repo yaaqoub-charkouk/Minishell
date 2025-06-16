@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 15:38:35 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/12 17:42:30 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:51:47 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ int	ft_atoi(const char *str)
 	{
 		if (rs > (LONG_MAX - *str - '\0') / 10)
 		{
-			if (s == 1)
+			// if (s == 1)
 				return (-1);
-			else
-				return (0);
+			// else
+			// 	return (0);
 		}
 		rs = rs * 10 + (*str - '0');
 		str++;

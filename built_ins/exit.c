@@ -22,7 +22,7 @@ int	built_in_exit(char **args, t_data *data)
 {
 	int	exit_status;
 
-	if (args[1])
+	if (args && args[1])
 	{
 		if (args[2])
 		{
@@ -35,13 +35,14 @@ int	built_in_exit(char **args, t_data *data)
 			exit(255);
 		}
 		exit_status = ft_atoi(args[1]);
-		 if (exit_status < 0)
-            exit_status = 256 + (exit_status % 256);
-        else
-            exit_status %= 256;
+		// printf("exit %d\n", exit_status);
+		//  if (exit_status < 0)
+        //     exit_status = (exit_status % 256);
+        // else
+        //     exit_status %= 256;
 	}
 	else
-		exit_status = data->exit_status % 256;
-	exit(exit_status);
+		exit_status = data->exit_status;
+	exit((unsigned char)exit_status);
 	return (0);
 }
