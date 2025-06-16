@@ -37,6 +37,7 @@ typedef struct	s_tokenize
 typedef struct s_expand
 {
 	char	***args;
+	char	***temp;
 	char	*arg;
 	char	**pile;
 	int		*k;
@@ -50,7 +51,7 @@ typedef struct s_redir
 	t_tree		*node;
 	t_tree		*entry_node;
 	t_type_node	*type;
-	t_list		*args_list;
+	t_list		*args_list; // need to free ; 
 	int			open_error;
 }	t_redir;
 

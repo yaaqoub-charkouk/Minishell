@@ -20,4 +20,10 @@ int		check_if_directory(t_tree *node);
 //utils.c
 void	free_split(char **str);
 int		ft_strcmp(const char *s1, const char *s2);
+
+// free
+void	free_matrix(char **args);
+
+
+
 #endif

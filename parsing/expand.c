@@ -117,16 +117,14 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		free_matrix(var);
 		return ;
 	}
-	
 	j = 0;
-	v = 0;
-	
-	while (j < *expand->k)
+	while (j < *expand->k) // copy old args;
 	{
 		new_args[j] = ft_strdup((*expand->args)[j]);
 		j++;
 	}
-	
+
+	v = 0;
 	new_args[j] = ft_strjoin(*expand->pile, var[v], 1);
 	j++;
 	v++;
@@ -137,7 +135,7 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 		v++;
 	}
-	free_matrix(var);
+	free_matrix(var); // wilds ;
 	v = *expand->k + 1;
 	while ((*expand->args)[v])
 	{
@@ -156,12 +154,12 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		*expand->pile = ft_strdup("");
 		(*expand->k)++;
 	}
+
 	// free old args and var
-	// to_free = *expand->args;
+	free_matrix(*expand->args);
 	*expand->args = new_args;
-	// free_matrix(to_free);
-	// to_free = NULL;
 }
+
 static void	expand_variable(t_data *data, t_expand *expand, int *i)
 {
 	char	*var_value;
@@ -183,6 +181,8 @@ static void	expand_variable(t_data *data, t_expand *expand, int *i)
 		(*i)++;
 	else
 		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i, &word_boundary); // get the var value , and skip the var name ;
+	if (*var_value == '\0')
+		*expand->is_ambiguous = 1;
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
 		*expand->pile = ft_strjoin(*expand->pile, var_value, 1);
 	else
@@ -222,7 +222,7 @@ void	expand_string(t_data *data, t_expand *expand)
 			pile = accumulate_char(pile, expand->arg[i]);
 		i++;
 	}
-	// free((*expand->args)[*expand->k]);
+	free((*expand->args)[*expand->k]);
 	(*expand->args)[*expand->k] = pile; // k is the last known arg ;
 }
 
@@ -259,19 +259,7 @@ void	expand_string(t_data *data, t_expand *expand)
 	free(pile);
 }
 
-void	free_matrix(char **args)
-{
-	int	i;
 
-	i = 0;
-	while (args[i])
-	{
-		free(args[i]);
-		args[i] = NULL;
-		i++;
-	}
-	free(args);
-}
 
 char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 {
