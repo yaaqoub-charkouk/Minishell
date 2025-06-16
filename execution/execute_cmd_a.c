@@ -84,7 +84,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	if (!node || !node->args || !node->args[0])
 	{
 		if (node && node->red.erno)
-			return (handle_redirection_err(node, is_pipe));
+			return (handle_redirection_err(node, is_pipe)); // we should free in case of failure at open ;
 		return (0);
 	}
 	if (node->red.erno)

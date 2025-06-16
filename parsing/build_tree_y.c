@@ -65,12 +65,11 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	t_tree	*root;
 	t_list	*reversed_queue;
 	t_list	*queue;
-	t_list	**to_free;
-	
+	t_list	*to_free;
 
 	queue = build_sy_queue(tokens); // tokens end here;
 	ft_lstclear(&tokens, NULL);
-	to_free = &queue;
+	to_free = queue;
 	reversed_queue = NULL;
 	root = NULL;
 	while (queue)
@@ -78,7 +77,7 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 		push(queue, &reversed_queue); // don't realloc 
 		queue = queue->next;
 	}
-	ft_lstclear(to_free, NULL);
+	ft_lstclear(&to_free, NULL);
 	root = build_tree_from_rqueue(&reversed_queue, data);
 	ft_lstclear(&reversed_queue, NULL);
 	to_free = NULL;

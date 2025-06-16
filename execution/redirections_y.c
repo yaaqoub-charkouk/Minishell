@@ -78,20 +78,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 	redir->entry_node->red.in_fd = fd;
 }
 
-void	write_args_fd(char **args, int fd)
-{
-	int	i;
-
-	i = 0;
-	while (args[i])
-	{
-		ft_putstr_fd(args[i], fd);
-		if (args[i + 1])
-			ft_putstr_fd(" ", fd);
-		i++;
-	}
-	write(fd, "\n", 1);
-}
 
 void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) // 
 {
