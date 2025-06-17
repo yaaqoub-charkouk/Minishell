@@ -84,8 +84,8 @@ void    free_tree(t_tree *tree)
 
     if (tree->args)
         free_matrix(tree->args);
-    // if (tree->red.outfile)
-    //     free(tree->red.outfile);
+    if (tree->red.outfile)
+        free(tree->red.outfile);
     // if (tree->red.file_name)
     //     free(tree->red.file_name);
 
@@ -95,7 +95,7 @@ void    free_tree(t_tree *tree)
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
-	t_tree	*tree; 
+	t_tree	*tree;
 	t_list	*env;
 	t_data	data;
 	char	*line;
@@ -141,7 +141,6 @@ int	main(int ac, char **av, char **envp)
 		data.is_heredoc = 0;
 		if (!line)
 		{
-			// printf("line is NULL from readline\n");
 			data.exit_status = 0;
 			printf("exit\n");
 			break;
@@ -168,7 +167,7 @@ int	main(int ac, char **av, char **envp)
 		// print_list(tokens);
 		tree = build_tree(tokens, &data);
 
-		// parsing end here
+		// NO LEAKS UNTIL HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NO LEAKS !
 
 		pre_execution(tree, &data);
 		// print_tree(tree, 0);
@@ -187,6 +186,8 @@ int	main(int ac, char **av, char **envp)
 	// while (1);
 	return (data.exit_status);
 }
+//  ↪ minishell-2.0$ ls || ps
+// minishell: syntax error near unexpected token `|'
 // bash-3.2$ ls (ls) <------ SYNTAX ERROR
 // bash: syntax error near unexpected token `ls'
 

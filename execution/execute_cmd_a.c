@@ -11,6 +11,7 @@ void    identify_read_write(t_tree *node)
 			perror("identify read write");
 			return ;
 		}
+		free(node->red.outfile);
 		dup2(fd, STDOUT_FILENO);
 		close (fd);
 	}
@@ -33,6 +34,9 @@ int	handle_redirection_err(t_tree *node, int is_pipe)
 		else
 			ft_putstr_fd("ambiguous redirect", 2);
 		write(2, "\n", 1);
+		// free(node->red.outfile);
+		free(node->red.file_name);
+		node->red.file_name = NULL;
 		if (is_pipe)
 			exit(1);
 		return (1);
@@ -84,7 +88,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	if (!node || !node->args || !node->args[0])
 	{
 		if (node && node->red.erno)
-			return (handle_redirection_err(node, is_pipe));
+			return (handle_redirection_err(node, is_pipe)); // we should free in case of failure at open ;
 		return (0);
 	}
 	if (node->red.erno)

@@ -8,7 +8,7 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 		return (printf("add cmd options NULL \n"), NULL); // delete printf;
 	while (args[i])
 	{
-		ft_lstadd_back(args_list, ft_lstnew(args[i]));
+		ft_lstadd_back(args_list, ft_lstnew(ft_strdup(args[i]))); // because we fre args at expand ; 
 		i++;
 	}
 	return (*args_list);
@@ -29,7 +29,7 @@ char	**list_to_char(t_list  *args_list)
      return (NULL);
 	while (i < size)
 	{
-		args_char[i] = ft_strdup(args_list->content);
+		args_char[i] = ft_strdup(args_list->content); // no need to allocate;
 		args_list = args_list->next;
 		i++;
 	}
@@ -52,12 +52,13 @@ void	open_outfile(char	*filename, t_redir *redir)
 	if (fd < 0)
 	{
 		redir->open_error = errno;
-		redir->entry_node->red.file_name = filename;
+		redir->entry_node->red.file_name = ft_strdup(filename);
 		redir->entry_node->red.erno = redir->open_error;
 		return ;
 	}
 	close(fd);
-	redir->entry_node->red.outfile = filename;
+	free(redir->entry_node->red.outfile);
+	redir->entry_node->red.outfile = ft_strdup(filename);
 	redir->entry_node->red.flag = flag;
 }
 
@@ -68,7 +69,7 @@ void	open_infile(char *filename,	t_redir	*redir)
 	fd = open(filename, O_RDONLY, 0777);
 	if (fd < 0)	
 	{
-		redir->entry_node->red.file_name = filename;
+		redir->entry_node->red.file_name = ft_strdup(filename);
 		redir->open_error = errno;
 		redir->entry_node->red.erno = redir->open_error;
 		return ;
@@ -76,21 +77,6 @@ void	open_infile(char *filename,	t_redir	*redir)
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd;
-}
-
-void	write_args_fd(char **args, int fd)
-{
-	int	i;
-
-	i = 0;
-	while (args[i])
-	{
-		ft_putstr_fd(args[i], fd);
-		if (args[i + 1])
-			ft_putstr_fd(" ", fd);
-		i++;
-	}
-	write(fd, "\n", 1);
 }
 
 void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) // 
@@ -124,19 +110,22 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		while (1)
 		{
 			line = readline(">");
-			expanded_line = expand_heredoc(line, data, redir->node->red.flag);
 			if (!line)
-				exit (0);
+			exit (0);
+			expanded_line = expand_heredoc(line, data, redir->node->red.flag);
 			if (!ft_strncmp(line, limiter, limiter_len) 
 				&& (ft_strlen(line)) == limiter_len)
 				break ;
 			// here should expand , afer check should expand 
-			
+			free(line);
+			line = NULL;
 			write(fd[1], expanded_line, ft_strlen(expanded_line));
 			write(fd[1], "\n", 1);
-			free(line);
+			free(expanded_line);
+			expanded_line = NULL;
 		}
 		free(line);
+		free(expanded_line);
 		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
@@ -150,9 +139,9 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 
 void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 {
-	int	k;
-	int	is_ambiguous;
-	char *file_name;
+	int		k;
+	int		is_ambiguous;
+	char	*file_name; // NO LEAKS 👍🏻 // free it at execute cmd;
 
 	file_name = ft_strdup(node->args[0]);
 	is_ambiguous = 0;
@@ -205,10 +194,11 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
 	traverse_branch(data, node, &redir);
-	if (redir.entry_node->type == REDIRECTION_IN || redir.entry_node->type == REDIRECTION_OUT 
-			|| redir.entry_node->type == APPEND || redir.entry_node->type == HEREDOC)
+	if (is_redirection(redir.entry_node->type))
 	{
+		free_matrix(redir.entry_node->args);
 		redir.entry_node->args = list_to_char(redir.args_list);
+		ft_lstclear(&redir.args_list, free);
 		redir.entry_node->type = CMD;
 	}
 	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it

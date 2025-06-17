@@ -117,16 +117,14 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		free_matrix(var);
 		return ;
 	}
-	
 	j = 0;
-	v = 0;
-	
-	while (j < *expand->k)
+	while (j < *expand->k) // copy old args;
 	{
 		new_args[j] = ft_strdup((*expand->args)[j]);
 		j++;
 	}
-	
+
+	v = 0;
 	new_args[j] = ft_strjoin(*expand->pile, var[v], 1);
 	j++;
 	v++;
@@ -137,7 +135,7 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		j++;
 		v++;
 	}
-	free_matrix(var);
+	free_matrix(var); // wilds ;
 	v = *expand->k + 1;
 	while ((*expand->args)[v])
 	{
@@ -156,12 +154,12 @@ void	insert_variable(t_expand *expand, char **var, int space_flag , int word_bou
 		*expand->pile = ft_strdup("");
 		(*expand->k)++;
 	}
+
 	// free old args and var
-	// to_free = *expand->args;
+	free_matrix(*expand->args);
 	*expand->args = new_args;
-	// free_matrix(to_free);
-	// to_free = NULL;
 }
+
 static void	expand_variable(t_data *data, t_expand *expand, int *i)
 {
 	char	*var_value;
@@ -183,6 +181,8 @@ static void	expand_variable(t_data *data, t_expand *expand, int *i)
 		(*i)++;
 	else
 		var_value = get_var_value(*data->envl, expand->arg + *i + 1, i, &word_boundary); // get the var value , and skip the var name ;
+	if (*var_value == '\0')
+		*expand->is_ambiguous = 1;
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
 		*expand->pile = ft_strjoin(*expand->pile, var_value, 1);
 	else
@@ -213,22 +213,20 @@ void	expand_string(t_data *data, t_expand *expand)
 	while (expand->arg[i])
 	{
 		if (in_quotes(expand->arg[i], &expand->in_dquotes, &expand->in_squotes, &i))
-			continue ; // if in quotes s*kip it ;
+			continue ;
 		if (expand->arg[i] == '*' && ((expand->in_dquotes || expand->in_squotes) || !ft_strcmp(*expand->args[0], "export")))// if a wild card is found change it to an unprintable char
 			expand->arg[i] = '\033';
-		if (should_expand_variable(expand, i)) // we have variable to expand ;
+		if (should_expand_variable(expand, i))
 			expand_variable(data, expand, &i);
 		else
-			pile = accumulate_char(pile, expand->arg[i]); // accumulate the char to pile;
+			pile = accumulate_char(pile, expand->arg[i]);
 		i++;
 	}
-	// free((*expand->args)[*expand->k]);
-	// (*expand->args)[*expand->k]= NULL;
+	free((*expand->args)[*expand->k]);
 	(*expand->args)[*expand->k] = pile; // k is the last known arg ;
-	
-	// return ((*expand->args)[0]); // if you want to expand string by string ;
 }
- void	expand_glob(t_expand *expand)
+
+ void	expand_glob(t_expand *expand) // NO LEAK except wilds args , free it at insert variable; 
  {
 	int	k = 0;
 	char	**wilds;
@@ -252,27 +250,16 @@ void	expand_string(t_data *data, t_expand *expand)
 			}
 			expand->k = &k;
 			
-			insert_variable(expand, wilds, 0, 0);
+			insert_variable(expand, wilds, 0, 0); // the only posible  leak in wilds args , free it like var .
 		}
-
+		free(pile);
 		pile = ft_strdup("");
 		k++;
 	}
+	free(pile);
 }
 
-void	free_matrix(char **args)
-{
-	int	i;
 
-	i = 0;
-	while (args[i])
-	{
-		free(args[i]);
-		args[i] = NULL;
-		i++;
-	}
-	free(args);
-}
 
 char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 {
@@ -303,6 +290,8 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 			break ;
 		k++;
 	}
+
+	// expand glob 
 	if (cmd_args)
 		expand_glob(&expand);
 	k = 0;
@@ -312,11 +301,9 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 		char	*wild = ft_strchr(args[k], '\033');
 		while ( wild)
 		{
-
 			*wild = '*';
 			wild = ft_strchr(args[k], '\033');
 		}
-
 		k++;
 	}
 	
