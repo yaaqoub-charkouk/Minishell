@@ -204,7 +204,7 @@ void	expand_string(t_data *data, t_expand *expand)
 	int			i;
 
 
-	expand->arg = (*expand->args)[*expand->k];
+	expand->arg = ft_strdup((*expand->args)[*expand->k]);
 
 	pile = ft_strdup(""); // init the pile to pile on it;
 	expand->pile = &pile;
@@ -222,6 +222,7 @@ void	expand_string(t_data *data, t_expand *expand)
 			pile = accumulate_char(pile, expand->arg[i]);
 		i++;
 	}
+	free(expand->arg);
 	free((*expand->args)[*expand->k]);
 	(*expand->args)[*expand->k] = pile; // k is the last known arg ;
 }
