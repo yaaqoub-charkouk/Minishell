@@ -20,7 +20,8 @@ int	check_is_num(char *str)
 
 int	built_in_exit(char **args, t_data *data)
 {
-	int	exit_status;
+	long long	exit_status;
+	int		overflow;
 
 	if (args && args[1])
 	{
@@ -29,20 +30,18 @@ int	built_in_exit(char **args, t_data *data)
 			ft_putstr_fd("exit: too many arguments\n", 2);
 			return (1);
 		}
-		if (!check_is_num(args[1]))
+		exit_status = ft_atoi(args[1], &overflow);
+		if (!check_is_num(args[1]) || overflow)
 		{
 			ft_putstr_fd("numeric argument required\n", 2);
-			exit(255);
+			// exit(255);
+			exit_status = 255;
 		}
-		exit_status = ft_atoi(args[1]);
-		// printf("exit %d\n", exit_status);
-		//  if (exit_status < 0)
-        //     exit_status = (exit_status % 256);
-        // else
-        //     exit_status %= 256;
+		printf("exit status %lld\n", exit_status);
+		
 	}
 	else
 		exit_status = data->exit_status;
-	exit((unsigned char)exit_status);
+	exit((unsigned char)exit_status % 256);
 	return (0);
 }
