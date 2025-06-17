@@ -1,4 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   build_tree_y.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/17 18:50:42 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/17 18:50:45 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
+
+void	add_token_to_queue(t_list **queue, t_list	*token)
+{
+	t_list	*new_node;
+
+	new_node = ft_lstnew(token->content);
+	if (!new_node)
+		return ;
+	new_node->type = token->type;
+	ft_lstadd_back(queue, new_node);
+}
 
 int	push(t_list *queue, t_list **list)
 {
@@ -13,7 +36,7 @@ int	push(t_list *queue, t_list **list)
 	return (1);
 }
 
-t_tree *new_tree_node(t_list	*token, t_data *data)
+t_tree	*new_tree_node(t_list	*token, t_data *data)
 {
 	t_tree	*tree_node;
 
@@ -23,10 +46,9 @@ t_tree *new_tree_node(t_list	*token, t_data *data)
 	tree_node = malloc(sizeof(t_tree));
 	if (!tree_node)
 		return (NULL);
-	tree_node->red.flag = 1; // pass a pointer to expand and check if we need to expand inside heredoc ;
-	// tree_node->args = ft_split(token->content, ' '); // expand here
+	tree_node->red.flag = 1;
 	if (token->type == CMD)
-		tree_node->args = ft_split_pipex(token->content, ' ');   // wait every time you expand limiter;
+		tree_node->args = ft_split_pipex(token->content, ' ');
 	else
 		tree_node->args = NULL;
 	free(token->content);
@@ -54,7 +76,7 @@ t_tree	*build_tree_from_rqueue(t_list **current, t_data *data)
 	*current = temp;
 	if (node->type != CMD)
 	{
-		node->right = build_tree_from_rqueue(current, data); // build the right first , so that the left will be the right->next ,wich will be updated when calling the function 
+		node->right = build_tree_from_rqueue(current, data);
 		node->left = build_tree_from_rqueue(current, data);
 	}
 	return (node);
@@ -67,14 +89,14 @@ t_tree	*build_tree(t_list	*tokens, t_data *data)
 	t_list	*queue;
 	t_list	*to_free;
 
-	queue = build_sy_queue(tokens); // tokens end here;
+	queue = build_sy_queue(tokens);
 	ft_lstclear(&tokens, NULL);
 	to_free = queue;
 	reversed_queue = NULL;
 	root = NULL;
 	while (queue)
 	{
-		push(queue, &reversed_queue); // don't realloc 
+		push(queue, &reversed_queue);
 		queue = queue->next;
 	}
 	ft_lstclear(&to_free, NULL);

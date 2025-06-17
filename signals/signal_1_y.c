@@ -29,6 +29,14 @@ void	setup_signals(void )
 {
 	struct sigaction	action;
 	struct sigaction	exit;
+	// sigset_t block_all;
+
+    // // Block all signals first
+    // sigfillset(&block_all);
+    // if (sigprocmask(SIG_SETMASK, &block_all, NULL) == -1) {
+    //     perror("sigprocmask");
+    //     return;
+    // }
 
 	reset_terminal_mode();
 	// setup action signal set
@@ -43,8 +51,8 @@ void	setup_signals(void )
 	// setup exit signal set // neeed to be removed 
 
 	exit.sa_handler = SIG_IGN;
-	// exit.sa_flags = SA_SIGINFO | SA_RESTART;
-	// sigemptyset(&exit.sa_mask);
+	exit.sa_flags = SA_SIGINFO | SA_RESTART;
+	sigemptyset(&exit.sa_mask);
 	sigaddset(&exit.sa_mask, SIGQUIT);
 	
 	// signal(SIGQUIT, SIG_IGN);
