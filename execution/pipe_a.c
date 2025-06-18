@@ -18,7 +18,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);
-		if (node->left->type == CMD)
+		if (node->left->type == CMD) // base condition for pipe recursion
 			exit(execution(node->left, data, 1));
 		else
 			exit(execution(node->left, data, 0));
@@ -40,7 +40,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 	close(fd[1]);
 	waitpid(pidl, &status, 0);
 	waitpid(pidr, &status, 0);
-	close_read_fd(node->left);
-	close_read_fd(node->right);
+	// close_read_fd(node->left);
+	// close_read_fd(node->right);
 	return (WEXITSTATUS(status));
 }
