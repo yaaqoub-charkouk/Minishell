@@ -5,18 +5,14 @@
 
 // linked list , basic , before the binary tree
 
-char	*expand_heredoc(char *line, t_data *data, int	should_expand_var);
-char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous);
-char	*accumulate_char(char *pile, char c);
-char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary);
  /*======= shunting yard ========*/
 t_list	*build_sy_queue(t_list	*token);
-
+void	add_token_to_queue(t_list **queue, t_list	*token);
 /**** tokenization ***/
 t_type_node	get_type(char *content);
 t_list		*tokenize(char	*line);;
 void	free_matrix(char **args);
-
+void	handle_quotes(char c, int *in_squote, int *in_dquote);
 
 t_tree		*build_tree(t_list *tokens, t_data *data);
 void		print_tokens(t_list *tokens);
@@ -30,10 +26,6 @@ char		**free_string(char **string, int i);
 
 void	print_list(t_list	*list);
 
-int		is_operator(t_type_node type); // from execution
-int		is_redirection(t_type_node type);
 int		count_words(const char *s, char sep);
-char	**expand_wildcard(char *pattern);
-void	expand_string(t_data *data, t_expand *expand);
 
 #endif

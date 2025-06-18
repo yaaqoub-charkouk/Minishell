@@ -1,15 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   build_queue_y.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/17 15:28:46 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/17 15:36:59 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
-
-void	add_token_to_queue(t_list **queue, t_list	*token)
-{
-	t_list	*new_node;
-
-	new_node = ft_lstnew(token->content);
-	if (!new_node)
-		return ;
-	new_node->type = token->type;
-	ft_lstadd_back(queue, new_node);
-}
 
 void	add_op_to_queue(t_list **queue, t_list **stack_op)
 {
@@ -67,15 +68,13 @@ t_list	*build_sy_queue(t_list	*token)
 	t_list	*stack_op;
 	t_list	**to_free;
 
-	queue = NULL;
-	stack_op = NULL;
-	to_free = &stack_op;
+	queue = (((stack_op = NULL), to_free = &stack_op), NULL);
 	while (token)
 	{
 		if (token->type == CMD)
 			add_token_to_queue(&queue, token);
 		else if (token->type == P_OPEN)
-			push_to_op_stack(&stack_op, token); // check return (value);
+			push_to_op_stack(&stack_op, token);
 		else if (token->type == P_CLOSE)
 			parenthesis_priority(&stack_op, &queue);
 		else
@@ -89,6 +88,5 @@ t_list	*build_sy_queue(t_list	*token)
 	}
 	while (stack_op)
 		add_op_to_queue(&queue, &stack_op);
-	ft_lstclear(to_free, NULL);
-	return (queue);
+	return (ft_lstclear(to_free, NULL), queue);
 }
