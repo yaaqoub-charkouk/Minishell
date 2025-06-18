@@ -6,12 +6,5 @@
 # include "signals/signals.h"
 
 #include <stdlib.h>
-// extern int g_sig;
-typedef struct s_wild
-{
-	char			*file;
-	struct s_wild	*next;
-}	t_wild;
 
-char	**expand_wildcard(char *pattern);
 #endif

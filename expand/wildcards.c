@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "expand.h"
 
 int	matches_pattern(char *pattern, const char *filename)
 {

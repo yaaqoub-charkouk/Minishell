@@ -24,7 +24,13 @@ int		ft_strcmp(const char *s1, const char *s2);
 
 // free
 void	free_matrix(char **args);
+char	**ft_split_pipex(const char *s, char c);
 
-
+// redirections utils
+char	**list_to_char(t_list  *args_list);
+t_list	*add_cmd_options(t_list **args_list, char **args, int i);
+int     is_redirection(t_type_node type);
+int     is_operator(t_type_node type);
+int     get_operator_len(t_type_node type);
 
 #endif

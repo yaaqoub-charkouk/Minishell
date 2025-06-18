@@ -1,4 +1,5 @@
 #include "minishell.h"
+
 #define SKY_BLUE "\033[38;5;39m"
 #define RESET_COLOR "\033[0m"
 #define GREEN "\033[0;32m"
@@ -92,6 +93,7 @@ void    free_tree(t_tree *tree)
     // Finally, free the node itself
     free(tree);
 }
+
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
@@ -116,9 +118,15 @@ int	main(int ac, char **av, char **envp)
 	syntax = 0;
 	while (1)
 	{
+		// char cmd[128];
+		// snprintf(cmd, sizeof(cmd), "lsof -p %d", getpid());
+		// system(cmd);
+
+
+
 		if (!isatty(STDIN_FILENO))
 		{
-			 rl_instream = stdin;
+			rl_instream = stdin;
 			rl_outstream = fopen("/dev/null", "w");
 			line = readline(NULL);
 			if (rl_outstream) fclose(rl_outstream);
@@ -186,6 +194,8 @@ int	main(int ac, char **av, char **envp)
 	// while (1);
 	return (data.exit_status);
 }
+//ls | pwd exit status should be 0 not 1 ; broken pipe ;
+
 //  ↪ minishell-2.0$ ls || ps
 // minishell: syntax error near unexpected token `|'
 // bash-3.2$ ls (ls) <------ SYNTAX ERROR

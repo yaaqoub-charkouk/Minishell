@@ -89,6 +89,7 @@ void	exec_cmd(t_tree *node, char **env)
 		free_split(path);
 	}
 	check_access_err(node, env);
+	// close_read_fd(node);
 }
 
 int	check_if_directory(t_tree *node)

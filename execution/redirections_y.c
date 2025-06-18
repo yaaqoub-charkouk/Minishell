@@ -1,41 +1,5 @@
 #include "execution.h"
 
-t_list	*add_cmd_options(t_list **args_list, char **args, int i)
-{
-	if (i == 0)
-		*args_list = NULL;
-	if (!args || !*args)
-		return ( NULL); // delete printf;
-	while (args[i])
-	{
-		ft_lstadd_back(args_list, ft_lstnew(ft_strdup(args[i]))); // because we fre args at expand ; 
-		i++;
-	}
-	return (*args_list);
-}
-
-char	**list_to_char(t_list  *args_list)
-{
-	int		size;
-	int		i;
-	char	**args_char;
-
-	if (!args_list)
-		return ( NULL);
-	i = 0;
-	size = ft_lstsize(args_list);
-	args_char = malloc((size + 1) * sizeof(char *));
-	if(!args_char)
-     return (NULL);
-	while (i < size)
-	{
-		args_char[i] = ft_strdup(args_list->content); // no need to allocate;
-		args_list = args_list->next;
-		i++;
-	}
-	args_char[i] = NULL;
-	return (args_char); // need to be freed ;
-}
 
 void	open_outfile(char	*filename, t_redir *redir)
 {
@@ -130,7 +94,11 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
+	{
 		setup_signals();
+		g_sig = 1;
+		data->exit_status = 1;
+	}
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
 	redir->entry_node->red.in_fd = fd[0];

@@ -1,37 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_y.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/17 18:53:38 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/17 18:59:32 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
-t_type_node get_type(char *content)
+t_type_node	get_type(char *content)
 {
-    if (ft_strncmp(content, ">>", 2) == 0)
-        return (APPEND);
-    else if (ft_strncmp(content, "<<", 2) == 0)
-        return (HEREDOC);
-    else if (ft_strncmp(content, "&&", 2) == 0)
-        return (AND);
-    else if (ft_strncmp(content, "||", 2) == 0) 
-        return (OR);
-    else if (ft_strncmp(content, ">", 1) == 0)
-        return (REDIRECTION_OUT);
-    else if (ft_strncmp(content, "<", 1) == 0)
-        return (REDIRECTION_IN);
-    else if (ft_strncmp(content, "|", 1) == 0)
-        return (PIPE);
+	if (ft_strncmp(content, ">>", 2) == 0)
+		return (APPEND);
+	else if (ft_strncmp(content, "<<", 2) == 0)
+		return (HEREDOC);
+	else if (ft_strncmp(content, "&&", 2) == 0)
+		return (AND);
+	else if (ft_strncmp(content, "||", 2) == 0) 
+		return (OR);
+	else if (ft_strncmp(content, ">", 1) == 0)
+		return (REDIRECTION_OUT);
+	else if (ft_strncmp(content, "<", 1) == 0)
+		return (REDIRECTION_IN);
+	else if (ft_strncmp(content, "|", 1) == 0)
+		return (PIPE);
 	else if (ft_strncmp(content, "(", 1) == 0)
 		return (P_OPEN);
 	else if (ft_strncmp(content, ")", 1) == 0)
 		return (P_CLOSE);
-    else
-        return (CMD);
-}		
-
-int	get_operator_len(t_type_node type)
-{
-	if (type == APPEND || type == HEREDOC || type == AND || type == OR)
-		return (2);
-	return (1);
+	else
+		return (CMD);
 }
 
-int	init_variables(t_tokenize *token, t_list **head, t_list **last, int *in_dquotes)
+int	init_variables(t_tokenize *token, t_list **head
+					, t_list **last, int *in_dquotes)
 {
 	*head = NULL;
 	*last = NULL;
@@ -65,7 +71,7 @@ int	add_token(t_list **head, t_list **last, char *content, t_type_node type)
 		}
 	}
 	else
-		return (ft_lstclear(&new_node, free), 1); // skip the node that wil contain only spaces
+		return (ft_lstclear(&new_node, free), 1);
 	return (1);
 }
 
@@ -109,10 +115,7 @@ t_list	*tokenize(char	*line)
 	while (line[token.i])
 	{
 		token.type = get_type(&line[token.i]);
-		if (line[token.i] == 34 && !in_squotes)
-			in_dquotes = !in_dquotes;
-		if (line[token.i] == 39 && !in_dquotes)
-			in_squotes = !in_squotes;
+		handle_quotes(line[token.i], &in_squotes, &in_dquotes);
 		if (token.type != CMD && !(in_squotes + in_dquotes))
 		{
 			if (!extract_token(line, &token, 0))
