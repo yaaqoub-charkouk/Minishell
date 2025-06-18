@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS =  -Wall -Wextra -Werror -I$(HOME) -g #-fsanitize=address
+CFLAGS =  -Wall -Wextra -Werror -I$(HOME) -g -fsanitize=address
 LDFLAGS = -L$(LIBFT_DIR) -L$(HOME)/readline -lreadline -lhistory 
 
 TARGET = minishell
@@ -10,7 +10,7 @@ BUILT_INS = $(addprefix built_ins/, echo.c exit.c pwd.c cd.c env.c export.c unse
 EXECUTION = $(addprefix execution/, execution_a.c redirections_y.c execute_cmd_a.c pipe_a.c)
 SIGNALS = $(addprefix signals/, signal_1_y.c)
 UTILS = $(addprefix utils/, execute_cmd_utils.c utils.c free.c split_pipex.c redirections_utils.c)
-EXPAND = $(addprefix expand/, wildcards.c expand.c expand_heredoc.c)
+EXPAND = $(addprefix expand/, wildcards.c expand.c expand_heredoc.c word_spliting.c expand_utils.c expand_variable.c)
 
 SOURCES = main.c $(PARSING) $(BUILT_INS) $(EXECUTION) $(SIGNALS) $(UTILS) $(EXPAND)
 
