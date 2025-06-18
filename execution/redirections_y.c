@@ -5,7 +5,7 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i)
 	if (i == 0)
 		*args_list = NULL;
 	if (!args || !*args)
-		return (printf("add cmd options NULL \n"), NULL); // delete printf;
+		return ( NULL); // delete printf;
 	while (args[i])
 	{
 		ft_lstadd_back(args_list, ft_lstnew(ft_strdup(args[i]))); // because we fre args at expand ; 
@@ -21,7 +21,7 @@ char	**list_to_char(t_list  *args_list)
 	char	**args_char;
 
 	if (!args_list)
-		return (printf("list to char NULL \n"), NULL);
+		return ( NULL);
 	i = 0;
 	size = ft_lstsize(args_list);
 	args_char = malloc((size + 1) * sizeof(char *));
