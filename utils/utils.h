@@ -15,7 +15,7 @@ char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
 void	check_access_err(t_tree *node, char **env);
 void	exec_cmd(t_tree *node, char **env);
-int		check_if_directory(t_tree *node);
+int		check_if_directory(char	*cmd);
 
 //utils.c
 void	close_read_fd(t_tree *node);
@@ -23,6 +23,7 @@ void	free_split(char **str);
 int		ft_strcmp(const char *s1, const char *s2);
 
 // free
+void	free_tree(t_tree *tree);
 void	free_matrix(char **args);
 char	**ft_split_pipex(const char *s, char c);
 

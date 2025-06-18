@@ -37,6 +37,8 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 		tmp2 = ft_strjoin(tmp, cmd, 1);
 		if (access(tmp2, X_OK) == 0)
 		{
+			if (check_if_directory(tmp2))
+				exit(126);
 			execve(tmp2, args, env);
 			free(tmp2);
 			exit(EXIT_FAILURE);
@@ -51,6 +53,8 @@ void	check_access_err(t_tree *node, char **env)
 {
 	if (access(node->args[0], X_OK) == 0) 
 	{
+		if (check_if_directory(node->args[0]))
+			exit (126);
 		execve(node->args[0], node->args, env);
 		perror("execve");
 		exit(1);
@@ -73,6 +77,9 @@ void	exec_cmd(t_tree *node, char **env)
 
 	if (ft_strchr(node->args[0], '/'))
 	{
+		// check if directory 
+		if (check_if_directory(node->args[0]))
+			exit(126);
 		execve(node->args[0], node->args, env);
 		perror("execve");
 		if (errno == ENOENT)
@@ -89,17 +96,17 @@ void	exec_cmd(t_tree *node, char **env)
 		free_split(path);
 	}
 	check_access_err(node, env);
-	// close_read_fd(node);
+	close_read_fd(node);
 }
 
-int	check_if_directory(t_tree *node)
+int	check_if_directory(char	*cmd)
 {
 	DIR	*dir;
 
-	dir = opendir(node->args[0]);
+	dir = opendir(cmd);
 	if (dir)
 	{
-		printf("minishell: %s: is a directory\n", node->args[0]);
+		printf("minishell: %s: is a directory\n", cmd);
 		closedir(dir);
 		return (1);
 	}
