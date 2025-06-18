@@ -41,7 +41,6 @@ int	built_in_unset(char **args, t_data *data)
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
 			i++;
-			//change the return value to 1;
 			return_value = 1;
 			continue ;
 		}

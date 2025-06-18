@@ -37,41 +37,6 @@ void	pad_redirections_with_cmd(t_list **lst)
 		temp = temp->next;
 	}
 }
-void	free_tokens(t_list *lst)
-{
-	t_list	*temp;
-
-	if (!lst)
-		return ;
-	while (lst)
-	{
-		temp = lst->next;
-		free(lst->content);
-		lst->content = NULL;
-		free(lst);
-		lst = NULL;
-		lst = temp;
-	}
-}
-
-void	free_env(char **env, t_list **envl)
-{
-	int		i;
-
-	ft_lstclear(envl, free);
-	if (env)
-	{
-		i = 0;
-		while (env[i])
-		{
-			free(env[i]);
-			env[i++] = NULL;
-		}
-		free(env);
-		env = NULL;
-	}
-}
-
 
 int	main(int ac, char **av, char **envp)
 {

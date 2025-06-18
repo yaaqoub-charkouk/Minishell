@@ -292,7 +292,9 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 		k++;
 	}
 
-	// expand glob 
+	// expand glob
+	if (!is_ambiguous)
+		return (args); 
 	if (cmd_args)
 		expand_glob(&expand);
 	k = 0;

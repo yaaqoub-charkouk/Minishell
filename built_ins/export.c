@@ -44,7 +44,6 @@ void	export_process_arg(char *arg, t_data *data)
 	{
 		if (curr)
 		{
-			// free old content
 			free(curr->content);
 			curr->content = ft_strdup(arg);
 		}

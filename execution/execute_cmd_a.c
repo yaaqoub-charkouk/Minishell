@@ -1,9 +1,10 @@
 #include "execution.h"
 
-void    identify_read_write(t_tree *node)
+void	identify_read_write(t_tree *node)
 {
 	int	fd;
-	if (node->red.outfile) // change the read fd
+
+	if (node->red.outfile)
 	{
 		fd = open(node->red.outfile, node->red.flag, 0777);
 		if (fd < 0)
@@ -15,7 +16,7 @@ void    identify_read_write(t_tree *node)
 		dup2(fd, STDOUT_FILENO);
 		close (fd);
 	}
-	if (node->red.in_fd != -1) // change the read fd
+	if (node->red.in_fd != -1)
 	{
 		dup2(node->red.in_fd, STDIN_FILENO);
 		close(node->red.in_fd);
@@ -26,9 +27,9 @@ int	handle_redirection_err(t_tree *node, int is_pipe)
 {
 	if (node->red.erno)
 	{
-		ft_putstr_fd("minishell :" ,2);
-		ft_putstr_fd(node->red.file_name,2);
-		write(2, ": " , 2);
+		ft_putstr_fd("minishell :", 2);
+		ft_putstr_fd(node->red.file_name, 2);
+		write(2, ": ", 2);
 		if (node->red.erno != -1337)
 			ft_putstr_fd(strerror(node->red.erno), 2);
 		else
@@ -56,14 +57,10 @@ int	execute_fork_command(t_tree *node, t_data *data)
 	{
 		signal(SIGINT, SIG_DFL);
 		identify_read_write(node);
-		// if (check_if_directory(node))
-		// 	exit(126);
-		// else
 		exec_cmd(node, data->env);
 	}
 	waitpid(pid, &status, 0);
 	setup_signals();
-	// close_read_fd(node);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
@@ -74,9 +71,6 @@ int	execute_fork_command(t_tree *node, t_data *data)
 int	execute_pipe_cmd(t_tree *node, t_data *data)
 {
 	identify_read_write(node);
-	// if (check_if_directory(node))
-	// 	return (126);
-	// else
 	exec_cmd(node, data->env);
 	return (0);
 }
@@ -88,7 +82,7 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	if (!node || !node->args || !node->args[0])
 	{
 		if (node && node->red.erno)
-			return (handle_redirection_err(node, is_pipe)); // we should free in case of failure at open ;
+			return (handle_redirection_err(node, is_pipe));
 		return (0);
 	}
 	if (node->red.erno)
