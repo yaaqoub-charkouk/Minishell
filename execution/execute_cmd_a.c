@@ -34,7 +34,6 @@ int	handle_redirection_err(t_tree *node, int is_pipe)
 		else
 			ft_putstr_fd("ambiguous redirect", 2);
 		write(2, "\n", 1);
-		// free(node->red.outfile);
 		free(node->red.file_name);
 		node->red.file_name = NULL;
 		if (is_pipe)
@@ -57,13 +56,14 @@ int	execute_fork_command(t_tree *node, t_data *data)
 	{
 		signal(SIGINT, SIG_DFL);
 		identify_read_write(node);
-		if (check_if_directory(node))
-			exit(126);
-		else
-			exec_cmd(node, data->env);
+		// if (check_if_directory(node))
+		// 	exit(126);
+		// else
+		exec_cmd(node, data->env);
 	}
 	waitpid(pid, &status, 0);
 	setup_signals();
+	// close_read_fd(node);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
@@ -74,10 +74,10 @@ int	execute_fork_command(t_tree *node, t_data *data)
 int	execute_pipe_cmd(t_tree *node, t_data *data)
 {
 	identify_read_write(node);
-	if (check_if_directory(node))
-		return (126);
-	else
-		exec_cmd(node, data->env);
+	// if (check_if_directory(node))
+	// 	return (126);
+	// else
+	exec_cmd(node, data->env);
 	return (0);
 }
 

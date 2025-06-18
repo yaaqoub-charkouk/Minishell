@@ -26,21 +26,25 @@ int	check_built_in(char **args, t_data *data, int is_pipe)
 int	execute_built_in(char **args, t_data *data, int is_pipe, t_tree *node)
 {
 	int	fd = -1;
-	int	saved_stdin = -1;
+	int	saved_stdout = -1;
 	int	ret;
 
 	if (node->red.outfile)
 	{
 		fd = open(node->red.outfile, node->red.flag, 0777);
-		saved_stdin = dup(STDOUT_FILENO);
-		if (fd != -1)
-			dup2(fd, STDOUT_FILENO);
+		if (fd < 0)
+			perror("minishell:");
+		saved_stdout = dup(STDOUT_FILENO);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
 	}
 	ret = check_built_in(args, data, is_pipe);
-	if (saved_stdin != -1)
+	if (saved_stdout != -1)
 	{
-		dup2(saved_stdin, STDOUT_FILENO);
-		close(fd);
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdout);
+		// printf("closed fd %d")
+		// close(fd);
 	}
 
 	return (ret);
