@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 19:01:38 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/17 19:04:53 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/19 13:43:22 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	should_expand(char *line, int i)
 			|| line[i + 1] == '0'));
 }
 
-static void	expand_variable(t_data *data, char *line, int *i, char **pile)
+static void	expand_var_heredoc(t_data *data, char *line, int *i, char **pile)
 {
 	char	*var_value;
 
@@ -45,7 +45,7 @@ static void	expand_variable(t_data *data, char *line, int *i, char **pile)
 	free(var_value);
 }
 
-char	*expand_heredoc(char *line, t_data *data, int	should_expand_var)
+char	*expand_heredoc(char *line, t_data *data, int should_expand_var)
 {
 	int		i;
 	char	*pile;
@@ -53,11 +53,11 @@ char	*expand_heredoc(char *line, t_data *data, int	should_expand_var)
 	if (!line)
 		return (NULL);
 	pile = ft_strdup("");
-	i =0;
+	i = 0;
 	while (line[i])
 	{
 		if (should_expand(line, i) && should_expand_var)
-			expand_variable(data, line, &i, &pile);
+			expand_var_heredoc(data, line, &i, &pile);
 		else
 			pile = accumulate_char(pile, line[i]);
 		i++;
