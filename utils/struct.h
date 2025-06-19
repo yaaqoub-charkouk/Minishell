@@ -47,7 +47,7 @@ typedef struct s_expand
 	int		word_boundary;
 	int		j;
 	int		flag;
-} t_expand;
+}	t_expand;
 
 typedef struct s_redir
 {

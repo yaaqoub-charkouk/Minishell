@@ -48,7 +48,9 @@ int	execute_pipe(t_tree *node, t_data *data)
 	close(fd[1]);
 	waitpid(pidl, &status, 0);
 	waitpid(pidr, &status, 0);
-	if (WIFSIGNALED(status))
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
 		return (128 + WTERMSIG(status));
-	return (WEXITSTATUS(status));
+	return (1);
 }
