@@ -2,6 +2,7 @@
 
 void	execute_left(t_tree *node, t_data *data, int *fd)
 {
+	signal(SIGINT, SIG_DFL);
 	close(fd[0]);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[1]);
@@ -13,6 +14,7 @@ void	execute_left(t_tree *node, t_data *data, int *fd)
 
 void	execute_right(t_tree *node, t_data *data, int *fd)
 {
+	signal(SIGINT, SIG_DFL);
 	close(fd[1]);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
@@ -46,5 +48,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 	close(fd[1]);
 	waitpid(pidl, &status, 0);
 	waitpid(pidr, &status, 0);
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
 	return (WEXITSTATUS(status));
 }

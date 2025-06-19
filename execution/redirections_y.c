@@ -1,11 +1,21 @@
-#include "execution.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirections_y.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 15:58:16 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/19 16:17:25 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "execution.h"
 
 void	open_outfile(char	*filename, t_redir *redir)
 {
 	int	flag;
 	int	fd;
-
 
 	flag = O_CREAT | O_WRONLY;
 	if (*(redir->type) == REDIRECTION_OUT)
@@ -31,7 +41,7 @@ void	open_infile(char *filename,	t_redir	*redir)
 	int	fd;
 
 	fd = open(filename, O_RDONLY, 0777);
-	if (fd < 0)	
+	if (fd < 0)
 	{
 		redir->entry_node->red.file_name = ft_strdup(filename);
 		redir->open_error = errno;
@@ -43,7 +53,7 @@ void	open_infile(char *filename,	t_redir	*redir)
 	redir->entry_node->red.in_fd = fd;
 }
 
-void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) // 
+void	open_heredoc(t_data *data, t_tree *node, t_redir *redir)
 {
 	int		fd[2];
 	int		pid;
@@ -93,7 +103,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // BEGIN:
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		setup_signals();
 		g_sig = 1;
@@ -105,11 +115,11 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir) //
 	close(fd[1]);
 }
 
-void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
+void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 {
 	int		k;
 	int		is_ambiguous;
-	char	*file_name; // NO LEAKS 👍🏻 // free it at execute cmd;
+	char	*file_name;
 
 	file_name = ft_strdup(node->args[0]);
 	is_ambiguous = 0;
@@ -124,19 +134,15 @@ void	open_fd(t_data *data,t_tree	*node, t_redir *redir)
 	}
 	else
 		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
-	if (is_ambiguous)
-	{
-		redir->entry_node->red.erno = -1337;
-		redir->entry_node->red.file_name = file_name;
+	if (check_ambiguity(redir, file_name, is_ambiguous))
 		return ;
-	}
 	free(file_name);
-	if (!redir->open_error && (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
+	if (!redir->open_error 
+		&& (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);
 	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)
 		open_infile(node->args[0], redir);
 }
-
 
 void	traverse_branch(t_data *data, t_tree *node, t_redir *redir)
 {
@@ -151,14 +157,13 @@ void	traverse_branch(t_data *data, t_tree *node, t_redir *redir)
 
 int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 {
-	t_redir redir;
+	t_redir	redir;
 
 	redir.args_list = NULL;
 	redir.node = node;
 	redir.entry_node = entry_node;
 	redir.type = type;
 	redir.open_error = 0;
-
 	if (redir.entry_node->left)
 		add_cmd_options(&redir.args_list, redir.entry_node->left->args, 0);
 	traverse_branch(data, node, &redir);
@@ -169,14 +174,13 @@ int	bridge(t_data *data, t_tree *node, t_tree *entry_node, t_type_node *type)
 		ft_lstclear(&redir.args_list, free);
 		redir.entry_node->type = CMD;
 	}
-	if (!entry_node->args && entry_node->red.in_fd != -1)// if there s no cmd expl << k close the heredoc read end we wont need it
+	if (!entry_node->args && entry_node->red.in_fd != -1)
 	{
 		close(entry_node->red.in_fd);
 		entry_node->red.in_fd = -1;
 	}
 	return (redir.open_error);
 }
-
 
 int	pre_execution(t_tree *node, t_data *data)
 {
@@ -185,26 +189,16 @@ int	pre_execution(t_tree *node, t_data *data)
 
 	open_error = 0;
 	if (!node)
-	{
-		printf("tree node is null segfault\n");
 		return (1);
-	}
 	type = node->type;
-	if (node->type == PIPE || node->type == OR || node->type == AND)
-	{
+	if (is_operator(node->type))
 		pre_execution(node->left, data);
-	}
 	if (node->right)
 	{
-		if (node->type == PIPE || node->type == OR || node->type == AND)
-		{
+		if (is_operator(node->type))
 			pre_execution(node->right, data);
-		}
-		if (node->right && (node->type == REDIRECTION_IN || node->type == REDIRECTION_OUT 
-			|| node->type == APPEND || node->type == HEREDOC))
-		{
-			open_error = bridge(data, node->right, node, &type); // traverse a branch
-		}
+		if (node->right && is_redirection(node->type))
+			open_error = bridge(data, node->right, node, &type);
 	}
 	return (open_error);
 }
