@@ -11,12 +11,6 @@
 # include <dirent.h>
 # include <sys/wait.h>
 
-char	**get_path(char **env, int *erno);
-void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
-void	check_access_err(t_tree *node, char **env);
-void	exec_cmd(t_tree *node, char **env);
-int		check_if_directory(char	*cmd);
-
 //utils.c
 void	close_read_fd(t_tree *node);
 void	free_split(char **str);
@@ -40,4 +34,5 @@ void	handle_quotes(char c, int *in_squote, int *in_dquote);
 int		is_space(char c);
 void	print_error(char *token);
 int		operator_error(int count, int flag);
+
 #endif

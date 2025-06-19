@@ -1,150 +1,40 @@
 #include "minishell.h"
 
-#define SKY_BLUE "\033[38;5;39m"
-#define RESET_COLOR "\033[0m"
-#define GREEN "\033[0;32m"
-#define RED "\033[0;31m"
- int 	g_sig;
-
-// void	ll()
-// {
-// 	system("leaks minishell");
-// }
-
-
-void	pad_redirections_with_cmd(t_list **lst)
-{
-	t_list	*node;
-	t_list	*temp;
-
-	if (is_redirection((*lst)->type))
-	{
-		node = ft_lstnew(NULL);
-		node->type = CMD;
-		node->next = *lst;
-		*lst = node;
-	}
-	temp = *lst;
-	while (temp)
-	{
-		if (is_operator(temp->type) && is_redirection(temp->next->type))
-		{
-			node = ft_lstnew(NULL);
-			node->type = CMD;
-			node->next = temp->next;
-			temp->next = node;
-		}
-		temp = temp->next;
-	}
-}
+int	g_sig;
 
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;
-	t_tree	*tree;
 	t_list	*env;
 	t_data	data;
-	char	*line;
-	char	*prompt;
-	int syntax;
+	int		ret;
 
 	(void)ac;
 	(void)av;
-	env = NULL;
-	copy_env(envp, &env);
-	tokens = NULL;
-	tree = NULL;
-	rl_catch_signals = 0;
-	setup_signals();
-	data.exit_status = 0;
-	data.env = env_struct_to_char(env);
-    data.envl = &env;
-	syntax = 0;
+	initialise_vars(&data, &env, &tokens, envp);
 	while (1)
 	{
-		// char cmd[128];
-		// snprintf(cmd, sizeof(cmd), "lsof -p %d", getpid());
-		// system(cmd);
-
-
-
-		if (!isatty(STDIN_FILENO))
-		{
-			rl_instream = stdin;
-			rl_outstream = fopen("/dev/null", "w");
-			line = readline(NULL);
-			if (rl_outstream) fclose(rl_outstream);
-				rl_outstream = stdout;
-		}
-		else
-		{
-            if (data.exit_status == 0)
-                prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-            else
-                prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-            line = readline(prompt);
-		}
-		if (data.env)
-		{
-			free_env(data.env, NULL);
-			data.env = env_struct_to_char(env);
-		}
+		free_env(data.env, NULL);
+		data.env = env_struct_to_char(env);
 		data.read_fd = STDIN_FILENO;
 		data.is_heredoc = 0;
-		if (!line)
-		{
-			data.exit_status = 0;
-			printf("exit\n");
-			break;
-		}
-		
-		add_history(line);
-		tokens = tokenize(line); // allocate memory
-		syntax = is_syntax_error(line, tokens); // free all inside except line, tokens;
-		
-		free(line);
-		line = NULL;
-		
-		if (syntax)
-		{
-			// free tokens;
-			data.exit_status = 258;
-			if(syntax == 1337)
-				data.exit_status = 0;
-			ft_lstclear(&tokens, free);
-			continue ;
-		}
-
-		pad_redirections_with_cmd(&tokens);
-		// print_list(tokens);
-		tree = build_tree(tokens, &data);
-
-		// NO LEAKS UNTIL HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NO LEAKS !
-
-		pre_execution(tree, &data);
-		// print_tree(tree, 0);
-		data.exit_status = execution(tree, &data, 0);
-		free_tree(tree);
-        tree = NULL;
-		reset_terminal_mode();
-		if (!isatty(STDIN_FILENO))
-		{
+		ret = read_tokenize(&data, &tokens);
+		if (ret == 42)
 			break ;
-		}
-
+		else if (ret == 258)
+			continue ;
+		if (build_execute(tokens, &data) == 42)
+			break ;
 	}
 	free_env(data.env, data.envl);
 	rl_clear_history();
-	// while (1);
 	return (data.exit_status);
 }
 //ls | pwd exit status should be 0 not 1 ; broken pipe ;
-
 //  ↪ minishell-2.0$ ls || ps
 // minishell: syntax error near unexpected token `|'
 // bash-3.2$ ls (ls) <------ SYNTAX ERROR
 // bash: syntax error near unexpected token `ls'
-
 
 // minishell-1.9$ "" -> command not found
 

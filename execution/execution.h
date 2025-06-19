@@ -3,7 +3,13 @@
 
 # include "../expand/expand.h"
 # include "../built_ins/built_ins.h"
-
+//execute_utils
+char	**get_path(char **env, int *erno);
+void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
+void	check_access_err(t_tree *node, char **env);
+void	exec_cmd(t_tree *node, char **env);
+int		check_if_directory(char	*cmd);
+//
 char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
 int		execute_built_in(char **args, t_data *data, int is_pipe, t_tree *node);
