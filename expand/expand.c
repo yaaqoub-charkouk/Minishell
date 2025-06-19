@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:48:03 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/19 15:35:32 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/19 22:01:28 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,5 +123,5 @@ char	**ft_expand(char *cmd, char **cmd_args, t_data *data, int *is_ambiguous)
 	}
 	if (cmd_args)
 		expand_globs(&expand);
-	return (args);
+	return (ignore_empty_args(args));
 }

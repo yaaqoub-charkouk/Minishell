@@ -18,4 +18,5 @@ int     ft_argslen(char **arg);
 int     should_expand_variable(t_expand *expand, int i);
 void	expand_variable(t_data *data, t_expand *expand, int *i);
 int     end_with_space(char *value);
+char	**ignore_empty_args(char **args);
 #endif

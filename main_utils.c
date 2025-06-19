@@ -74,9 +74,9 @@ int	read_tokenize(t_data *data, t_list **tokens)
 	else
 	{
 		if (data->exit_status == 0)
-			prompt = GREEN " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+			prompt = GREEN SKY_BLUE "minishell-2.0$ " RESET_COLOR;
 		else
-			prompt = RED " ↪ " SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+			prompt = RED SKY_BLUE"minishell-2.0$ " RESET_COLOR;
 		line = readline(prompt);
 	}
 	if (!line)
