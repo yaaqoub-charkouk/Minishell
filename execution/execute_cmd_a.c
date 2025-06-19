@@ -87,6 +87,8 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	if (node->red.erno)
 		return (handle_redirection_err(node, is_pipe));
 	node->args = ft_expand(NULL, node->args, data, &temp);
+	if (!node->args)
+		return (data->exit_status = 0, 0);
 	if (execute_built_in(&node->args[0], data, is_pipe, node))
 	{
 		if (is_pipe)

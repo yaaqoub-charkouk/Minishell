@@ -9,23 +9,6 @@ void	close_read_fd(t_tree *node)
 	}
 }
 
-void	free_split(char **str)
-{
-	int	i;
-
-	if (!str)
-		return ;
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		str[i] = NULL;
-		i++;
-	}
-	free(str);
-	str = NULL;
-}
-
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	unsigned char	*str1;

@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:36:25 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/19 15:40:28 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/19 21:59:19 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ void	insert_variable(t_expand *expand,
 	int		var_count;
 	char	**new_args;
 
+	if (!expand->is_ambiguous)
+		return ;
 	expand->space_flag = space_flag;
 	expand->word_boundary = word_boundary;
 	if (!pre_insert_variable(expand, &new_args, var, &var_count))

@@ -92,7 +92,7 @@ void	exec_cmd(t_tree *node, char **env)
 	if (path)
 	{
 		exec_cmd_from_path(path, node->args[0], node->args, env);
-		free_split(path);
+		free_matrix(path);
 	}
 	check_access_err(node, env);
 	close_read_fd(node);
