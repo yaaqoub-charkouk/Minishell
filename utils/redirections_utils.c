@@ -54,3 +54,14 @@ int	get_operator_len(t_type_node type)
 		return (2);
 	return (1);
 }
+
+int	check_ambiguity(t_redir *redir, char *file_name, int is_ambiguous)
+{
+	if (is_ambiguous)
+	{
+		redir->entry_node->red.erno = -1337;
+		redir->entry_node->red.file_name = file_name;
+		return (1);
+	}
+	return (0);
+}

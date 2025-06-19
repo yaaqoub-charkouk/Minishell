@@ -29,6 +29,8 @@ t_list	*add_cmd_options(t_list **args_list, char **args, int i);
 int		is_redirection(t_type_node type);
 int		is_operator(t_type_node type);
 int		get_operator_len(t_type_node type);
+int		check_ambiguity(t_redir *redir, char *file_name, int is_ambiguous);
+
 // parsing_utils
 void	handle_quotes(char c, int *in_squote, int *in_dquote);
 int		is_space(char c);
