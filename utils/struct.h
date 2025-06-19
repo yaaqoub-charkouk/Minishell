@@ -38,11 +38,16 @@ typedef struct s_expand
 	char	***temp;
 	char	*arg;
 	char	**pile;
+	char	**var_value;
 	int		*k;
 	int		in_dquotes;
 	int		in_squotes;
 	int		*is_ambiguous;
-}	t_expand;
+	int		space_flag;
+	int		word_boundary;
+	int		j;
+	int		flag;
+} t_expand;
 
 typedef struct s_redir
 {
