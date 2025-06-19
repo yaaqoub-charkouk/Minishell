@@ -2,23 +2,21 @@
 
 int	matches_pattern(char *pattern, const char *filename)
 {
-	if (!*pattern && !*filename)//if both are finished it means they match
+	if (!*pattern && !*filename)
 		return (1);
-	if (!*pattern && *filename)//if pattern sala wlakin filename baki no match
+	if (!*pattern && *filename)
 		return (0);
 	if (*pattern == '\033')
 	{
-		// *pattern = '*';
 		if (*filename == '*')
 			return (matches_pattern(pattern + 1, filename + 1));
-		
 		return (0);
 	}
 	if (*pattern == '*')
 	{
-		if (matches_pattern(pattern + 1, filename))//skip the * to check the rest of the pattern
+		if (matches_pattern(pattern + 1, filename))
 			return (1);
-		if (*filename && matches_pattern(pattern, filename + 1))//check if the rest of the filename matches the pattern
+		if (*filename && matches_pattern(pattern, filename + 1))
 			return (1);
 		return (0);
 	}
@@ -59,8 +57,8 @@ char	**expand_wildcard(char *pattern)
 	struct dirent	*entry;
 	t_list			*wild;
 	char			**result;
-	wild = NULL;
-	dir = opendir(".");
+
+	wild = ((dir = opendir(".")), NULL);
 	if (!dir)
 		return (perror("minishell: opendir"), NULL);
 	entry = readdir(dir);

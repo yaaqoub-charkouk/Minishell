@@ -12,10 +12,12 @@ void	copy_env(char **envp, t_list **env)
 	}
 }
 
-int	built_in_env(t_data *data)
+int	built_in_env(char **args, t_data *data)
 {
 	t_list	*current;
 
+	if (args && args[1])
+		return (errno = 2, perror("env"), 1);
 	current = *data->envl;
 	while (current)
 	{

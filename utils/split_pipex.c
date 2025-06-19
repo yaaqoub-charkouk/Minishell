@@ -8,11 +8,6 @@ static void	update_quotes(char c, int *d, int *s)
 		*s = !(*s);
 }
 
-static int	check_sep(char c, char sep)
-{
-	return (c == sep);
-}
-
 static int	word_len(const char *str, char sep)
 {
 	int	len;
@@ -48,14 +43,6 @@ int	count_words(const char *s, char sep)
 			update_quotes(*s++, &in_d, &in_s);
 	}
 	return (count);
-}
-
-char	**free_strs(char **strs, int i)
-{
-	while (i >= 0)
-		free(strs[i--]);
-	free(strs);
-	return (NULL);
 }
 
 static char	**fill_strs(const char *s, char c, char **strs)

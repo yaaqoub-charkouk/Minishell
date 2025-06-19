@@ -7,12 +7,12 @@ int	check_built_in(char **args, t_data *data, int is_pipe)
 	else if (ft_strncmp(args[0], "echo", 5) == 0)
 		return (data->exit_status = built_in_echo(args), 1);
 	else if (ft_strncmp(args[0], "env", 4) == 0)
-		return (data->exit_status = built_in_env(data), 1);
+		return (data->exit_status = built_in_env(args, data), 1);
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
 	{
 		if (!is_pipe)
 			printf("exit\n");
-		return (data->exit_status = built_in_exit(args, data), 1);//exit need argument
+		return (data->exit_status = built_in_exit(args, data), 1);
 	}
 	else if (ft_strncmp(args[0], "export", 7) == 0)
 		return (data->exit_status = built_in_export(args, data), 1);
@@ -25,10 +25,12 @@ int	check_built_in(char **args, t_data *data, int is_pipe)
 
 int	execute_built_in(char **args, t_data *data, int is_pipe, t_tree *node)
 {
-	int	fd = -1;
-	int	saved_stdout = -1;
+	int	fd;
+	int	saved_stdout;
 	int	ret;
 
+	fd = -1;
+	saved_stdout = -1;
 	if (node->red.outfile)
 	{
 		fd = open(node->red.outfile, node->red.flag, 0777);
@@ -43,10 +45,7 @@ int	execute_built_in(char **args, t_data *data, int is_pipe, t_tree *node)
 	{
 		dup2(saved_stdout, STDOUT_FILENO);
 		close(saved_stdout);
-		// printf("closed fd %d")
-		// close(fd);
 	}
-
 	return (ret);
 }
 
@@ -67,7 +66,7 @@ int	execute_or(t_tree *node, t_data *data, int is_pipe)
 int	execution(t_tree *node, t_data *data, int is_pipe)
 {
 	if (!node)
-		return (printf("no cmd to execute\n"),1);
+		return (1);
 	if (node->type == CMD)
 		return (execute_cmd(node, data, is_pipe));
 	if (node->type == PIPE)

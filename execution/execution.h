@@ -3,9 +3,6 @@
 
 # include "../expand/expand.h"
 # include "../built_ins/built_ins.h"
-# include "../utils/utils.h"
-
-
 
 char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);

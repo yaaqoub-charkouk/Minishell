@@ -77,7 +77,6 @@ void	exec_cmd(t_tree *node, char **env)
 
 	if (ft_strchr(node->args[0], '/'))
 	{
-		// check if directory 
 		if (check_if_directory(node->args[0]))
 			exit(126);
 		execve(node->args[0], node->args, env);

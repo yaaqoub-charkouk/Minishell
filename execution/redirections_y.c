@@ -1,7 +1,6 @@
 #include "execution.h"
 
 
-
 void	open_outfile(char	*filename, t_redir *redir)
 {
 	int	flag;
