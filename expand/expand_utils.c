@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:43:49 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/19 13:44:22 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "expand.h"
 
 char	*accumulate_char(char *pile, char c)
@@ -25,7 +37,7 @@ int	in_quotes(char c, int *in_dquotes, int *in_squotes, int *i)
 		*in_dquotes = !*in_dquotes;
 		(*i)++;
 		return (1);
-	}	
+	}
 	if (c == '\'' && !*in_dquotes)
 	{
 		*in_squotes = !*in_squotes;
@@ -49,7 +61,6 @@ int	should_expand_variable(t_expand *expand, int i)
 {
 	return (expand->is_ambiguous && expand->arg[i] == '$' 
 		&& (ft_isalnum(expand->arg[i + 1]) || expand->arg[i + 1] == '_' 
-		|| expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' 
-		|| expand->arg[i + 1] == '0') && !expand->in_squotes);
+			|| expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' 
+			|| expand->arg[i + 1] == '0') && !expand->in_squotes);
 }
-
