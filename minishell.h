@@ -15,7 +15,7 @@
 // main_utils
 void	pad_redirections_with_cmd(t_list **lst);
 int		build_execute(t_list *tokens, t_data *data);
-int		read_tokenize(t_data *data, t_list **tokens);
+int		tokenize_syntax(t_data *data, t_list **tokens, char *line);
 void	initialise_vars(t_data *data, t_list **env,
 t_list **tokens, char **envp);
 

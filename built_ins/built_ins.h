@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 15:22:55 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/18 17:16:44 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/20 20:32:25 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int		built_in_cd(char **args, t_data *data);
 int		built_in_echo(char **args);
 int		built_in_env(char **args, t_data *data);
 int		built_in_exit(char **args, t_data *data);
-int		built_in_pwd(void);
+int		built_in_pwd(t_data *data);
 int		built_in_export(char **args, t_data *data);
 int		built_in_unset(char **args, t_data *data);
 char	**env_struct_to_char(t_list *env);
-
+void	export_process_arg(char *arg, t_list **env, t_data *data);
 #endif

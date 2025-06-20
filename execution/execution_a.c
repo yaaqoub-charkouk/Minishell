@@ -11,13 +11,13 @@ int	check_built_in(char **args, t_data *data, int is_pipe)
 	else if (ft_strncmp(args[0], "exit", 5) == 0)
 	{
 		if (!is_pipe)
-			printf("exit\n");
+			ft_putstr_fd("exit\n", 2);
 		return (data->exit_status = built_in_exit(args, data), 1);
 	}
 	else if (ft_strncmp(args[0], "export", 7) == 0)
 		return (data->exit_status = built_in_export(args, data), 1);
 	else if (ft_strncmp(args[0], "pwd", 4) == 0)
-		return (data->exit_status = built_in_pwd(), 1);
+		return (data->exit_status = built_in_pwd(data), 1);
 	else if (ft_strncmp(args[0], "unset", 6) == 0)
 		return (data->exit_status = built_in_unset(args, data), 1);
 	return (0);

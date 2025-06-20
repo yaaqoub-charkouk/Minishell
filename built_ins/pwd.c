@@ -1,12 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/20 21:55:18 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/20 21:55:19 by akharkho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "built_ins.h"
 
-int	built_in_pwd(void)
+int	built_in_pwd(t_data *data)
 {
-	char	cwd[PATH_MAX];
+	char	*cwd;
 
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	if (*data->envl)
+		cwd = ft_strdup(get_env_content(*data->envl, "PWD"));
+	else 
+		cwd = getcwd(NULL, 0);
+	if (cwd != NULL)
 		printf("%s\n", cwd);
 	else
-		perror("pwd");
+		perror("minishell :pwd: ");
+	free(cwd);
 	return (0);
 }

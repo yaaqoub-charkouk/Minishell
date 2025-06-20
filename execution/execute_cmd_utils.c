@@ -61,6 +61,7 @@ void	check_access_err(t_tree *node, char **env)
 	}
 	if (node->red.erno)
 	{
+		ft_putstr_fd("minishell :", 2);
 		ft_putstr_fd(strerror(node->red.erno), 2);
 		write(2, "\n", 1);
 		exit(127);

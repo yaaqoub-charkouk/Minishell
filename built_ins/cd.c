@@ -54,7 +54,7 @@ char	*get_cd_path(char **args, t_data *data, int *print_olpwd)
 		path = get_env_content(*data->envl, "HOME");
 		if (!path)
 		{
-			write(2, "cd: HOME not set\n", 17);
+			write(2, "minishell: cd: HOME not set\n", 28);
 			return (NULL);
 		}
 	}
@@ -63,7 +63,7 @@ char	*get_cd_path(char **args, t_data *data, int *print_olpwd)
 		path = get_env_content(*data->envl, "OLDPWD");
 		if (!path)
 		{
-			write(2, "cd: OLDPWD not set\n", 19);
+			write(2, "minishell: cd: OLDPWD not set\n", 30);
 			return (NULL);
 		}
 		else
@@ -82,9 +82,12 @@ int	built_in_cd(char **args, t_data *data)
 	int		print_oldpwd;
 
 	print_oldpwd = 0;
-	oldpwd = getcwd(NULL, 0);
+	if (*data->envl)
+		oldpwd = ft_strdup(get_env_content(*data->envl, "PWD"));
+	else
+		oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
-		return (perror("minishell: getcwd"), 1);
+		return (perror("minishell: cd"), 1);
 	path = get_cd_path(args, data, &print_oldpwd);
 	if (!path)
 		return (free(oldpwd), 1);

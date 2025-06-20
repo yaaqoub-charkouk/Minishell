@@ -2,6 +2,31 @@
 
 int	g_sig;
 
+int	read_tokenize(t_data *data, t_list **tokens)
+{
+	char	*line;
+	char	*prompt;
+
+	if (!isatty(STDIN_FILENO))
+		line = readline("");
+	else
+	{
+		if (data->exit_status == 0)
+			prompt = GREEN SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+		else
+			prompt = RED SKY_BLUE"minishell-2.0$ " RESET_COLOR;
+		line = readline(prompt);
+	}
+	if (!line)
+	{
+		data->exit_status = 0;
+		ft_putstr_fd("exit\n", 2);
+		return (42);
+	}
+	add_history(line);
+	return (tokenize_syntax(data, tokens, line));
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_list	*tokens;

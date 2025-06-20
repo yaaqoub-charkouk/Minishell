@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_1_a.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/20 18:27:36 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/20 18:27:37 by akharkho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
 int	has_special_char(char *line)
@@ -91,8 +103,18 @@ int	check_op_start_end(t_list *list)
 		return (1);
 	}
 	while (list && list->next)
+	{
+		if ((list->type == P_CLOSE 
+				&& (!is_operator(list->next->type)
+					&& !(list->next->type == P_CLOSE)))
+			|| (list->type == P_OPEN && list->next->type == P_CLOSE))
+		{
+			print_error(list->next->content);
+			return (1);
+		}
 		list = list->next;
-	if (list->type == AND || list->type == OR || list->type == PIPE)
+	}
+	if (is_operator(list->type))
 	{
 		print_error(list->content);
 		return (1);

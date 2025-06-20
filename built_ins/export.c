@@ -27,7 +27,7 @@ void	handle_plus(char *plus, char *temp, t_data *data, t_list *curr)
 	}
 }
 
-void	export_process_arg(char *arg, t_data *data)
+void	export_process_arg(char *arg, t_list **env, t_data *data)
 {
 	t_list	*curr;
 	char	*plus;
@@ -35,7 +35,7 @@ void	export_process_arg(char *arg, t_data *data)
 	char	*temp;
 
 	temp = ft_strdup(arg);
-	curr = get_env_value(*data->envl, arg);
+	curr = get_env_value(*env, arg);
 	plus = ft_strnstr(temp, "+=", ft_strlen(temp));
 	equal = ft_strchr(temp, '=');
 	if (plus)
@@ -48,10 +48,10 @@ void	export_process_arg(char *arg, t_data *data)
 			curr->content = ft_strdup(arg);
 		}
 		else
-			ft_lstadd_back(data->envl, ft_lstnew(ft_strdup(arg)));
+			ft_lstadd_back(env, ft_lstnew(ft_strdup(arg)));
 	}
 	else if (!curr)
-		ft_lstadd_back(data->envl, ft_lstnew(ft_strdup(arg)));
+		ft_lstadd_back(env, ft_lstnew(ft_strdup(arg)));
 	free(temp);
 }
 
@@ -90,7 +90,7 @@ int	built_in_export(char **args, t_data *data)
 			return_value = 1;
 			continue ;
 		}
-		export_process_arg(args[i], data);
+		export_process_arg(args[i], data->envl, data);
 		i++;
 	}
 	return (return_value);

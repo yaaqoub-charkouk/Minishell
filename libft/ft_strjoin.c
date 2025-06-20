@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 16:55:40 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/12 20:48:47 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/20 21:25:18 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ char	*ft_strjoin(char const *s1, char const *s2, int should_free)
 		return (NULL);
 	ft_memcpy(str, s1, ft_strlen(s1));
 	ft_memcpy(str + ft_strlen(s1), s2, ft_strlen(s2) + 1);
-	if (should_free)
+	if (should_free == 1)
 		free((void *)s1);
+	if (should_free == 2)
+		free((void *)s2);
 	return (str);
 }

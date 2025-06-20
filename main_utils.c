@@ -64,29 +64,33 @@ int	tokenize_syntax(t_data *data, t_list **tokens, char *line)
 	return (0);
 }
 
-int	read_tokenize(t_data *data, t_list **tokens)
+void	check_env(t_data *data, t_list **env, char **envp)
 {
-	char	*line;
-	char	*prompt;
+	char	cwd[PATH_MAX];
+	char	*join;
+	int		val;
+	char	*num;
 
-	if (!isatty(STDIN_FILENO))
-		line = readline(NULL);
+	if (!*envp)
+	{
+		join = ft_strjoin("PWD=", getcwd(cwd, sizeof(cwd)), 0);
+		export_process_arg(join, env, NULL);
+		free(join);
+		export_process_arg("_=/usr/bin/env", env, NULL);
+		export_process_arg("SHLVL=1", env, NULL);
+		export_process_arg("PATH=/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.",
+			env, NULL);
+	}
+	if (getenv("SHLVL"))
+		val = ft_atoi(getenv("SHLVL"), &val) + 1;
 	else
-	{
-		if (data->exit_status == 0)
-			prompt = GREEN SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-		else
-			prompt = RED SKY_BLUE"minishell-2.0$ " RESET_COLOR;
-		line = readline(prompt);
-	}
-	if (!line)
-	{
-		data->exit_status = 0;
-		printf("exit\n");
-		return (42);
-	}
-	add_history(line);
-	return (tokenize_syntax(data, tokens, line));
+		val = 1;
+	copy_env(envp, env);
+	data->envl = env;
+	num = ft_itoa(val);
+	join = ft_strjoin("SHLVL=", num, 2);
+	export_process_arg(join, env, NULL);
+	free(join);
 }
 
 void	initialise_vars(t_data *data, t_list **env,
@@ -94,10 +98,9 @@ void	initialise_vars(t_data *data, t_list **env,
 {
 	*tokens = NULL;
 	*env = NULL;
+	check_env(data, env, envp);
 	rl_catch_signals = 0;
 	data->exit_status = 0;
 	data->env = env_struct_to_char(*env);
-	data->envl = env;
-	copy_env(envp, env);
 	setup_signals();
 }
