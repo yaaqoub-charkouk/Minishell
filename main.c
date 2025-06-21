@@ -50,6 +50,7 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 		if (build_execute(tokens, &data) == 42)
 			break ;
+		g_sig = 0;
 	}
 	free_env(data.env, data.envl);
 	rl_clear_history();
