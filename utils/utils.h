@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/21 20:28:52 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/21 20:28:53 by akharkho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef UTILS_H
 # define UTILS_H
 
@@ -17,7 +29,10 @@ int		ft_strcmp(const char *s1, const char *s2);
 char	**free_strs(char **strs, int i);
 int		check_sep(char c, char sep);
 int		signal_exit(t_tree *node, int is_pipe);
+<<<<<<< HEAD
 
+=======
+>>>>>>> adnane
 // free
 void	free_tree(t_tree *tree);
 void	free_matrix(char **args);
