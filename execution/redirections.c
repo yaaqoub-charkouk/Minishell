@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:58:16 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 16:46:57 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 19:34:56 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
 	if (check_ambiguity(redir, file_name, is_ambiguous))
 		return ;
+	free(file_name);
 	if (!node->args)
 		return ;
-	free(file_name);
-	if (!redir->open_error 
+	if (!redir->open_error && !data->signaled
 		&& (*(redir->type) == REDIRECTION_OUT || *(redir->type) == APPEND))
 		open_outfile(node->args[0], redir);
 	else if (!redir->open_error && *(redir->type) == REDIRECTION_IN)

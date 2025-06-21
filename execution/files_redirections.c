@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   files_redirections.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/21 20:25:58 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/21 20:26:04 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 void	open_outfile(char	*filename, t_redir *redir)
@@ -78,6 +90,7 @@ void	check_heredoc_status(t_data *data, t_redir *redir, int status)
 		g_sig = 1;
 		data->exit_status = 1;
 		data->signaled = 1;
+		printf(">\n");
 	}
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);

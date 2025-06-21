@@ -43,11 +43,6 @@ int	is_redirection(t_type_node type)
 		|| type == APPEND || type == HEREDOC);
 }
 
-int	is_operator(t_type_node type)
-{
-	return (type == PIPE || type == OR || type == AND);
-}
-
 int	get_operator_len(t_type_node type)
 {
 	if (type == APPEND || type == HEREDOC || type == AND || type == OR)

@@ -16,7 +16,8 @@ void	close_read_fd(t_tree *node);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**free_strs(char **strs, int i);
 int		check_sep(char c, char sep);
-int     signal_exit(t_tree *node, int is_pipe);
+int		signal_exit(t_tree *node, int is_pipe);
+
 // free
 void	free_tree(t_tree *tree);
 void	free_matrix(char **args);

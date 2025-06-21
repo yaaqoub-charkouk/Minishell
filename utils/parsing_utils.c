@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:51:19 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:51:20 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:31:44 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,9 @@ int	operator_error(int count, int flag)
 		return (1);
 	}
 	return (0);
+}
+
+int	is_operator(t_type_node type)
+{
+	return (type == PIPE || type == OR || type == AND);
 }

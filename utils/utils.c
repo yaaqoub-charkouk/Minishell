@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:31 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:50:32 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 19:49:59 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,11 @@ char	**free_strs(char **strs, int i)
 
 int	signal_exit(t_tree *node, int is_pipe)
 {
+	if (node->red.file_name)
+	{
+		free(node->red.file_name);
+		node->red.file_name = NULL;
+	}
 	close_read_fd(node);
 	if (is_pipe)
 		exit(1);
