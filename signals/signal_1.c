@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:04 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 20:28:05 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:02:32 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	sig_quit_child(int signal)
 	write(2, "Quit: 3\n", 9);
 }
 
-void	reset_terminal_mode(void)
+void	reset_terminal_state(void)
 {
 	struct termios	term;
 
@@ -48,7 +48,7 @@ void	setup_signals(void )
 	struct sigaction	action;
 	struct sigaction	exit;
 
-	reset_terminal_mode();
+	reset_terminal_state();
 	action.sa_sigaction = display_new_prompt;
 	action.sa_flags = SA_SIGINFO | SA_RESTART;
 	sigemptyset(&action.sa_mask);

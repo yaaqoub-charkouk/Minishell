@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:52 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:39:01 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:47:06 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int		is_redirection(t_type_node type);
 int		is_operator(t_type_node type);
 int		get_operator_len(t_type_node type);
 int		check_ambiguity(t_redir *redir, char *file_name, int is_ambiguous);
+void	cmd_sub_heredoc(int	cmd_sub, int fd);
 
 // parsing_utils
 void	handle_quotes(char c, int *in_squote, int *in_dquote);

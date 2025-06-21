@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:21:10 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 16:26:24 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:32:40 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	execute_command_in_child(char *command, int pipe_fd[2], t_data *data)
 		if (tokens)
 		{
 			data->read_fd = STDIN_FILENO;
+			data->cmd_sub = 1;
 			build_execute(tokens, data);
 		}
 		exit(0);
