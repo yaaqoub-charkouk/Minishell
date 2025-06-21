@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+void print_tree(t_tree *node, int level);
 
 void	pad_redirections_with_cmd(t_list **lst)
 {
@@ -45,9 +46,17 @@ int	build_execute(t_list *tokens, t_data *data)
 	tree = NULL;
 	pad_redirections_with_cmd(&tokens);
 	tree = build_tree(tokens, data);
+	data->signaled = 0;
 	pre_execution(tree, data);
 	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, sig_quit_child);
 	data->exit_status = execution(tree, data, 0);
+	if (!data->exit_status && g_sig)
+	{
+		data->exit_status = 1;
+		g_sig = 0;
+	}
+	data->signaled = 0;
 	setup_signals();
 	free_tree(tree);
 	tree = NULL;

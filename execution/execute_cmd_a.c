@@ -37,7 +37,7 @@ void	identify_read_write(t_tree *node)
 
 int	handle_redirection_err(t_tree *node, int is_pipe)
 {
-	if (node->red.erno)
+	if (node && node->red.erno)
 	{
 		ft_putstr_fd("minishell :", 2);
 		ft_putstr_fd(node->red.file_name, 2);
@@ -67,20 +67,18 @@ int	execute_fork_command(t_tree *node, t_data *data)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		identify_read_write(node);
 		exec_cmd(node, data->env);
 	}
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
-	return (1);
+	return (exit_status(status));
 }
 
 int	execute_pipe_cmd(t_tree *node, t_data *data)
 {
 	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	identify_read_write(node);
 	exec_cmd(node, data->env);
 	return (0);
@@ -91,11 +89,9 @@ int	execute_cmd(t_tree *node, t_data *data, int is_pipe)
 	int		temp;
 
 	if (!node || !node->args || !node->args[0])
-	{
-		if (node && node->red.erno)
-			return (handle_redirection_err(node, is_pipe));
-		return (0);
-	}
+		return (handle_redirection_err(node, is_pipe));
+	if (data->signaled)
+		return (signal_exit(node, is_pipe));
 	if (node->red.erno)
 		return (handle_redirection_err(node, is_pipe));
 	node->args = ft_expand(NULL, node->args, data, &temp);

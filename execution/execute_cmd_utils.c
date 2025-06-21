@@ -49,8 +49,8 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 		tmp2 = ft_strjoin(tmp, cmd, 1);
 		if (access(tmp2, X_OK) == 0)
 		{
-			if (check_if_directory(tmp2))
-				exit(126);
+			if (check_if_directory(tmp2, cmd, 2))
+				exit(127);
 			execve(tmp2, args, env);
 			free(tmp2);
 			exit(EXIT_FAILURE);
@@ -65,8 +65,6 @@ void	check_access_err(t_tree *node, char **env)
 {
 	if (access(node->args[0], X_OK) == 0) 
 	{
-		if (check_if_directory(node->args[0]))
-			exit (126);
 		execve(node->args[0], node->args, env);
 		perror("execve");
 		exit(1);
@@ -90,7 +88,7 @@ void	exec_cmd(t_tree *node, char **env)
 
 	if (ft_strchr(node->args[0], '/'))
 	{
-		if (check_if_directory(node->args[0]))
+		if (check_if_directory(node->args[0], NULL, 1))
 			exit(126);
 		execve(node->args[0], node->args, env);
 		perror("execve");
@@ -111,14 +109,27 @@ void	exec_cmd(t_tree *node, char **env)
 	close_read_fd(node);
 }
 
-int	check_if_directory(char	*cmd)
+int	check_if_directory(char	*cmd, char *direct, int should_print)
 {
 	DIR	*dir;
 
 	dir = opendir(cmd);
 	if (dir)
 	{
-		printf("minishell: %s: is a directory\n", cmd);
+		if (should_print == 1)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd, 2);
+			write(2, ": ", 2);
+			ft_putstr_fd(strerror(EISDIR), 2);
+			write(2, "\n", 1);
+		}
+		if (should_print == 2)
+		{
+			write(2, "minishell: ", 11);
+			write(2, direct, ft_strlen(direct));
+			write(2, ": command not found\n", 20);
+		}
 		closedir(dir);
 		return (1);
 	}

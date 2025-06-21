@@ -14,7 +14,8 @@
 
 void	execute_left(t_tree *node, t_data *data, int *fd)
 {
-	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 	close(fd[0]);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[1]);
@@ -26,7 +27,8 @@ void	execute_left(t_tree *node, t_data *data, int *fd)
 
 void	execute_right(t_tree *node, t_data *data, int *fd)
 {
-	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 	close(fd[1]);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
@@ -34,6 +36,15 @@ void	execute_right(t_tree *node, t_data *data, int *fd)
 		exit(execution(node->right, data, 1));
 	else
 		exit(execution(node->right, data, 0));
+}
+
+int	exit_status(int	status)
+{
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (1);
 }
 
 int	execute_pipe(t_tree *node, t_data *data)
@@ -45,6 +56,7 @@ int	execute_pipe(t_tree *node, t_data *data)
 
 	if (pipe(fd) < 0)
 		return (perror("pipe"), 1);
+	signal(SIGINT, SIG_IGN);
 	pidl = fork();
 	if (pidl < 0)
 		return (close(fd[0]), close(fd[1]), perror("fork"), 1);
@@ -60,9 +72,5 @@ int	execute_pipe(t_tree *node, t_data *data)
 	close(fd[1]);
 	waitpid(pidl, &status, 0);
 	waitpid(pidr, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
-	return (1);
+	return (exit_status(status));
 }

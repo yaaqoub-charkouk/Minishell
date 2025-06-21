@@ -1,5 +1,11 @@
 #include "signals.h"
 
+void	sig_quit_child(int signal)
+{
+	(void)signal;
+	write(2, "Quit: 3\n", 9);
+}
+
 void	reset_terminal_mode(void)
 {
 	struct termios	term;
@@ -41,7 +47,6 @@ void	setup_signals(void )
 	exit.sa_flags = SA_SIGINFO | SA_RESTART;
 	sigemptyset(&exit.sa_mask);
 	sigaddset(&exit.sa_mask, SIGQUIT);
-	// signal(SIGQUIT, SIG_IGN);
 	if (sigaction(SIGQUIT, &exit, NULL) == -1)
 		perror("sigaction ^\\");
 }

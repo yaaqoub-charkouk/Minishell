@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/20 15:54:02 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/21 15:20:02 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXPAND_H
 # define EXPAND_H
 
@@ -18,7 +30,10 @@ char	*accumulate_char(char *pile, char c);
 int		ft_argslen(char **arg);
 int		should_expand_variable(t_expand *expand, int i);
 void	expand_variable(t_data *data, t_expand *expand, int *i);
-int     end_with_space(char *value);
+int		end_with_space(char *value);
 char	**ignore_empty_args(char **args);
+
+//command substitution
+char	*expand_cmd_substitution(t_data *data, t_expand *expand, int *i);
 
 #endif
