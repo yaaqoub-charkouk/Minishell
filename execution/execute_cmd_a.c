@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:19 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:49:20 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 17:23:13 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	handle_redirection_err(t_tree *node, int is_pipe)
 			exit(1);
 		return (1);
 	}
-	return (0);
+	return (g_sig);
 }
 
 int	execute_fork_command(t_tree *node, t_data *data)
