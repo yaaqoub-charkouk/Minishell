@@ -6,12 +6,11 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:35 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 17:25:53 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:32:19 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-void print_tree(t_tree *node, int level);
 
 void	pad_redirections_with_cmd(t_list **lst)
 {
@@ -56,6 +55,7 @@ int	build_execute(t_list *tokens, t_data *data)
 	free_tree(tree);
 	tree = NULL;
 	reset_terminal_mode();
+	g_sig = 0;
 	if (!isatty(STDIN_FILENO))
 		return (42);
 	return (0);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_a.c                                           :+:      :+:    :+:   */
+/*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:30 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:49:31 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:34:58 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	execute_right(t_tree *node, t_data *data, int *fd)
 		exit(execution(node->right, data, 0));
 }
 
-int	exit_status(int	status)
+int	exit_status(int status)
 {
 	if (WIFSIGNALED(status))
 		return (128 + WTERMSIG(status));
