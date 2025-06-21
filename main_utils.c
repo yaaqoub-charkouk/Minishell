@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:35 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:36:17 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:02:34 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	build_execute(t_list *tokens, t_data *data)
 	setup_signals();
 	free_tree(tree);
 	tree = NULL;
-	reset_terminal_mode();
 	g_sig = 0;
 	if (!isatty(STDIN_FILENO))
 		return (42);

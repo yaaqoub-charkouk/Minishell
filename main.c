@@ -20,6 +20,10 @@ int	read_tokenize(t_data *data, t_list **tokens)
 	if (!line)
 	{
 		data->exit_status = 0;
+		ft_putstr_fd("\033[A", 2);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();      
 		ft_putstr_fd("exit\n", 2);
 		return (42);
 	}
