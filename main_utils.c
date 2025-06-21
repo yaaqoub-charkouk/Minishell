@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:35 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 16:30:35 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 17:25:53 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,6 @@ int	build_execute(t_list *tokens, t_data *data)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, sig_quit_child);
 	data->exit_status = execution(tree, data, 0);
-	if (!data->exit_status && g_sig)
-	{
-		data->exit_status = 1;
-		g_sig = 0;
-	}
 	data->signaled = 0;
 	setup_signals();
 	free_tree(tree);
