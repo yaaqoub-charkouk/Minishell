@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:58:16 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/19 22:19:50 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 16:46:57 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 	add_cmd_options(&redir->args_list, node->args, 1);
 	if (ft_strchr(node->args[0], '\"') || ft_strchr(node->args[0], '\''))
 		node->red.flag = 0;
-	if (*(redir->type) == HEREDOC)
+	if (*(redir->type) == HEREDOC && !data->signaled)
 	{
 		ft_expand(NULL, node->args, data, NULL);
 		open_heredoc(data, node, redir);

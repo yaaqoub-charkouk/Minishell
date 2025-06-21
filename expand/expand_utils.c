@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:43:49 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/19 13:44:22 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 11:54:10 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,7 @@ int	should_expand_variable(t_expand *expand, int i)
 	return (expand->is_ambiguous && expand->arg[i] == '$' 
 		&& (ft_isalnum(expand->arg[i + 1]) || expand->arg[i + 1] == '_' 
 			|| expand->arg[i + 1] == '?' || expand->arg[i + 1] == '$' 
-			|| expand->arg[i + 1] == '0') && !expand->in_squotes);
+			|| expand->arg[i + 1] == '0' || ((expand->arg[i + 1] == '\"'
+			|| expand->arg[i + 1] == '\'') && !expand->in_dquotes) || expand->arg[i + 1] == '(')
+			&& !expand->in_squotes);
 }

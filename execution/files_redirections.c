@@ -77,6 +77,7 @@ void	check_heredoc_status(t_data *data, t_redir *redir, int status)
 		setup_signals();
 		g_sig = 1;
 		data->exit_status = 1;
+		data->signaled = 1;
 	}
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);

@@ -1,14 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ignore_empty_args.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/20 15:54:35 by ycharkou          #+#    #+#             */
+/*   Updated: 2025/06/21 09:33:21 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "expand.h"
 
 int	count_empties(char **args)
 {
-	int	k = 0;
+	int	k ;
 	int	count;
 
 	count = 0;
+	k = 0;
 	while (args[k])
 	{
-		if (!*args[k])
+		if (*args[k] == '\a')
 			count++;
 		k++;
 	}
@@ -24,7 +37,7 @@ char	**new_arguments(char ***new_args, char **args)
 	j = 0;
 	while (args[i])
 	{
-		if (!*args[i])
+		if (*args[i] == '\a')
 			free(args[i]);
 		else
 		{

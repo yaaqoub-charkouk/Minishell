@@ -30,6 +30,9 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
+// execve: No such file or directory ---> bash: /ls: No such file or directory
+
+
 //ls | pwd exit status should be 0 not 1 ; broken pipe ;
 //  ↪ minishell-2.0$ ls || ps
 // minishell: syntax error near unexpected token `|'

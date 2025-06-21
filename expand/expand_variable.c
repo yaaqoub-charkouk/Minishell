@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:49 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/19 13:47:46 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 16:21:02 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,17 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	var_value = NULL;
 	word_boundary = 0;
 	expand_special_var(data, expand, i, &var_value);
-	if (expand->arg[*i + 1] == '?' || expand->arg[*i + 1] == '$')
+	if (expand->arg[*i + 1] == '(')
+		var_value = expand_cmd_substitution(data, expand, i);
+	else if (expand->arg[*i + 1] == '?' || expand->arg[*i + 1] == '$')
 		(*i)++;
 	else
 		var_value = get_var_value(*data->envl, 
 				expand->arg + *i + 1, i, &word_boundary);
 	if (*var_value == '\0')
 		*expand->is_ambiguous = 1;
+	if (!*var_value && !**expand->pile && !expand->arg[*i + 1])
+		*var_value = '\a';
 	if (expand->in_dquotes || !ft_strchr(var_value, ' '))
 		*expand->pile = ft_strjoin(*expand->pile, var_value, 1);
 	else

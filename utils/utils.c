@@ -38,3 +38,11 @@ char	**free_strs(char **strs, int i)
 	free(strs);
 	return (NULL);
 }
+
+int	signal_exit(t_tree *node, int is_pipe)
+{
+	close_read_fd(node);
+	if (is_pipe)
+		exit(1);
+	return (1);
+}
