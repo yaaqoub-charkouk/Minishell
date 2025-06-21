@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/21 20:33:17 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/21 20:34:33 by akharkho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXECUTION_H
 # define EXECUTION_H
 
@@ -9,7 +21,7 @@ char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
 void	check_access_err(t_tree *node, char **env);
 void	exec_cmd(t_tree *node, char **env);
-int     exit_status(int	status);
+int		exit_status(int status);
 int		check_if_directory(char	*cmd, char *direct, int should_print);
 // execute command
 char	**get_path(char **env, int *erno);
