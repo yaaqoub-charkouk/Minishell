@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS =   -I$(HOME) -g #-fsanitize=address
+CFLAGS =  -Wall -Wextra -Werror -I$(HOME) -g #-fsanitize=address
 LDFLAGS = -L$(LIBFT_DIR) -L$(HOME)/readline -lreadline -lhistory 
 
 TARGET = minishell
@@ -19,7 +19,7 @@ OBJECTS = $(SOURCES:.c=.o)
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-all: $(LIBFT) $(TARGET) clean
+all: $(LIBFT) $(TARGET)
 
 $(LIBFT):
 	make -C $(LIBFT_DIR)
