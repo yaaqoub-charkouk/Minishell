@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:49 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 16:21:02 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:34:11 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	expand_variable(t_data *data, t_expand *expand, int *i)
 	else
 		var_value = get_var_value(*data->envl, 
 				expand->arg + *i + 1, i, &word_boundary);
-	if (*var_value == '\0')
+	if (*var_value == '\0' && !**expand->pile && !expand->arg[*i + 1])
 		*expand->is_ambiguous = 1;
 	if (!*var_value && !**expand->pile && !expand->arg[*i + 1])
 		*var_value = '\a';

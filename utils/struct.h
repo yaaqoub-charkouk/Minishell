@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:47 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:28:48 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/21 21:32:29 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_data
 	int		exit_status;
 	int		is_heredoc;
 	int		signaled;
+	int		cmd_sub;
 }	t_data;
 
 #endif

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:35 by akharkho          #+#    #+#             */
 /*   Updated: 2025/06/21 21:02:34 by akharkho         ###   ########.fr       */
@@ -116,6 +116,7 @@ void	initialise_vars(t_data *data, t_list **env,
 	check_env(data, env, envp);
 	rl_catch_signals = 0;
 	data->exit_status = 0;
+	data->cmd_sub = 0;
 	data->env = env_struct_to_char(*env);
 	setup_signals();
 }

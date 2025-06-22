@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:17 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 20:28:19 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:59:32 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 void	setup_signals(void );
 void	display_new_prompt(int signal, siginfo_t *info, void *context);
-void	reset_terminal_mode(void);
+void	reset_terminal_state(void);
 void	sig_quit_child(int signal);
 
 #endif
