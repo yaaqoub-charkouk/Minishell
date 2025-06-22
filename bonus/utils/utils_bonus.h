@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   utils_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:52 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 13:36:38 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:37:25 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef UTILS_BONUS_H
+# define UTILS_BONUS_H
 
-# include "struct.h"
-# include "../signals/signals.h"
+# include "struct_bonus.h"
+# include "../signals/signals_bonus.h"
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_variable.c                                  :+:      :+:    :+:   */
+/*   expand_variable_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:49 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/22 13:34:11 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:48:23 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "expand.h"
+#include "expand_bonus.h"
 
 char	*get_var_value(t_list *env, char *value, int *i, int *word_boundary)
 {
