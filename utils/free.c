@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:40 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 13:36:33 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 16:15:32 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	free_tree(t_tree *tree)
 		free_matrix(tree->args);
 	if (tree->red.outfile)
 		free(tree->red.outfile);
+	if (tree->red.file_name)
+		free(tree->red.file_name);
 	close_read_fd(tree);
 	free(tree);
 }

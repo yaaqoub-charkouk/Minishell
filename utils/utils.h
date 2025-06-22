@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:52 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 13:36:38 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 16:38:38 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <dirent.h>
-# include <sys/wait.h>
 
 //utils.c
 void	close_read_fd(t_tree *node);
