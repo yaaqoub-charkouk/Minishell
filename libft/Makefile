@@ -24,13 +24,13 @@ $(NAME): $(OBJ)
 	@ar rcs $(NAME) $?
 
 %.o: %.c libft.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 bonus: .additional
 	
 .additional: $(OBJBONUS)
 	@ar rcs $(NAME) $?
-	touch .additional
+	@touch .additional
 
 clean:
 	@rm -f $(OBJ) $(OBJBONUS)

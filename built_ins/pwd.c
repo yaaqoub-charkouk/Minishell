@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:55:18 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:49:03 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:01:19 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	built_in_pwd(t_data *data)
 	if (cwd != NULL)
 		printf("%s\n", cwd);
 	else
-		perror("minishell :pwd: ");
+		perror("minishell: pwd: ");
 	free(cwd);
 	return (0);
 }

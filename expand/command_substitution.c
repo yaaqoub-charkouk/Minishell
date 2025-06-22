@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 16:21:10 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 21:32:40 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:04:06 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	execute_command_in_child(char *command, int pipe_fd[2], t_data *data)
 	pid = fork();
 	if (pid == -1)
 	{
-		perror("fork");
+		perror("minishell: fork: ");
 		return (-1);
 	}
 	if (pid == 0)
@@ -57,7 +57,7 @@ char	*read_pipe_output(int fd)
 		buffer[bytes_read] = '\0';
 		output = ft_strjoin(output, buffer, 1);
 		if (!output)
-			return (perror("minishell: cmd_sub_end:"), NULL);
+			return (perror("minishell: "), NULL);
 		total_len += bytes_read;
 		bytes_read = read(fd, buffer, sizeof(buffer) - 1);
 	}
@@ -86,7 +86,7 @@ char	*expand_cmd_substitution(t_data *data, t_expand *expand, int *i)
 		return (ft_strdup(""));
 	(*i) += len - *i;
 	if (pipe(fd) < 0)
-		perror("minishell: cmd_sub:");
+		perror("minishell: ");
 	pid = execute_command_in_child(line, fd, data);
 	if (pid < 0)
 		return (close(fd[0]), close(fd[1]), ft_strdup(""));

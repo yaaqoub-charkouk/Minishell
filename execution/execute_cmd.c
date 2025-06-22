@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:19 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 16:26:08 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:01:51 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	identify_read_write(t_tree *node)
 		fd = open(node->red.outfile, node->red.flag, 0777);
 		if (fd < 0)
 		{
-			perror("identify read write");
+			perror("minishell: ");
 			return ;
 		}
 		free(node->red.outfile);
@@ -63,7 +63,7 @@ int	execute_fork_command(t_tree *node, t_data *data)
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("fork"), 1);
+		return (perror("minishell: "), 1);
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);

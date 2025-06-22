@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:04 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 21:02:32 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:05:07 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ void	setup_signals(void )
 	sigemptyset(&action.sa_mask);
 	sigaddset(&action.sa_mask, SIGINT);
 	if (sigaction(SIGINT, &action, NULL) == -1)
-		perror("sigaction ^C");
+		perror("minishell: ");
 	exit.sa_handler = SIG_IGN;
 	exit.sa_flags = SA_SIGINFO | SA_RESTART;
 	sigemptyset(&exit.sa_mask);
 	sigaddset(&exit.sa_mask, SIGQUIT);
 	if (sigaction(SIGQUIT, &exit, NULL) == -1)
-		perror("sigaction ^\\");
+		perror("minishell: ");
 }

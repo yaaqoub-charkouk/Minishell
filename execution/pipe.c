@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:30 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:36:59 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:02:32 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,17 @@ int	execute_pipe(t_tree *node, t_data *data)
 	int	status;
 
 	if (pipe(fd) < 0)
-		return (perror("pipe"), 1);
+		return (perror("minishell: "), 1);
 	signal(SIGINT, SIG_IGN);
 	pidl = fork();
 	if (pidl < 0)
-		return (close(fd[0]), close(fd[1]), perror("fork"), 1);
+		return (close(fd[0]), close(fd[1]), perror("minishell: fork: "), 1);
 	if (pidl == 0)
 		execute_left(node, data, fd);
 	pidr = fork();
 	if (pidr < 0)
 		return (close(fd[0]), kill(pidl, SIGKILL),
-			close(fd[1]), perror("fork"), 1);
+			close(fd[1]), perror("minishell: fork: "), 1);
 	if (pidr == 0)
 		execute_right(node, data, fd);
 	close(fd[0]);
