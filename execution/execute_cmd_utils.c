@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:22 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 16:21:43 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:05:40 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	**get_path(char **env, int *erno)
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
 	{
-		perror("split");
+		perror("minishell: ");
 		exit(EXIT_FAILURE);
 	}
 	return (path);
@@ -66,7 +66,7 @@ void	check_access_err(t_tree *node, char **env)
 	if (access(node->args[0], X_OK) == 0) 
 	{
 		execve(node->args[0], node->args, env);
-		perror("execve");
+		perror("minishell: ");
 		exit(1);
 	}
 	if (node->red.erno)
@@ -85,12 +85,13 @@ void	check_access_err(t_tree *node, char **env)
 void	exec_cmd(t_tree *node, char **env)
 {
 	char	**path;
+
 	if (ft_strchr(node->args[0], '/'))
 	{
 		if (check_if_directory(node->args[0], NULL, 1))
 			exit(126);
 		execve(node->args[0], node->args, env);
-		perror("execve");
+		perror("minishell: ");
 		if (errno == ENOENT)
 			exit(127);
 		else if (errno == EACCES || errno == ENOEXEC)

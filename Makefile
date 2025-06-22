@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS =  -Wall -Wextra -Werror -I$(HOME) -g# -fsanitize=address
+CFLAGS =  -Wall -Wextra -Werror -I$(HOME)
 LDFLAGS = -L$(LIBFT_DIR) -L$(HOME)/readline -lreadline -lhistory 
 
 TARGET = minishell
@@ -36,10 +36,10 @@ $(LIBFT):
 	make -C $(LIBFT_DIR)
 
 $(TARGET): $(OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(TARGET_BONUS): $(OBJ_BONUS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 bonus/%.o: bonus/%.c $(HEADERS_BONUS) $(LIBFT_HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -50,12 +50,12 @@ bonus/%.o: bonus/%.c $(HEADERS_BONUS) $(LIBFT_HEADER)
 clean:
 	rm -f $(OBJECTS)
 	rm -f $(OBJ_BONUS)
-	make -C $(LIBFT_DIR) clean
+	@make -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(TARGET)
 	rm -f $(TARGET_BONUS)
-	make -C $(LIBFT_DIR) fclean
+	@make -C $(LIBFT_DIR) fclean
 
 re: fclean all
 

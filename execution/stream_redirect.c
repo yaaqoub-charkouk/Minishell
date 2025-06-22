@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:25:58 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/22 16:23:38 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:03:05 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir)
 		return ;
 	if (pipe(fd) == -1)
 	{
-		perror("pipe"); 
+		perror("minishell: "); 
 		return ;
 	}
 	if (ft_strchr(node->args[0], '\'') || ft_strchr(node->args[0], '\"'))
@@ -114,7 +114,7 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir)
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
-		perror("heredoc");
+		perror("minishell: ");
 	if (pid == 0)
 		process_heredoc(data, redir, node->args[0], fd[1]);
 	waitpid(pid, &status, 0);
