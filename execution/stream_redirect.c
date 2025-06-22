@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   files_redirections.c                               :+:      :+:    :+:   */
+/*   stream_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:25:58 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/21 20:26:04 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/22 16:23:38 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	open_infile(char *filename,	t_redir	*redir)
 	{
 		redir->entry_node->red.file_name = ft_strdup(filename);
 		redir->open_error = errno;
-		redir->entry_node->red.erno = redir->open_error;
+		redir->entry_node->red.erno = errno;
 		return ;
 	}
 	if (redir->entry_node->red.in_fd != -1)
@@ -59,8 +59,8 @@ void	process_heredoc(t_data *data, t_redir *redir, char *limiter, int fd)
 	char	*line;
 	char	*expanded_line;
 
-	signal(SIGINT, SIG_DFL);
 	limiter_len = ft_strlen(limiter);
+	cmd_sub_heredoc(data->cmd_sub, fd);
 	while (1)
 	{
 		line = readline(">");

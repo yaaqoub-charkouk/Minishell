@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:48:49 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:48:50 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:37:05 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,12 @@ int	is_unvalid_name(char *value, int is_unset)
 	i = 0;
 	if (!value || (!ft_isalpha(value[i]) && value[i] != '_'))
 		return (1);
-	while (!is_unset && value[i] && value[i] != '=' && value[i] != '+')
+	while (!is_unset && value[i] && value[i] != '=')
 	{
-		if (!ft_isalnum(value[i]) && value[i] != '_')
+		if (!ft_isalnum(value[i]) && value[i] != '_'
+			&& value[i] != '+')
+			return (1);
+		if ((value[i] == '+' && value[i + 1] != '='))
 			return (1);
 		i++;
 	}

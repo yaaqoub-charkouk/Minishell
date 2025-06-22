@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:30:31 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:30:32 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 16:39:48 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # define RESET_COLOR "\001\033[0m\002"
 
 // main_utils
+
 void	pad_redirections_with_cmd(t_list **lst);
 int		build_execute(t_list *tokens, t_data *data);
 int		tokenize_syntax(t_data *data, t_list **tokens, char *line);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:28:40 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 20:28:41 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 16:15:32 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	free_tree(t_tree *tree)
 		free_matrix(tree->args);
 	if (tree->red.outfile)
 		free(tree->red.outfile);
+	if (tree->red.file_name)
+		free(tree->red.file_name);
 	close_read_fd(tree);
 	free(tree);
 }
@@ -47,4 +49,14 @@ void	free_env(char **env, t_list **envl)
 	ft_lstclear(envl, free);
 	if (env)
 		free_matrix(env);
+}
+
+void	cmd_sub_heredoc(int cmd_sub, int fd)
+{
+	signal(SIGINT, SIG_DFL);
+	if (cmd_sub)
+	{
+		write(fd, "\0", 1);
+		exit(EXIT_SUCCESS);
+	}
 }
