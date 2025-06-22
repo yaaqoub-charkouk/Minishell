@@ -1,0 +1,91 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution_bonus.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/20 21:49:25 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/22 17:39:29 by ycharkou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "execution_bonus.h"
+
+int	check_built_in(char **args, t_data *data, int is_pipe)
+{
+	if (ft_strncmp(args[0], "cd", 3) == 0)
+		return (data->exit_status = built_in_cd(args, data), 1);
+	else if (ft_strncmp(args[0], "echo", 5) == 0)
+		return (data->exit_status = built_in_echo(args), 1);
+	else if (ft_strncmp(args[0], "env", 4) == 0)
+		return (data->exit_status = built_in_env(args, data), 1);
+	else if (ft_strncmp(args[0], "exit", 5) == 0)
+	{
+		if (!is_pipe)
+			ft_putstr_fd("exit\n", 2);
+		return (data->exit_status = built_in_exit(args, data), 1);
+	}
+	else if (ft_strncmp(args[0], "export", 7) == 0)
+		return (data->exit_status = built_in_export(args, data), 1);
+	else if (ft_strncmp(args[0], "pwd", 4) == 0)
+		return (data->exit_status = built_in_pwd(data), 1);
+	else if (ft_strncmp(args[0], "unset", 6) == 0)
+		return (data->exit_status = built_in_unset(args, data), 1);
+	return (0);
+}
+
+int	execute_built_in(char **args, t_data *data, int is_pipe, t_tree *node)
+{
+	int	fd;
+	int	saved_stdout;
+	int	ret;
+
+	fd = -1;
+	saved_stdout = -1;
+	if (node->red.outfile)
+	{
+		fd = open(node->red.outfile, node->red.flag, 0777);
+		if (fd < 0)
+			perror("minishell:");
+		saved_stdout = dup(STDOUT_FILENO);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+	ret = check_built_in(args, data, is_pipe);
+	if (saved_stdout != -1)
+	{
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdout);
+	}
+	return (ret);
+}
+
+int	execute_and(t_tree *node, t_data *data, int is_pipe)
+{
+	if (execution(node->left, data, is_pipe) == 0)
+		return (execution(node->right, data, is_pipe));
+	return (1);
+}
+
+int	execute_or(t_tree *node, t_data *data, int is_pipe)
+{
+	if (execution(node->left, data, is_pipe) != 0)
+		return (execution(node->right, data, is_pipe));
+	return (0);
+}
+
+int	execution(t_tree *node, t_data *data, int is_pipe)
+{
+	if (!node)
+		return (1);
+	if (node->type == CMD)
+		return (execute_cmd(node, data, is_pipe));
+	if (node->type == PIPE)
+		return (execute_pipe(node, data));
+	if (node->type == OR)
+		return (execute_or(node, data, is_pipe));
+	if (node->type == AND)
+		return (execute_and(node, data, is_pipe));
+	return (1);
+}

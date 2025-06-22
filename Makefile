@@ -6,7 +6,7 @@ TARGET = minishell
 TARGET_BONUS = minishell_bonus
 
 HEADERS = minishell expand/expand parsing/parsing utils/utils \
-built_ins/built_ins signals/signals execution/execution utils/struct
+		built_ins/built_ins signals/signals execution/execution utils/struct
 HEADERS_MANDATORY = $(addsuffix .h, $(HEADERS))
 HEADERS_BONUS = $(addprefix bonus/, $(addsuffix _bonus.h, $(HEADERS)))
 
