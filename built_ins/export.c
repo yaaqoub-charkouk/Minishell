@@ -34,7 +34,7 @@ void	handle_plus(char *plus, char *temp, t_data *data, t_list *curr)
 	{
 		joined = ft_strjoin(temp, "=", 0);
 		joined2 = ft_strjoin(joined, plus + 2, 1);
-		ft_lstadd_back(data->envl, ft_lstnew(joined2));
+		ft_lstadd_back(data->envl, ft_lstnew(ft_strdup(joined2)));
 		free(joined2);
 	}
 }
