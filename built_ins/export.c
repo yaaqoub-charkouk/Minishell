@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:48:52 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:48:53 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:21:53 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	built_in_export(char **args, t_data *data)
 	{
 		if (is_unvalid_name(args[i], 0))
 		{
-			ft_putstr_fd("export: `", 2);
+			ft_putstr_fd("minishell: export: `", 2);
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
 			i++;

@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:07 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:49:08 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:22:08 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	built_in_unset(char **args, t_data *data)
 	{
 		if (is_unvalid_name(args[i], 1))
 		{
-			ft_putstr_fd("unset: `", 2);
+			ft_putstr_fd("minishell: unset: `", 2);
 			ft_putstr_fd(args[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
 			i++;
