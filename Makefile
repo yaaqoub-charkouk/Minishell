@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS =  -Wall -Wextra -Werror -I$(HOME) -g #-fsanitize=address
+CFLAGS =   -I$(HOME) -g #-fsanitize=address
 LDFLAGS = -L$(LIBFT_DIR) -L$(HOME)/readline -lreadline -lhistory 
 
 TARGET = minishell

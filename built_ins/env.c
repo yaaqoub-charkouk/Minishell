@@ -29,7 +29,14 @@ int	built_in_env(char **args, t_data *data)
 	t_list	*current;
 
 	if (args && args[1])
-		return (errno = 2, perror("env"), 1);
+	{
+		ft_putstr_fd("minishell : ‘", 2);
+		ft_putstr_fd(args[1], 2);
+		ft_putstr_fd("’: ", 2);
+		ft_putstr_fd(strerror(2), 2);
+		write(2, "\n", 1);
+		return (127);
+	}
 	current = *data->envl;
 	while (current)
 	{
