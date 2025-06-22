@@ -1,6 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/22 17:09:18 by akharkho          #+#    #+#             */
+/*   Updated: 2025/06/22 17:10:10 by akharkho         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	g_sig;
+
+static void	redisplay(void)
+{
+	ft_putstr_fd("\033[A", 2);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+	ft_putstr_fd("exit\n", 2);
+}
 
 int	read_tokenize(t_data *data, t_list **tokens)
 {
@@ -19,12 +40,11 @@ int	read_tokenize(t_data *data, t_list **tokens)
 	}
 	if (!line)
 	{
-		data->exit_status = 0;
-		ft_putstr_fd("\033[A", 2);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();      
-		ft_putstr_fd("exit\n", 2);
+		if (isatty(0))
+		{
+			data->exit_status = 0;
+			redisplay();
+		}
 		return (42);
 	}
 	add_history(line);
@@ -59,5 +79,3 @@ int	main(int ac, char **av, char **envp)
 	rl_clear_history();
 	return (data.exit_status);
 }
-
-// multiple tabs !!!!
