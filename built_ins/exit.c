@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:48:47 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:48:48 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/22 17:11:46 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,6 @@ int	built_in_exit(char **args, t_data *data)
 
 	if (args && args[1])
 	{
-		if (args[2])
-		{
-			ft_putstr_fd("exit: too many arguments\n", 2);
-			return (1);
-		}
 		exit_status = ft_atoi(args[1], &overflow);
 		if (!check_is_num(args[1]) || overflow)
 		{
@@ -49,6 +44,11 @@ int	built_in_exit(char **args, t_data *data)
 			ft_putstr_fd(args[1], 2);
 			ft_putstr_fd(": numeric argument required\n", 2);
 			exit_status = 255;
+		}
+		else if (args[2])
+		{
+			ft_putstr_fd("exit: too many arguments\n", 2);
+			return (1);
 		}
 	}
 	else
