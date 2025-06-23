@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   build_queue_y.c                                    :+:      :+:    :+:   */
+/*   build_queue.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 15:28:46 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/17 15:36:59 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/23 15:06:51 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	push_to_op_stack(t_list **op_stack, t_list	*token)
 	return (1);
 }
 
-void	parenthesis_priority(t_list **stack_op, t_list **queue)
+void	parenthesis_priority(t_list **stack_op, t_list **queue, t_list *token)
 {
 	t_list	*temp;
 
@@ -48,6 +48,8 @@ void	parenthesis_priority(t_list **stack_op, t_list **queue)
 		add_op_to_queue(queue, stack_op);
 	temp = *stack_op;
 	*stack_op = (*stack_op)->next;
+	free(temp->content);
+	free(token->content);
 	free(temp);
 }
 
@@ -76,7 +78,7 @@ t_list	*build_sy_queue(t_list	*token)
 		else if (token->type == P_OPEN)
 			push_to_op_stack(&stack_op, token);
 		else if (token->type == P_CLOSE)
-			parenthesis_priority(&stack_op, &queue);
+			parenthesis_priority(&stack_op, &queue, token);
 		else
 		{
 			while (stack_op && precedence(token->type)
