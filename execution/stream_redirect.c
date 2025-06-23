@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:25:58 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/22 17:03:05 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/23 21:37:51 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,11 @@ void	process_heredoc(t_data *data, t_redir *redir, char *limiter, int fd)
 	exit(EXIT_SUCCESS);
 }
 
-void	check_heredoc_status(t_data *data, t_redir *redir, int status)
+void	check_heredoc_status(t_data *data, t_redir *redir, int pid)
 {
+	int	status;
+
+	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		setup_signals();
@@ -94,21 +97,29 @@ void	check_heredoc_status(t_data *data, t_redir *redir, int status)
 	}
 	if (redir->entry_node->red.in_fd != -1)
 		close(redir->entry_node->red.in_fd);
+	
 }
 
 void	open_heredoc(t_data *data, t_tree *node, t_redir *redir)
 {
-	int		fd[2];
-	int		pid;
-	int		status;
+	int			fd;
+	int			fd1;
+	int			pid;
+	static int	herdoc_n;
+	char		*filename;
 
 	if (!node || !node->args || !*node->args)
 		return ;
-	if (pipe(fd) == -1)
+	filename = ft_strjoin("/tmp/heredoc_", ft_itoa(herdoc_n++), 2);
+	unlink(filename);
+	fd = open(filename,O_CREAT | O_RDONLY | O_TRUNC, 0777);
+	fd1 = open(filename,O_CREAT | O_WRONLY | O_TRUNC, 0777);
+	if (fd < 0)
 	{
-		perror("minishell: "); 
+		perror("minishell: ");
 		return ;
 	}
+	unlink(filename);
 	if (ft_strchr(node->args[0], '\'') || ft_strchr(node->args[0], '\"'))
 		redir->node->red.flag = 0;
 	signal(SIGINT, SIG_IGN);
@@ -116,9 +127,8 @@ void	open_heredoc(t_data *data, t_tree *node, t_redir *redir)
 	if (pid < 0)
 		perror("minishell: ");
 	if (pid == 0)
-		process_heredoc(data, redir, node->args[0], fd[1]);
-	waitpid(pid, &status, 0);
-	check_heredoc_status(data, redir, status);
-	redir->entry_node->red.in_fd = fd[0];
-	close(fd[1]);
+		process_heredoc(data, redir, node->args[0], fd1);
+	check_heredoc_status(data, redir, pid);
+	redir->entry_node->red.in_fd = fd;
+	close(fd1);
 }
