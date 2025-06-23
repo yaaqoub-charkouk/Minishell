@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd_bonus.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:55:18 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 17:38:59 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/23 12:58:22 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	built_in_pwd(t_data *data)
 {
 	char	*cwd;
 
-	if (*data->envl)
+	if (get_env_content(*data->envl, "PWD"))
 		cwd = ft_strdup(get_env_content(*data->envl, "PWD"));
 	else 
 		cwd = getcwd(NULL, 0);

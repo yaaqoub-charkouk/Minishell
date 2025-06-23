@@ -6,7 +6,7 @@
 /*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:48:15 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 21:48:16 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/23 12:49:44 by akharkho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	built_in_cd(char **args, t_data *data)
 	int		print_oldpwd;
 
 	print_oldpwd = 0;
-	if (*data->envl)
+	if (get_env_content(*data->envl, "PWD"))
 		oldpwd = ft_strdup(get_env_content(*data->envl, "PWD"));
 	else
 		oldpwd = getcwd(NULL, 0);
