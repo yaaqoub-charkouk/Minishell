@@ -6,11 +6,28 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:58:16 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/23 21:02:25 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:44:27 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execution.h"
+
+void	open_heredoc_file(int *heredoc_n, int *fd_write, int *fd_read)
+{
+	char	*filename;
+
+	filename = ft_strjoin("/tmp/heredoc_", ft_itoa((*heredoc_n)++), 2);
+	unlink(filename);
+	*fd_read = open(filename, O_CREAT | O_RDONLY | O_TRUNC, 0777);
+	*fd_write = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0777);
+	unlink(filename);
+	free(filename);
+	if (*fd_read < 0 || *fd_write < 0)
+	{
+		perror("minishell: ");
+		return ;
+	}
+}
 
 void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 {
@@ -20,13 +37,8 @@ void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 
 	file_name = ((is_ambiguous = 0), (k = 0), ft_strdup(node->args[0]));
 	add_cmd_options(&redir->args_list, node->args, 1);
-	if (ft_strchr(node->args[0], '\"') || ft_strchr(node->args[0], '\''))
-		node->red.flag = 0;
 	if (*(redir->type) == HEREDOC && !data->signaled)
-	{
-		ft_expand(NULL, node->args, data, NULL);
 		open_heredoc(data, node, redir);
-	}
 	else
 		node->args = ft_expand(NULL, node->args, data, &is_ambiguous);
 	if (check_ambiguity(redir, file_name, is_ambiguous))
