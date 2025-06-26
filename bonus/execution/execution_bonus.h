@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:33:17 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/23 13:00:16 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:43:44 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ int		pre_execution(t_tree *node, t_data *data);
 void	open_heredoc(t_data *data, t_tree *node, t_redir *redir);
 void	open_infile(char *filename,	t_redir	*redir);
 void	open_outfile(char	*filename, t_redir *redir);
+void	open_heredoc_file(int	*heredoc_n, int *fd_write, int *fd_read);
 
 #endif
