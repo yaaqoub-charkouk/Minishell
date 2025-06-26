@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:33:17 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/26 16:43:44 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/26 17:18:49 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 //execute_utils
 char	**get_path(char **env, int *erno);
 void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env);
-void	check_access_err(t_tree *node, char **env);
+void	check_access_err(t_tree *node, char **env, char **path);
 void	exec_cmd(t_tree *node, char **env);
 int		exit_status(int status);
 int		check_if_directory(char	*cmd, char *direct, int should_print);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmd_utils_bonus.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:49:22 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/23 13:00:08 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/26 17:41:17 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,21 @@ void	exec_cmd_from_path(char **path, char *cmd, char **args, char **env)
 	}
 }
 
-void	check_access_err(t_tree *node, char **env)
+void	check_access_err(t_tree *node, char **env, char **path)
 {
-	if (access(node->args[0], X_OK) == 0) 
+	if (!path && access(node->args[0], X_OK) == 0) 
 	{
 		execve(node->args[0], node->args, env);
-		perror("minishell: ");
+		write(2, "minishell: ", 11);
+		write(2, node->args[0], ft_strlen(node->args[0]));
+		perror(": ");
 		exit(1);
 	}
 	if (node->red.erno)
 	{
 		ft_putstr_fd("minishell :", 2);
+		write(2, node->args[0], ft_strlen(node->args[0]));
+		write(2, ": ", 2);
 		ft_putstr_fd(strerror(node->red.erno), 2);
 		write(2, "\n", 1);
 		exit(127);
@@ -91,7 +95,9 @@ void	exec_cmd(t_tree *node, char **env)
 		if (check_if_directory(node->args[0], NULL, 1))
 			exit(126);
 		execve(node->args[0], node->args, env);
-		perror("minishell: ");
+		write(2, "minishell: ", 11);
+		write(2, node->args[0], ft_strlen(node->args[0]));
+		perror(" ");
 		if (errno == ENOENT)
 			exit(127);
 		else if (errno == EACCES || errno == ENOEXEC)
@@ -105,7 +111,7 @@ void	exec_cmd(t_tree *node, char **env)
 		exec_cmd_from_path(path, node->args[0], node->args, env);
 		free_matrix(path);
 	}
-	check_access_err(node, env);
+	check_access_err(node, env, path);
 	close_read_fd(node);
 }
 
