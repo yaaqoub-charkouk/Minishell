@@ -6,7 +6,7 @@
 /*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 18:27:45 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 17:40:19 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/06/26 19:20:26 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ int	check_type_of_error(t_list *list)
 		return (print_error("||"), 1);
 	if (list->type == PIPE)
 		return (print_error("|"), 1);
+	if (list->type == P_OPEN)
+		return (print_error("("), 1);
+	if (list->type == P_CLOSE)
+		return (print_error(")"), 1);
 	return (0);
 }
 

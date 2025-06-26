@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_1_a.c                                      :+:      :+:    :+:   */
+/*   syntax.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akharkho <akharkho@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 18:27:36 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/20 18:27:37 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/06/26 19:14:15 by ycharkou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ int	check_op_start_end(t_list *list)
 	{
 		if ((list->type == P_CLOSE 
 				&& (!is_operator(list->next->type)
+					&& !is_redirection(list->next->type)
 					&& !(list->next->type == P_CLOSE)))
 			|| (list->type == P_OPEN && list->next->type == P_CLOSE))
 		{
