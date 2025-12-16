@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaaqoub <yaaqoub@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:30:31 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/22 17:42:17 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/12/16 11:50:26 by yaaqoub          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include "parsing/parsing.h"
 # include "signals/signals.h"
 # include <stdlib.h>
+# include <linux/limits.h>
+
 # define GREEN       "\001\033[32m↪  \002"
 # define SKY_BLUE    "\001\033[1;36m\002"
 # define RED     "\001\033[1;31m↪  \002"

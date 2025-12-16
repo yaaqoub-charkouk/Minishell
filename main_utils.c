@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaaqoub <yaaqoub@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:50:35 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/21 21:02:34 by akharkho         ###   ########.fr       */
+/*   Updated: 2025/12/16 11:50:52 by yaaqoub          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ void	check_env(t_data *data, t_list **env, char **envp)
 void	initialise_vars(t_data *data, t_list **env,
 	t_list **tokens, char **envp)
 {
-	*tokens = NULL;
 	*env = NULL;
+	*tokens = NULL;
 	check_env(data, env, envp);
 	rl_catch_signals = 0;
 	data->exit_status = 0;

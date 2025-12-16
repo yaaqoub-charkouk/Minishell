@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaaqoub <yaaqoub@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:58:16 by ycharkou          #+#    #+#             */
-/*   Updated: 2025/06/26 16:44:27 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/12/16 11:44:42 by yaaqoub          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,10 @@ void	open_heredoc_file(int *heredoc_n, int *fd_write, int *fd_read)
 
 void	open_fd(t_data *data, t_tree	*node, t_redir *redir)
 {
-	int		k;
 	int		is_ambiguous;
 	char	*file_name;
 
-	file_name = ((is_ambiguous = 0), (k = 0), ft_strdup(node->args[0]));
+	file_name = ((is_ambiguous = 0), ft_strdup(node->args[0]));
 	add_cmd_options(&redir->args_list, node->args, 1);
 	if (*(redir->type) == HEREDOC && !data->signaled)
 		open_heredoc(data, node, redir);

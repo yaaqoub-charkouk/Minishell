@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ycharkou <ycharkou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaaqoub <yaaqoub@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 20:33:17 by akharkho          #+#    #+#             */
-/*   Updated: 2025/06/26 17:42:56 by ycharkou         ###   ########.fr       */
+/*   Updated: 2025/12/16 11:45:10 by yaaqoub          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../expand/expand.h"
 # include "../built_ins/built_ins.h"
+# include <sys/wait.h>
 
 //execute_utils
 char	**get_path(char **env, int *erno);
