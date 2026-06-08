@@ -32,10 +32,13 @@
 - **Inter-process communication** (pipes, file descriptors)
 - **Signal handling** (SIGINT, SIGQUIT, SIGTERM)
 - **File I/O and redirections** (stdin, stdout, stderr)
-- **Lexical parsing and tokenization**
-- **Environment variable expansion**
+- **Lexical parsing and tokenization** with quote-aware handling
+- **Operator precedence** using the Shunting Yard algorithm
+- **Binary tree AST** for command representation
 
 The implementation mimics core Bash functionality while maintaining clean, modular C code with proper memory management and error handling.
+
+**Validated with teammate:** 🤝 **Adnane Kharkhour**
 
 ---
 
@@ -53,6 +56,10 @@ The implementation mimics core Bash functionality while maintaining clean, modul
   command < input.txt > output.txt
   command >> append.txt
   ```
+- ✅ **Logical Operators** - AND (`&&`) and OR (`||`) operators for conditional execution
+  ```bash
+  ls && echo "Success" || echo "Failed"
+  ```
 - ✅ **Built-in Commands** - Essential shell built-ins
   - `cd` - Change directory
   - `pwd` - Print working directory
@@ -69,10 +76,25 @@ The implementation mimics core Bash functionality while maintaining clean, modul
 - 🗂️ **Environment Management** - Full environment variable support
 - 📝 **Error Handling** - Comprehensive error messages and status codes
 - 🧹 **Memory Management** - Proper cleanup and leak prevention
+- 📋 **Quote-Aware Tokenization** - Strict input validation with proper quote handling
+- 🔀 **Operator Precedence** - Correct handling with Shunting Yard algorithm
+- 🌳 **Binary Tree AST** - Abstract syntax tree for command representation
 
 ---
 
 ## 🏗️ Architecture
+
+### Parsing Pipeline: Shunting Yard Algorithm
+
+The shell uses the **Shunting Yard algorithm** to parse commands with proper operator precedence:
+
+```
+Operator Precedence (lowest to highest):
+1. Logical OR (||)
+2. Logical AND (&&)
+3. Pipes (|)
+4. Redirections (>, >>, <, <<)
+```
 
 ### Component Overview
 
@@ -84,28 +106,38 @@ The implementation mimics core Bash functionality while maintaining clean, modul
                  │
         ┌────────┼────────┐
         ▼        ▼        ▼
-   ┌────────┐ ┌─────────┐ ┌──────────┐
-   │Parsing │ │Execution│ │Built-ins │
-   │        │ │         │ │          │
-   │•Tokens │ │•Pipes   │ │•cd       │
-   │•Quotes │ │•Redirect│ │•export   │
-   │•Expand │ │•Process │ │•unset    │
-   └────────┘ └─────────┘ └──────────┘
-        │        │            │
-        └────────┼────────────┘
+   ┌─────────┐ ┌────────────────┐ ┌──────────┐
+   │Tokenize │ │Shunting Yard   │ │Binary    │
+   │         │ │Algorithm       │ │Tree AST  │
+   │•Quotes  │ │•Precedence     │ │•Commands │
+   │•Escape  │ │•Stack-based    │ │•Operators│
+   └─────────┘ │•Output Queue   │ └──────────┘
+               └────────────────┘
+                      │
+        ┌─────────────┼──────────────┐
+        ▼             ▼              ▼
+   ┌─────────┐ ┌───────────┐ ┌──────────────┐
+   │Expansion│ │Pre-Exec   │ │Recursive     │
+   │         │ │Phase      │ │Execution     │
+   │•Variable│ │•FD Setup  │ │•Pipes        │
+   │•History │ │•Heredoc   │ │•Redirections │
+   └─────────┘ └───────────┘ └──────────────┘
+        │             │              │
+        └─────────────┼──────────────┘
                  │
         ┌────────▼────────┐
-        │   Utilities     │
-        │   & Signals     │
+        │  Built-ins &    │
+        │  Process Mgmt   │
         └─────────────────┘
 ```
 
 ### Design Principles
 
-1. **Modularity** - Separated concerns into distinct directories
-2. **Reusability** - Custom `libft` library for common operations
-3. **Robustness** - Comprehensive error handling and edge case management
-4. **Efficiency** - Minimal system calls and optimized data structures
+1. **Tokenization** - Input is tokenized with awareness of quotes and escape sequences
+2. **Shunting Yard** - Operators are processed based on precedence using a stack-based algorithm
+3. **AST Construction** - The output queue is converted to a binary tree for recursive execution
+4. **Pre-Execution Phase** - All file descriptors are resolved before process execution
+5. **Clean Execution** - Binary tree is recursively executed with proper process management
 
 ---
 
@@ -116,7 +148,7 @@ The implementation mimics core Bash functionality while maintaining clean, modul
 - **GCC** or **Clang** compiler
 - **GNU Make** build tool
 - **POSIX-compliant** Unix/Linux system (Linux, macOS)
-- **Readline library** (optional, for enhanced line editing)
+- **Readline library** (for line editing capabilities)
 
 ### Installation
 
@@ -139,7 +171,7 @@ make          # Compile the project
 make clean    # Remove object files
 make fclean   # Remove all generated files
 make re       # Rebuild from scratch
-make bonus    # Build bonus features (if implemented)
+make bonus    # Build bonus features
 ```
 
 ---
@@ -150,11 +182,11 @@ make bonus    # Build bonus features (if implemented)
 
 ```bash
 $ ./minishell
-minishell> ls -la
-minishell> pwd
-minishell> cd /home
-minishell> pwd
-minishell> echo "Hello, World!"
+minishell-4.2$ ls -la
+minishell-4.2$ pwd
+minishell-4.2$ cd /home
+minishell-4.2$ pwd
+minishell-4.2$ echo "Hello, World!"
 ```
 
 ### Pipes and Redirections
@@ -170,8 +202,21 @@ minishell> echo "World" >> output.txt
 # Input redirection
 minishell> sort < unsorted.txt
 
-# Combined redirections
-minishell> grep "error" < input.log > errors.txt 2>&1
+# Combined operations
+minishell> grep "pattern" < input.txt > output.txt
+```
+
+### Logical Operators
+
+```bash
+# AND operator (execute second command only if first succeeds)
+minishell> ls /tmp && echo "Directory exists"
+
+# OR operator (execute second command only if first fails)
+minishell> ls /nonexistent || echo "Directory not found"
+
+# Chaining operators
+minishell> cd /tmp && ls && pwd || echo "Failed"
 ```
 
 ### Environment Variables
@@ -218,31 +263,70 @@ minishell> exit 0
 
 ## 🔍 Implementation Details
 
-### Parsing Pipeline
+### Tokenization Phase
 
-1. **Lexical Analysis** - Tokenize input into meaningful units
-2. **Quote Handling** - Process single/double quotes and escape sequences
-3. **Variable Expansion** - Expand `$VAR` and special variables
-4. **AST Construction** - Build Abstract Syntax Tree for execution
-
-### Execution Engine
-
-1. **Command Resolution** - Locate command in PATH or execute absolute path
-2. **File Descriptor Management** - Setup redirections before execution
-3. **Process Creation** - Fork child process and execute command
-4. **Wait & Cleanup** - Collect child process status and manage resources
-
-### Signal Management
+1. **Lexical Analysis** - Input string is scanned character by character
+2. **Quote Handling** - Single quotes (`'`) and double quotes (`"`) are tracked
+3. **Operator Recognition** - Multi-character operators (`&&`, `||`, `>>`, `<<`) are identified
+4. **Token Creation** - Tokens are created as linked list nodes with type information
 
 ```c
-// Handle Ctrl+C gracefully
-signal(SIGINT, signal_handler);
+// Example: "echo hello | grep hello"
+// Tokens: [echo hello] [|] [grep hello]
+```
 
-// Handle Ctrl+\ for core dump (disabled in interactive shell)
-signal(SIGQUIT, signal_handler);
+### Shunting Yard Algorithm
 
-// Handle child process termination
-signal(SIGCHLD, signal_handler);
+The algorithm converts infix notation to postfix (RPN) for proper operator precedence:
+
+```c
+Precedence Levels (build_queue.c):
+- Redirections:  3 (highest)
+- Pipes:         2
+- OR (||):       1
+- AND (&&):      1 (lowest)
+```
+
+### Binary Tree Construction
+
+The postfix queue is converted to a binary tree where:
+- **Leaf nodes** = Commands (`CMD`)
+- **Internal nodes** = Operators (`PIPE`, `AND`, `OR`, `REDIRECTION_*`)
+
+```
+Example: cmd1 | cmd2 && cmd3
+
+         &&
+        /  \
+       |    cmd3
+      / \
+   cmd1  cmd2
+```
+
+### Pre-Execution Phase
+
+Before execution, all file descriptors are resolved:
+- **Input files** - Opened and linked to nodes
+- **Output files** - Created/truncated/appended as needed
+- **Heredocs** - Temporary files created for here-document input
+- **Pipes** - File descriptor pairs created
+
+### Recursive Execution
+
+The tree is executed recursively with proper process management:
+
+```c
+int execution(t_tree *node, t_data *data, int is_pipe)
+{
+    if (node is PIPE)
+        return execute_pipe(node, data);
+    else if (node is AND)
+        return execute_and(node, data);
+    else if (node is OR)
+        return execute_or(node, data);
+    else if (node is CMD)
+        return execute_cmd(node, data, is_pipe);
+}
 ```
 
 ---
@@ -252,63 +336,76 @@ signal(SIGCHLD, signal_handler);
 ```
 Minishell/
 ├── main.c                 # Entry point and main loop
-├── main_utils.c           # Main loop utilities
-├── minishell.h            # Header file with data structures
+├── main_utils.c           # Build & execute, tokenization
+├── minishell.h            # Main header file
 ├── Makefile               # Build configuration
 │
 ├── parsing/               # Lexical analysis and parsing
-│   ├── lexer.c           # Tokenization
-│   ├── parser.c          # AST construction
-│   └── expand.c          # Variable expansion
+│   ├── tokenize.c        # Tokenization with quote handling
+│   ├── build_queue.c     # Shunting Yard algorithm
+│   ├── build_tree.c      # AST construction
+│   ├── syntax.c          # Syntax validation
+│   └── parsing.h         # Parsing declarations
 │
 ├── execution/             # Command execution engine
-│   ├── execute.c         # Main execution logic
-│   ├── pipes.c           # Pipe handling
-│   └── redirections.c    # I/O redirection
+│   ├── execute.c         # Recursive execution logic
+│   ├── execute_utils.c   # Command resolution & PATH
+│   ├── pipes.c           # Pipe handling and setup
+│   ├── redirections.c    # I/O redirection & file ops
+│   └── execution.h       # Execution declarations
 │
 ├── built_ins/             # Built-in command implementations
 │   ├── cd.c              # Change directory
-│   ├── export.c          # Environment variable export
+│   ├── export.c          # Export environment variables
 │   ├── echo.c            # Echo command
-│   └── utils.c           # Built-in utilities
+│   ├── env.c             # Display environment
+│   └── built_ins.h       # Built-in declarations
 │
 ├── signals/               # Signal handling
-│   └── signals.c         # Signal handlers and setup
+│   └── signals.c         # SIGINT, SIGQUIT, SIGTERM handlers
 │
 ├── expand/                # Variable and glob expansion
-│   ├── expansion.c       # Main expansion logic
-│   └── variable.c        # Variable substitution
+│   ├── expand.c          # Main expansion logic
+│   └── expand.h          # Expansion declarations
 │
 ├── utils/                 # Utility functions
-│   ├── memory.c          # Memory allocation wrappers
-│   ├── string.c          # String utilities
-│   └── error.c           # Error handling
+│   ├── struct.h          # Data structure definitions
+│   ├── utils.h           # Utility declarations
+│   └── memory.c          # Memory management
 │
 ├── libft/                 # Custom C library
 │   ├── libft.h          # Library header
 │   ├── ft_*.c           # Library functions
 │   └── Makefile         # Library build
 │
-└── bonus/                 # Bonus features
-    └── features.c        # Additional enhancements
+└── bonus/                 # Bonus features (if implemented)
+    └── ...               # Bonus implementations
 ```
 
 ---
 
 ## 🎓 Technical Highlights
 
-### Systems Programming Concepts
+### Core Algorithms
 
-- **Process Management**: Deep dive into `fork()`, `execve()`, `waitpid()`
-- **File Descriptors**: Understanding `open()`, `close()`, `dup2()`, `pipe()`
-- **Signal Handling**: Synchronous vs asynchronous signal handling
-- **Environment**: Understanding environment variable scope and inheritance
+- **Shunting Yard Algorithm** - Converting infix to postfix notation with precedence
+- **Binary Tree AST** - Hierarchical representation of command structure
+- **Recursive Descent Execution** - Processing AST nodes recursively
+- **File Descriptor Management** - Pre-execution resolution and setup
 
-### Memory Safety
+### Systems Programming
+
+- **Process Management**: `fork()`, `execve()`, `waitpid()`, process groups
+- **File Descriptors**: `open()`, `close()`, `dup2()`, `pipe()`, multiplexing
+- **Signal Handling**: `signal()`, `sigaction()`, safe signal programming
+- **Environment**: Variable scope, inheritance, PATH resolution
+
+### Memory & Safety
 
 - **Allocation Tracking** - Custom wrappers for `malloc()/free()`
-- **Leak Prevention** - Structured cleanup at exit
-- **Bounds Checking** - Safe string operations with bounds
+- **Leak Prevention** - Structured cleanup at all exit paths
+- **Quote-Aware Parsing** - Correct handling of escaped characters
+- **Bounds Checking** - Safe string operations throughout
 
 ### Code Quality
 
@@ -316,29 +413,39 @@ Minishell/
 Language Breakdown:
 ├── C                98.8%  (Core implementation)
 └── Makefile          1.2%  (Build configuration)
+
+Total LOC: ~1000 lines of well-structured C code
 ```
 
 ---
 
-## 📊 Learning Outcomes
+## 🎯 Learning Outcomes
 
 This project reinforced and demonstrated proficiency in:
 
 ### Low-Level Systems Programming
-- Process creation, management, and synchronization
-- File descriptor manipulation and I/O redirection
-- Signal handling and safe signal programming
+- **Process Creation & Management** - fork, exec, signal coordination
+- **Inter-Process Communication** - Pipes, file descriptors, inheritance
+- **Signal Safety** - Asynchronous signal handling in shell context
+- **File I/O** - Redirections, heredocs, file descriptor juggling
 
-### Software Engineering Practices
+### Parsing & Compiler Design
+- **Tokenization** - Lexical analysis with quote and escape awareness
+- **Operator Precedence** - Shunting Yard algorithm implementation
+- **AST Construction** - Building hierarchical command structures
+- **Syntax Validation** - Error checking and reporting
+
+### Software Engineering
 - **Modular Architecture** - Clear separation of concerns
-- **Error Handling** - Comprehensive error management
-- **Memory Management** - Leak-free C code
-- **Documentation** - Self-documenting code with comments
+- **Error Handling** - Comprehensive error checking
+- **Memory Management** - Leak-free code with proper cleanup
+- **Code Organization** - Logical grouping and reusable components
 
 ### Problem-Solving
-- Complex parsing and tokenization
-- Managing parent-child process communication
-- Handling edge cases and race conditions
+- **Complex Parsing** - Handling nested quotes and escapes
+- **Process Coordination** - Parent-child communication
+- **Edge Case Management** - Empty commands, multiple redirections
+- **Signal Safety** - Handling asynchronous events safely
 
 ---
 
@@ -348,24 +455,23 @@ This project reinforced and demonstrated proficiency in:
 
 ```bash
 # Compile with debug symbols
-CFLAGS="-g -O0" make clean make
+CFLAGS="-g -O0" make clean && make
 
 # Run with debugger
 gdb ./minishell
-(gdb) run
 (gdb) break main
+(gdb) run
+(gdb) break execution
 (gdb) continue
 ```
 
 ### Testing
 
 ```bash
-# Test built-in commands
+# Test pipes and redirections
 ./minishell << EOF
-export TEST="value"
-echo $TEST
-cd /tmp
-pwd
+echo "test" | cat > output.txt
+cat output.txt
 exit
 EOF
 
@@ -381,17 +487,19 @@ bash < test_script.sh
 While this is a learning project, feedback and suggestions are welcome! Feel free to:
 
 - Open an issue for bugs or feature requests
-- Create a pull request with improvements
-- Suggest better approaches or optimizations
+- Suggest improvements to the architecture
+- Share optimizations or edge cases
 
 ---
 
 ## 📚 References
 
 - **POSIX Shell Specification**: [pubs.opengroup.org](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html)
+- **Shunting Yard Algorithm**: [Wikipedia](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
 - **Advanced Bash-Scripting Guide**: [tldp.org](https://tldp.org/LDP/abs/html/)
 - **The Linux Programming Interface**: Michael Kerrisk
 - **Operating Systems: Three Easy Pieces**: Remzi H. Arpaci-Dusseau
+- **42 School Norm**: Clean code standards and best practices
 
 ---
 
@@ -431,6 +539,8 @@ Currently balancing Software Engineering studies at **1337 Coding School (42 Net
 
 **Made with ❤️ at 1337 Coding School**
 
-⭐ If this project helped you understand shell implementation, please consider giving it a star!
+🌟 This shell demonstrates mastery of systems programming, parsing algorithms, and process management
+
+⭐ If this project helped you understand shell implementation or systems design, please consider giving it a star!
 
 </div>
